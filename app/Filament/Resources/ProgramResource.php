@@ -54,27 +54,37 @@ class ProgramResource extends Resource
                             ->prefix('₱ ')
                             ->numeric()
                             ->default(0),
-                            Repeater::make('files')
+                           
+                            Section::make('Programs Documents')
+                            ->icon('heroicon-m-folder')
+                            ->description('Manage and organize your program documents. Upload files here')
+                            ->schema([
+                                Repeater::make('files')
                             
                                 ->relationship()
-                                ->label('Files')
+                                ->label('Documents')
                                     ->schema([
                                       TextInput::make('file_name')
                                         ->label('Name')
                                         ->maxLength(191),
                                         FileUpload::make('file')
+                                      
                                         // ->columnSpanFull()
                                         // ->image()
                                         ->preserveFilenames()
-                                        ->multiple(false)
+                                      
                                         ->label('File')
                                         ->disk('public')
                                        ->directory('program-files')
-                                       ->deletable(false),
                                     ])
                                     ->deleteAction(
                                         fn (Action $action) => $action->requiresConfirmation(),
                                     )
+                                    ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
+                                        // $data['user_id'] = auth()->id();
+                                 
+                                        return $data;
+                                    })
                                     ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                         // $filePath = storage_path('app/public/' . $data['file']);
 
@@ -133,13 +143,8 @@ class ProgramResource extends Resource
                                     ->columns(2)
                                     ->defaultItems(0)
                                     ->addActionLabel('Add Documents')
-                            // Section::make('Programs Documents')
-                            // ->icon('heroicon-m-folder')
-                            // ->description('Manage and organize your program documents. Upload files here')
-                            // ->schema([
-                                
-                            //         // ->collapsed()
-                            // ]),
+                                    
+                            ]),
                        
                     ])
 
@@ -167,7 +172,8 @@ class ProgramResource extends Resource
                     ->label('Date Created')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                    TextColumn::make('files.file_name')
+                    TextColumn::make('files')
+                    ->formatStateUsing(fn($state) => $state->file ? $state->file_name : null)
                     ->label('Documents')
     ->listWithLineBreaks()
     ->wrap()
