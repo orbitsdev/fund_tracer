@@ -32,6 +32,8 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
     protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Management';
+
 
     public $data;
     // protected static bool $shouldRegisterNavigation = false;

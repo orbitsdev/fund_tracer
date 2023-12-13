@@ -8,11 +8,12 @@ use Filament\Widgets;
 use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
 use App\Filament\Pages\Project;
-use App\Filament\Resources\ProgramResource;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Navigation\NavigationItem;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
+use App\Filament\Resources\ProgramResource;
 use App\Filament\Resources\ProjectResource;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -83,6 +84,12 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->darkMode(false)
+            // ->sidebarFullyCollapsibleOnDesktop()
+            // ->sidebarCollapsibleOnDesktop()
+            ->spa()
+            // ->domain('admin.example.com')
+            // ->maxContentWidth(MaxWidth::Full)
+            // ->font('Poppins')
             ;
     }
 }

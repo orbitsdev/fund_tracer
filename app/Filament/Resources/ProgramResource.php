@@ -33,6 +33,7 @@ class ProgramResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
 
     protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Management';
 
 
     public static function form(Form $form): Form
