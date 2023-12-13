@@ -2,21 +2,27 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
-use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Filament\PanelProvider;
+use Filament\Pages\Dashboard;
+use App\Filament\Pages\Project;
+use App\Filament\Resources\ProgramResource;
+use Filament\Support\Colors\Color;
+use Filament\Navigation\NavigationItem;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Navigation\NavigationBuilder;
+use App\Filament\Resources\ProjectResource;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -29,13 +35,34 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 'primary' => '#4338ca',
+                'gray' => '#4338ca',
             ])
             // ->brandLogo(fn () => view('filament.admin.logo'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+               
+                // NavigationItem::make('Project')
+                // ->icon('heroicon-o-inbox-stack')
+                // ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.projects.project'))
+                // ->url(fn (): string => ProjectResource::getUrl()),
+
+                
             ])
+            // ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+            //     return $builder->items([
+            //         NavigationItem::make('Dashboard')
+            //         ->icon('heroicon-o-home')
+            //         ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
+            //         ->url(fn (): string => Dashboard::getUrl()),
+            //         ...ProgramResource::getNavigationItems(),
+            //      NavigationItem::make('Projects')
+            //     ->icon('heroicon-o-inbox-stack')
+            //     ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.projects.project'))
+            //      ->url(route('filament.admin.resources.projects.project')),
+            //     ]);
+            // })
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

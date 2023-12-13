@@ -4,12 +4,14 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Panel;
+use App\Models\Expense;
 use Laravel\Sanctum\HasApiTokens;
+use Filament\Models\Contracts\HasName;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Filament\Models\Contracts\HasName;
+
 class User extends Authenticatable implements  FilamentUser,  HasName
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -59,5 +61,12 @@ class User extends Authenticatable implements  FilamentUser,  HasName
         return "{$this->first_name} {$this->last_name}";
     }
 
+    public function managerProject(){
+        return $this->hasOne(Project::class,'user_id');
+    }
+   
+    public function projectExpenses(){
+        return $this->hasMany(Expense::class);
+    }
 
 }

@@ -11,17 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('programs', function (Blueprint $table) {
-
-
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
- 
-            // $table->string('status')->nullable()->default('pending');
+
+            $table->foreignId('user_id')->nullable();
+            $table->foreignId('program_id')->nullable();
             $table->string('title');
+            $table->decimal('allocated_fund', 10, 2);
             $table->date('start_date');
             $table->date('end_date');
-            $table->decimal('total_budget', 10, 2)->nullable()->default(0);
-            $table->string('status')->nullable()->default('Pending');
+            $table->string('status')->nullable()->default('Not Active');
+            // $table->decimal('expenses', 10, 2);
+            // $table->string('status');
+            // $table->foreignId('user_id')->constrained();
+            
             $table->timestamps();
         });
     }
@@ -31,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('programs');
+        Schema::dropIfExists('projects');
     }
 };

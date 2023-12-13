@@ -2,10 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\Expense;
 use App\Models\File;
+use App\Models\User;
 use App\Models\Program;
+use App\Models\Project;
+use App\Observers\ExpenseObserver;
 use App\Observers\FileObserver;
+use App\Observers\UserObserver;
 use App\Observers\ProgramObserver;
+use App\Observers\ProjectObserver;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -29,7 +35,10 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        User::observe(UserObserver::class);
         Program::observe(ProgramObserver::class);
+        Project::observe(ProjectObserver::class);
+        Expense::observe(ExpenseObserver::class);
         File::observe(FileObserver::class);
     }
 
