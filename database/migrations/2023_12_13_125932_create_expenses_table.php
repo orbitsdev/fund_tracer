@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->nullable();
-            $table->string('description');
-            $table->decimal('amount', 10, 2);
-            $table->string('category');
+            $table->string('description')->nullable();
+            $table->decimal('amount', 10, 2)->nullable();
+            $table->string('category')->nullable();
             // $table->string('frequency');
             // $table->text('notes');
             // $table->text('financial_statements')->nullable();

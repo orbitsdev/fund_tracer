@@ -24,6 +24,7 @@ use Filament\Forms\Components\Actions\Action;
 use App\Filament\Resources\ProgramResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProgramResource\RelationManagers;
+use Filament\Support\RawJs;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 
 class ProgramResource extends Resource
@@ -57,13 +58,19 @@ class ProgramResource extends Resource
                         TextInput::make('title')
                             ->label('Title')
                             ->maxLength(191)
+                            ->required()
                             ->columnSpanFull(),
 
                         TextInput::make('total_budget')
-                            ->prefix('₱ ')
+                            // ->mask(RawJs::make('$money($input)'))
+                            // ->stripCharacters(',')
+                            ->prefix('₱')
                             ->numeric()
+                            // ->maxValue(9999999999)
                             ->default(0)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->required()
+                            ,
                         Select::make('status')
                             ->options([
                                 'Pending' => 'Pending',
@@ -73,11 +80,16 @@ class ProgramResource extends Resource
                                 'On Hold' => 'On Hold',
                                 'Completed' => 'Completed',
                             ])
+                            ->required()
                             ->native(false)
                             ->columnSpan(3),
 
-                        DatePicker::make('start_date')->date()->native(false)->columnSpan(3),
-                        DatePicker::make('end_date')->date()->native(false)->columnSpan(3),
+                        DatePicker::make('start_date')->date()->native(false)->columnSpan(3)
+                        ->required()
+                        ,
+                        DatePicker::make('end_date')->date()->native(false)->columnSpan(3)
+                        ->required()
+                        ,
 
                        
 
@@ -100,9 +112,11 @@ class ProgramResource extends Resource
                                     ->schema([
                                         TextInput::make('file_name')
                                             ->label('Name')
-                                            ->maxLength(191),
+                                            ->maxLength(191)
+                                            ->required()
+                                            ,
                                         FileUpload::make('file')
-
+                                        ->required()
                                             // ->columnSpanFull()
                                             // ->image()
                                             ->preserveFilenames()
@@ -214,6 +228,13 @@ class ProgramResource extends Resource
                     ->prefix('₱ ')
                     ->numeric()
                     // ->badge()
+                    ->sortable(),
+                TextColumn::make('total_usage')
+                    ->label('Total Usage')
+                    ->prefix('₱ ')
+                    ->numeric()
+                    ->badge()
+                    // ->color('info')
                     ->sortable(),
 
 

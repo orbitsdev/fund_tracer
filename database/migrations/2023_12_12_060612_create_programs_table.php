@@ -17,10 +17,11 @@ return new class extends Migration
             $table->id();
  
             // $table->string('status')->nullable()->default('pending');
-            $table->string('title');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->decimal('total_budget', 10, 2)->nullable()->default(0);
+            $table->string('title')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->decimal('total_budget', 20, 2)->nullable()->default(0);
+            $table->decimal('total_usage', 20, 2)->nullable()->default(0);
             $table->string('status')->nullable()->default('Pending');
             $table->timestamps();
         });

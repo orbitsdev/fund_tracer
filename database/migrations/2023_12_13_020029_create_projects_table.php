@@ -16,10 +16,11 @@ return new class extends Migration
 
             $table->foreignId('user_id')->nullable();
             $table->foreignId('program_id')->nullable();
-            $table->string('title');
-            $table->decimal('allocated_fund', 10, 2);
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->string('title')->nullable();
+            $table->decimal('allocated_fund', 20, 2)->nullable();
+            $table->decimal('total_usage', 20, 2)->nullable()->default(0);
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->string('status')->nullable()->default('Not Active');
             // $table->decimal('expenses', 10, 2);
             // $table->string('status');
