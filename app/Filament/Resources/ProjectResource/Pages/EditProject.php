@@ -20,25 +20,34 @@ class EditProject extends EditRecord
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
-{
+    {
 
-    // dd($data);
-    $record = Project::find($data['id']);
-    // dd($record, $data);
+        $project = Project::find($data['id']);
+        $total_expenses = $project->expenses()->sum('amount');
 
-    $total_expenses =$record->expenses()->sum('amount');
-    // dd($total_expenses);
-    
+        //fill program oberview
+        $data['program_name_overview'] = $project->program->title;
+        $data['program_budget_overview'] = number_format($project->program->total_budget);
+        $data['program_use_budget_overview'] =   number_format($project->program->total_usage);
+        $data['program_remaining_budget_overview'] = number_format($project->program->total_budget - $project->program->total_usage);
+        
+        //fill project overview
 
-     $data['total_expenses'] = $total_expenses;
- 
-    return $data;
-}
+        $data['project_fund'] =number_format($project->allocated_fund);
+        $data['total_expenses'] = number_format($total_expenses);
+
+        return $data;
+    }
+
     protected function mutateFormDataBeforeSave(array $data): array
-{
-       unset($data['total_expenses']);
-      //  unset($data['project_fund']);
-      // dd($data);
+    {
+        unset($data['total_expenses']);
+        unset($data['program_name_overview']);
+        unset($data['program_budget_overview']);
+        unset($data['program_use_budget_overview']);
+        unset($data['program_remaining_budget_overview']);
+        unset($data['project_fund']);
+        
         return $data;
     }
     protected function handleRecordUpdate(Model $record, array $data): Model
@@ -50,7 +59,7 @@ class EditProject extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-          //  Actions\DeleteAction::make(),
+            //  Actions\DeleteAction::make(),
         ];
     }
 }

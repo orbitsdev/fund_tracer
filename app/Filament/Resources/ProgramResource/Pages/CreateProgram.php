@@ -13,7 +13,18 @@ class CreateProgram extends CreateRecord
     protected static bool $canCreateAnother = false;
 
 
-   
+    protected function mutateFormDataBeforeCreate(array $data): array
+      {
+        //  dd($data);
+        unset($data['duration']);
+        // unset($data['program_name_overview']);
+        // unset($data['program_budget_overview']);
+        // unset($data['program_use_budget_overview']);
+        // unset($data['program_remaining_budget_overview']);
+        // unset($data['project_fund']);
+        // dd($data);
+          return $data;
+      }
 
     protected function getRedirectUrl(): string
 {

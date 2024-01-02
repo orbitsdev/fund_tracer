@@ -87,6 +87,8 @@ class AdminPanelProvider extends PanelProvider
             // ->sidebarFullyCollapsibleOnDesktop()
             // ->sidebarCollapsibleOnDesktop()
             ->spa()
+            // ->databaseNotifications()
+            // ->databaseNotificationsPolling('30s')
             // ->domain('admin.example.com')
             // ->maxContentWidth(MaxWidth::Full)
             // ->font('Poppins')

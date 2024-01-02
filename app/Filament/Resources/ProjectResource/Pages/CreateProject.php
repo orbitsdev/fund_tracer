@@ -13,6 +13,10 @@ class CreateProject extends CreateRecord
     protected static string $resource = ProjectResource::class;
     protected static bool $canCreateAnother = false;
 
+
+
+
+
       // public $budget;
       // public function mount(): void
       // {
@@ -22,20 +26,24 @@ class CreateProject extends CreateRecord
 
       protected function mutateFormDataBeforeCreate(array $data): array
       {
-  
-         unset($data['total_expenses']);
-        //  unset($data['project_fund']);
+        //  dd($data);
+        unset($data['total_expenses']);
+        unset($data['program_name_overview']);
+        unset($data['program_budget_overview']);
+        unset($data['program_use_budget_overview']);
+        unset($data['program_remaining_budget_overview']);
+        unset($data['project_fund']);
         // dd($data);
           return $data;
       }
   
       protected function handleRecordCreation(array $data): Model
   {
-      $program = Program::first();
-      // dd($program->total_usage, $data['allocated_fund']);
-     $sum= $program->total_usage =$program->total_usage + $data['allocated_fund'];
-      // dd($sum);
-      $program->save();
+    //   $program = Program::first();
+    //   // dd($program->total_usage, $data['allocated_fund']);
+    //  $sum= $program->total_usage =$program->total_usage + $data['allocated_fund'];
+    //   // dd($sum);
+    //   $program->save();
      
       return static::getModel()::create($data);
   }
