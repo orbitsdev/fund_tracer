@@ -27,15 +27,22 @@ class EditProgram extends EditRecord
             $totalMonths = $endDate->diffInMonths($startDate);
     
             // Set the duration in months
-             $data['duration'] = $totalMonths . ' months';
-        }
-    
+             $data['duration_overview'] = $totalMonths . ' months';
+            }
+            
+            $data['program_leader_overview'] = $program->program_leader ?? '';
+            $data['current_duration_overview'] = Carbon::parse($program->start_date)->format('F d, Y') . ' - ' . Carbon::parse($program->end_date)->format('F d, Y');
+
+        
         return $data;
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        unset($data['duration']);
+        // unset($data['duration']);
+        unset($data['program_leader_overview']);
+        unset($data['duration_overview']);
+        unset($data['current_duration_overview']);
         
         return $data;
     }

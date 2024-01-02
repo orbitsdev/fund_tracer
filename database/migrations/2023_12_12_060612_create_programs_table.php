@@ -18,6 +18,7 @@ return new class extends Migration
  
             // $table->string('status')->nullable()->default('pending');
             $table->string('title')->nullable();
+            $table->string('program_leader')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->decimal('total_budget', 20, 2)->nullable()->default(0);

@@ -16,7 +16,9 @@ class CreateProgram extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
       {
         //  dd($data);
-        unset($data['duration']);
+        unset($data['program_leader_overview']);
+        unset($data['duration_overview']);
+        unset($data['current_duration_overview']);
         // unset($data['program_name_overview']);
         // unset($data['program_budget_overview']);
         // unset($data['program_use_budget_overview']);
