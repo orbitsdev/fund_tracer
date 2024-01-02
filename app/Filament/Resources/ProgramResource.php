@@ -60,7 +60,7 @@ class ProgramResource extends Resource
                     ->columns([
                         'sm' => 3,
                         'xl' => 6,
-                        '2xl' => 9,
+                        '2xl' => 8,
                     ])
 
 
@@ -95,20 +95,20 @@ class ProgramResource extends Resource
                             ->default(0)
                             ->columnSpanFull()
                             ->required(),
-                        Select::make('status')
-                            ->options([
-                                'Pending' => 'Pending',
-                                'Planning' => 'Planning',
-                                'Active' => 'Active',
-                                'Cancelled' => 'Cancelled',
-                                'On Hold' => 'On Hold',
-                                'Completed' => 'Completed',
-                            ])
-                            ->required()
-                            ->native(false)
-                            ->columnSpan(3),
+                        // Select::make('status')
+                        //     ->options([
+                        //         'Pending' => 'Pending',
+                        //         'Planning' => 'Planning',
+                        //         'Active' => 'Active',
+                        //         'Cancelled' => 'Cancelled',
+                        //         'On Hold' => 'On Hold',
+                        //         'Completed' => 'Completed',
+                        //     ])
+                        //     ->required()
+                        //     ->native(false)
+                        //     ->columnSpan(3),
 
-                        DatePicker::make('start_date')->date()->native(false)->columnSpan(3)
+                        DatePicker::make('start_date')->date()->native(false)->columnSpan(4)
                         ->live()
                         ->debounce(700)
                         ->afterStateUpdated(function (Get $get, Set $set) {
@@ -117,7 +117,7 @@ class ProgramResource extends Resource
                         })
                             ->required(),
                             
-                        DatePicker::make('end_date')->date()->native(false)->columnSpan(3)
+                        DatePicker::make('end_date')->date()->native(false)->columnSpan(4)
                         ->live()
                         ->debounce(700)
                         ->afterStateUpdated(function (Get $get, Set $set) {
@@ -290,13 +290,14 @@ class ProgramResource extends Resource
                 TextColumn::make('title')
                     ->label('Title')
                     ->searchable(
-                        isIndividual:true,
-
-                    ),
+                        // isIndividual:true,
+                    )
+                    
+                    ,
                 TextColumn::make('program_leader')
                     ->label('Program Leader')
                     ->searchable(
-                        isIndividual:true,
+                        // isIndividual:true,
                     ),
                     TextColumn::make('total_budget')
                     ->label('Total Budget')
@@ -304,19 +305,41 @@ class ProgramResource extends Resource
                     ->numeric()
                     // ->badge()
                     ->sortable(),
+
+ 
+                    // TextColumn::make('projects_count')
+                    // ->counts('projects')
+                    // ->badge()
+                    // ->tooltip(function (Model $record): string {
+                    //     return "\n" . $record->projects->map(function ($project, $index) {
+                    //         return ($index + 1) . ". {$project->title}";
+                    //     })->implode("\n");
+                    // }),
+                
+                
+                
                     TextColumn::make('projects')
                     ->listWithLineBreaks()
                     ->label('Project & Allocated Fund')
                     ->wrap()
-                    ->limitList(5)
+                    ->badge()
+                    ->separator(',')
+                    // ->limitList(2)
+                    ->words(8)
+                    ->listWithLineBreaks()
                     ->expandableLimitedList()
                     ->formatStateUsing(function($state) {
-                        return $state->title.' - ₱'.number_format($state->allocated_fund);
+                        // return $state->title.' - ₱'.number_format($state->allocated_fund);
+                        return $state->title;
                     })
-                    ->badge()
-                    // ->bulleted()
-                        ,
-
+                    ->tooltip(function (Model $record): string {
+                        return "\n" . $record->projects->map(function ($project, $index) {
+                            return ($index + 1) . ". {$project->title}";
+                        })->implode("\n");
+                    })
+                    ,
+                    
+                    
                     
                     // TextColumn::make('total_usage')
                     //     ->label('Total Usage')

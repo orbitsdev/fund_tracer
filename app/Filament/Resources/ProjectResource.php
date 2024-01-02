@@ -109,20 +109,20 @@ class ProjectResource extends Resource
                                     ->required()
                                     ->maxLength(191)
                                     ->columnSpan(4),
-                                Select::make('user_id')
-                                    ->relationship(
-                                        name: 'manager',
-                                        titleAttribute: 'first_name',
-                                        modifyQueryUsing: fn (Builder $query) => $query->whereDoesntHave('managerProject'),
-                                    )
-                                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
-                                    ->searchable(['first_name', 'last_name'])
-                                    // ->searchable()
-                                    ->preload()
-                                    ->columnSpan(4)
-                                    ->required()
+                                // Select::make('user_id')
+                                //     ->relationship(
+                                //         name: 'manager',
+                                //         titleAttribute: 'first_name',
+                                //         modifyQueryUsing: fn (Builder $query) => $query->whereDoesntHave('managerProject'),
+                                //     )
+                                //     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
+                                //     ->searchable(['first_name', 'last_name'])
+                                //     // ->searchable()
+                                //     ->preload()
+                                //     ->columnSpan(4)
+                                //     ->required()
 
-                                    ->native(false),
+                                //     ->native(false),
 
                                 TextInput::make('allocated_fund')
                                     ->label('Allocated Amount')
@@ -171,25 +171,25 @@ class ProjectResource extends Resource
 
 
 
-                                DatePicker::make('start_date')->date()->native(false)->columnSpan(2)
+                                DatePicker::make('start_date')->date()->native(false)->columnSpan(4)
                                     ->required(),
-                                DatePicker::make('end_date')->date()->native(false)->columnSpan(2)
+                                DatePicker::make('end_date')->date()->native(false)->columnSpan(4)
                                     ->required(),
 
 
-                                Select::make('status')
-                                    ->options([
-                                        'Not Started' => 'Not Started',
-                                        'Planning' => 'Planning',
-                                        'In Progress' => 'In Progress',
-                                        'On Hold' => 'On Hold',
-                                        'Cancelled' => 'Cancelled',
-                                        'Under Revision' => 'Under Revision',
-                                    ])
-                                    ->default('In Progress')
-                                    ->searchable()
-                                    ->native(false)
-                                    ->columnSpanFull(),
+                                // Select::make('status')
+                                //     ->options([
+                                //         'Not Started' => 'Not Started',
+                                //         'Planning' => 'Planning',
+                                //         'In Progress' => 'In Progress',
+                                //         'On Hold' => 'On Hold',
+                                //         'Cancelled' => 'Cancelled',
+                                //         'Under Revision' => 'Under Revision',
+                                //     ])
+                                //     ->default('In Progress')
+                                //     ->searchable()
+                                //     ->native(false)
+                                //     ->columnSpanFull(),
 
                             ])
                             ->collapsed()
