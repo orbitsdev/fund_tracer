@@ -161,6 +161,8 @@ return [
          * Package Service Providers...
          */
 
+         KoenHendriks\StrAcronym\StrServiceProvider::class,
+
         /*
          * Application Service Providers...
          */

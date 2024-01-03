@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('project_division_sub_categories', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
+            $table->string('abbreviation')->nullable();
             $table->timestamps();
         });
     }

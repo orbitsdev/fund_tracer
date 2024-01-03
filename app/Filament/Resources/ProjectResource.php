@@ -433,38 +433,38 @@ class ProjectResource extends Resource
                             ]),
                                 
                          
-                        Section::make('Project Overview')
-                            //  ->icon('heroicon-m-square-3-stack-3d')
-                            // ->description('Manage and organize project expenses here. You can only add expense in edit')
-                            ->columnSpanFull()
-                            ->schema([
+                        // Section::make('Project Overview')
+                        //     //  ->icon('heroicon-m-square-3-stack-3d')
+                        //     // ->description('Manage and organize project expenses here. You can only add expense in edit')
+                        //     ->columnSpanFull()
+                        //     ->schema([
 
-                                TextInput::make('project_fund')
-                                    ->label('Allocated Amount')
-                                    ->mask(RawJs::make('$money($input)'))
-                                     ->stripCharacters(',')
-                                    ->numeric()
-                                    ->columnSpan(3)
-                                    ->default(0)
-                                    // ->maxLength(191)
-                                    ->readOnly(),
-                                TextInput::make('total_expenses')
-                                    ->label('Total Expenses')
-                                    // ->prefix('₱ ')
-                                    // ->numeric()
-                                    ->columnSpan(3)
-                                    ->default(0)
-                                    // ->maxLength(191)
-                                    ->readOnly()
-                                    ->rules([
-                                        fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                            if ($value > $get('allocated_fund') || $value < 0) {
-                                                $fail("The expenses amount should not exceed the allocated fund or be less than 0");
-                                            }
-                                        },
-                                    ]),
+                        //         TextInput::make('project_fund')
+                        //             ->label('Allocated Amount')
+                        //             ->mask(RawJs::make('$money($input)'))
+                        //              ->stripCharacters(',')
+                        //             ->numeric()
+                        //             ->columnSpan(3)
+                        //             ->default(0)
+                        //             // ->maxLength(191)
+                        //             ->readOnly(),
+                        //         TextInput::make('total_expenses')
+                        //             ->label('Total Expenses')
+                        //             // ->prefix('₱ ')
+                        //             // ->numeric()
+                        //             ->columnSpan(3)
+                        //             ->default(0)
+                        //             // ->maxLength(191)
+                        //             ->readOnly()
+                        //             ->rules([
+                        //                 fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        //                     if ($value > $get('allocated_fund') || $value < 0) {
+                        //                         $fail("The expenses amount should not exceed the allocated fund or be less than 0");
+                        //                     }
+                        //                 },
+                        //             ]),
 
-                            ]),
+                        //     ]),
                     ])
                     // ->hidden(fn (string $operation): bool => $operation === 'create')
                     ->columnSpan(['lg' => 1]),
