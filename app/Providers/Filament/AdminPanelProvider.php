@@ -84,6 +84,8 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->darkMode(false)
+         ->collapsibleNavigationGroups(true)
+         ->sidebarCollapsibleOnDesktop()
             // ->sidebarFullyCollapsibleOnDesktop()
             // ->sidebarCollapsibleOnDesktop()
             ->spa()

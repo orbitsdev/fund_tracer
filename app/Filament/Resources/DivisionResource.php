@@ -23,10 +23,11 @@ class DivisionResource extends Resource
 {
     protected static ?string $model = Division::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-wallet';
     protected static ?string $navigationGroup = 'Content Management';
      protected static ?string $navigationLabel = 'Expenses Divisions';
     protected static ?string $modelLabel = 'Expenses Divisions';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

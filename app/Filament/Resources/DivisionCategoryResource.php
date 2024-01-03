@@ -20,8 +20,9 @@ class DivisionCategoryResource extends Resource
 {
     protected static ?string $model = DivisionCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox';
     protected static ?string $navigationGroup = 'Content Management';
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

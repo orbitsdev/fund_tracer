@@ -37,7 +37,7 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
     protected static ?int $navigationSort = 3;
-    protected static ?string $navigationGroup = 'Management';
+    protected static ?string $navigationGroup = 'Program Management';
 
 
     public $data;
@@ -136,7 +136,7 @@ class ProjectResource extends Resource
                                     ->default(0)
                                     ->label('Allocated Amount')
                                     ->live()
-                                    ->debounce(700)
+                                    ->debounce(900)
                                     ->required()
                                     // ->disabled(function(Get $get, Set $set){
                                     //     if(empty($get('program_id'))){
@@ -235,13 +235,16 @@ class ProjectResource extends Resource
                                             ->maxLength(191),
                                         TextInput::make('amount')
                                             ->required()
+                                            ->mask(RawJs::make('$money($input)'))
+                                            ->stripCharacters(',')
+                                           ->numeric()
                                             ->live()
                                             ->debounce(1000)
                                             ->afterStateUpdated(function (Get $get, Set $set) {
                                                 self::updateTotal($get, $set);
                                             })
                                             ->prefix('₱ ')
-                                            ->numeric()
+                                       
                                             ->columnSpan(3)
                                             ->default(0),
 
@@ -433,38 +436,44 @@ class ProjectResource extends Resource
                             ]),
                                 
                          
-                        // Section::make('Project Overview')
-                        //     //  ->icon('heroicon-m-square-3-stack-3d')
-                        //     // ->description('Manage and organize project expenses here. You can only add expense in edit')
-                        //     ->columnSpanFull()
-                        //     ->schema([
+                        Section::make('Project Overview')
+                            //  ->icon('heroicon-m-square-3-stack-3d')
+                            // ->description('Manage and organize project expenses here. You can only add expense in edit')
+                            ->columnSpanFull()
+                            ->schema([
 
-                        //         TextInput::make('project_fund')
-                        //             ->label('Allocated Amount')
-                        //             ->mask(RawJs::make('$money($input)'))
-                        //              ->stripCharacters(',')
-                        //             ->numeric()
-                        //             ->columnSpan(3)
-                        //             ->default(0)
-                        //             // ->maxLength(191)
-                        //             ->readOnly(),
-                        //         TextInput::make('total_expenses')
-                        //             ->label('Total Expenses')
-                        //             // ->prefix('₱ ')
-                        //             // ->numeric()
-                        //             ->columnSpan(3)
-                        //             ->default(0)
-                        //             // ->maxLength(191)
-                        //             ->readOnly()
-                        //             ->rules([
-                        //                 fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                        //                     if ($value > $get('allocated_fund') || $value < 0) {
-                        //                         $fail("The expenses amount should not exceed the allocated fund or be less than 0");
-                        //                     }
-                        //                 },
-                        //             ]),
+                                TextInput::make('project_fund')
+                                    ->label('Allocated Amount')
+                                    ->mask(RawJs::make('$money($input)'))
+                                     ->stripCharacters(',')
+                                    ->numeric()
+                                    ->columnSpan(3)
+                                    ->default(0)
+                                    // ->maxLength(191)
+                                    ->readOnly(),
+                                TextInput::make('total_expenses')
+                                    ->label('Total Expenses')
+                                    ->mask(RawJs::make('$money($input)'))
+                                    ->stripCharacters(',')
+                                   ->numeric()
+                                    ->columnSpan(3)
+                                    ->default(0)
+                                    // ->maxLength(191)
+                                    ->readOnly()
+                                    ->rules([
+                                        fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                            $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
+                                            $cvalue = (float) str_replace(',', '', $value);
+                                    
+                                            // Assuming you want to check if $cvalue is greater than the allocated fund or less than 0
+                                            if ($cvalue > $allocatedFund || $cvalue < 0) {
+                                                $fail("The expenses amount should not exceed the allocated fund or be less than 0");
+                                            }
+                                            
+                                        },
+                                    ]),
 
-                        //     ]),
+                            ]),
                     ])
                     // ->hidden(fn (string $operation): bool => $operation === 'create')
                     ->columnSpan(['lg' => 1]),
@@ -598,7 +607,7 @@ class ProjectResource extends Resource
                     ,
 
                 TextColumn::make('title')
-                    ->searchable(),
+                    ->searchable()->label('Project Title')->wrap(),
                 TextColumn::make('allocated_fund')
                     // ->numeric()
                     ->prefix('₱ ')
@@ -612,8 +621,8 @@ class ProjectResource extends Resource
                     ->date()
                     ->sortable(),
 
-                TextColumn::make('status')
-                    ->searchable(),
+                // TextColumn::make('status')
+                //     ->searchable(),
 
             ])
             ->filters([
@@ -679,42 +688,46 @@ class ProjectResource extends Resource
     public static function updateLeftAllocated(Get $get, Set $set)
     {
 
-        $allocatedFund = $get('allocated_fund');
-    $set('project_fund', number_format((float) $allocatedFund, 2));
-    // $set('total_expenses', (int)$allocatedFund);
-    self::updateTotal($get, $set);
+        $allocatedFund =  (float) str_replace(',', '', $get('allocated_fund')) ; 
+        $set('project_fund', number_format($allocatedFund));
+        self::updateTotal($get, $set);
+    
+        // $set('total_expenses', (int)$allocatedFund);
     //     $allocatedFund = floatval($get('allocated_fund'));
     // $set('project_fund', number_format($allocatedFund));
     // $set('total_expenses', (int)$allocatedFund);
     //self::updateTotal($get, $set);
+
+
     }
 
     public static function updateTotal(Get $get, Set $set)
     {
 
 
-        $current_fund = (float)$get('allocated_fund'); // Convert to float
+        $current_fund = (float) str_replace(',', '', $get('allocated_fund')); // Convert to float
         $expenses = collect($get('expenses'))->filter(fn ($item) => !empty($item['amount']));
-
-
+    
         $totalAmount = $expenses->sum(function ($item) {
-            return (float)$item['amount'];
+            return (float) str_replace(',', '', $item['amount']);
         });
-
+    
         // $left_fund = $current_fund - $totalAmount;
+    
+        $set('total_expenses', number_format($totalAmount, 2));
 
-        $set('total_expenses', number_format($totalAmount));
+        // $current_fund = (float)$get('allocated_fund'); // Convert to float
+        // $expenses = collect($get('expenses'))->filter(fn ($item) => !empty($item['amount']));
 
-        // $current_fund = $get('allocated_fund');
-        // $selectedProducts = collect($get('expenses'))->filter(fn($item) => !empty($item['amount']));
 
-        // $totalAmount = $selectedProducts->sum(function ($item) {
-        //     return (float) $item['amount'];
+        // $totalAmount = $expenses->sum(function ($item) {
+        //     return (float)$item['amount'];
         // });
 
-        // $left_fund = $current_fund - $totalAmount;
+        // // $left_fund = $current_fund - $totalAmount;
 
-        // $set('total_expenses', number_format($left_fund));
+        // $set('total_expenses', number_format($totalAmount));
+
 
 
 
