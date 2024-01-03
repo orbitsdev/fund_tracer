@@ -62,7 +62,7 @@ class ProjectResource extends Resource
                             ->columns([
                                 'sm' => 3,
                                 'xl' => 6,
-                                '2xl' => 8,
+                                '2xl' => 9,
                             ])
                             ->schema([
 
@@ -108,7 +108,7 @@ class ProjectResource extends Resource
                                     ->label('Project Title')
                                     ->required()
                                     ->maxLength(191)
-                                    ->columnSpan(4),
+                                    ->columnSpanFull(),
                                 // Select::make('user_id')
                                 //     ->relationship(
                                 //         name: 'manager',
@@ -125,6 +125,15 @@ class ProjectResource extends Resource
                                 //     ->native(false),
 
                                 TextInput::make('allocated_fund')
+                                ->mask(RawJs::make('$money($input)'))
+                                ->stripCharacters(',')
+                                
+                                    // ->mask(RawJs::make('$money($input)'))
+                                    // ->stripCharacters(',')
+                                    ->prefix('₱')
+                                    ->numeric()
+                                    // ->maxValue(9999999999)
+                                    ->default(0)
                                     ->label('Allocated Amount')
                                     ->live()
                                     ->debounce(700)
@@ -145,7 +154,7 @@ class ProjectResource extends Resource
                                     ->prefix('₱ ')
                                     ->numeric()
                                     ->default(0)
-                                    ->columnSpan(4)
+                                    ->columnSpan(3)
                                     ->rules([
                                         fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                             
@@ -171,9 +180,9 @@ class ProjectResource extends Resource
 
 
 
-                                DatePicker::make('start_date')->date()->native(false)->columnSpan(4)
+                                DatePicker::make('start_date')->date()->native(false)->columnSpan(3)
                                     ->required(),
-                                DatePicker::make('end_date')->date()->native(false)->columnSpan(4)
+                                DatePicker::make('end_date')->date()->native(false)->columnSpan(3)
                                     ->required(),
 
 
@@ -669,9 +678,15 @@ class ProjectResource extends Resource
     }
     public static function updateLeftAllocated(Get $get, Set $set)
     {
-        $set('project_fund', number_format($get('allocated_fund')));
-        // $set('total_expenses', (int)$get('allocated_fund'));
-        self::updateTotal($get, $set);
+
+        $allocatedFund = $get('allocated_fund');
+    $set('project_fund', number_format((float) $allocatedFund, 2));
+    // $set('total_expenses', (int)$allocatedFund);
+    self::updateTotal($get, $set);
+    //     $allocatedFund = floatval($get('allocated_fund'));
+    // $set('project_fund', number_format($allocatedFund));
+    // $set('total_expenses', (int)$allocatedFund);
+    //self::updateTotal($get, $set);
     }
 
     public static function updateTotal(Get $get, Set $set)
