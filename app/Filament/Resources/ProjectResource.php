@@ -307,13 +307,32 @@ class ProjectResource extends Resource
                                                         TextInput::make('title')
                                                             ->label('Sub Cateogry Title')
                                                             ->required()
+                                                            ->live()
                                                             ->maxLength(191)
                                                             ->columnSpanFull(),
+
+
+                                                            Repeater::make('fourth_layers')
+                                                            ->live()
+                                                                ->relationship()
+            
+                                                                ->label('Forth Layers')
+                                                                ->columns([
+                                                                    'sm' => 3,
+                                                                    'xl' => 6,
+                                                                    '2xl' => 9,
+                                                                ])
+                                                                ->schema([
+                                                                    TextInput::make('title')
+                                                                    ->label('Fourth  Title')
+                                                                    ->required()
+                                                                    ->maxLength(191)
+                                                                    ->columnSpanFull(),
+                                                                ])  ->columnSpanFull()
+                                                               
+                                                                ,
                                                     ])
-                                                    ->extraAttributes([
-                                                        'class' => 'border-none',
-                                                      
-                                                    ])
+                                                
                                                     ->columnSpanFull()
                                                     ->visible(fn(Get $get)=> !empty($get('division_category_id')) ? true : false)
 
