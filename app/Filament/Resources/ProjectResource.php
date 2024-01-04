@@ -286,8 +286,9 @@ class ProjectResource extends Resource
                                                     ->preload()
                                                     ->native(false)
                                                     ->columnSpanFull()
-                                                    ->unique()
-                                                    
+                                                
+                                                    ->distinct()
+                                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                                     ->live()
                                                     ,
 
@@ -338,6 +339,7 @@ class ProjectResource extends Resource
 
 
                                             ])
+                                            ->columns(2)
                                             ->columnSpanFull()
                                             ->visible(fn(Get $get)=> !empty($get('division_id')) ? true : false)
                                             ,
@@ -359,90 +361,90 @@ class ProjectResource extends Resource
                                 }
                             }),
 
-                        // Section::make('Other Expenses')
-                        //     ->icon('heroicon-m-banknotes')
-                        //     ->description('Manage other expeneses  ')
-                        //     ->columnSpanFull()
-                        //     ->schema([
-                        //         Repeater::make('expenses')
+                        Section::make('Other Expenses')
+                            ->icon('heroicon-m-banknotes')
+                            ->description('Manage other expeneses  ')
+                            ->columnSpanFull()
+                            ->schema([
+                                Repeater::make('expenses')
 
-                        //             ->relationship()
-                        //             ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
-                        //                 return $data;
-                        //             })
+                                    ->relationship()
+                                    ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
+                                        return $data;
+                                    })
 
-                        //             ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
-
-
-                        //                 return $data;
-                        //             })
-                        //             ->label('Expenses')
-                        //             ->columns([
-                        //                 'sm' => 3,
-                        //                 'xl' => 6,
-                        //                 '2xl' => 9,
-                        //             ])
-                        //             ->schema([
-                        //                 TextInput::make('description')
-                        //                     ->label('Description')
-                        //                     ->columnSpan(3)
-                        //                     ->required()
-                        //                     ->maxLength(191),
-                        //                 TextInput::make('amount')
-                        //                     ->required()
-                        //                     ->mask(RawJs::make('$money($input)'))
-                        //                     ->stripCharacters(',')
-                        //                     ->numeric()
-                        //                     ->live()
-                        //                     ->debounce(1000)
-                        //                     ->afterStateUpdated(function (Get $get, Set $set) {
-                        //                         self::updateTotal($get, $set);
-                        //                     })
-                        //                     ->prefix('₱ ')
-
-                        //                     ->columnSpan(3)
-                        //                     ->default(0),
+                                    ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
 
 
-                        //                 FileUpload::make('financial_statements')
-                        //                     ->columnSpan(3)
+                                        return $data;
+                                    })
+                                    ->label('Expenses')
+                                    ->columns([
+                                        'sm' => 3,
+                                        'xl' => 6,
+                                        '2xl' => 9,
+                                    ])
+                                    ->schema([
+                                        TextInput::make('description')
+                                            ->label('Description')
+                                            ->columnSpan(3)
+                                            ->required()
+                                            ->maxLength(191),
+                                        TextInput::make('amount')
+                                            ->required()
+                                            ->mask(RawJs::make('$money($input)'))
+                                            ->stripCharacters(',')
+                                            ->numeric()
+                                            ->live()
+                                            ->debounce(1000)
+                                            ->afterStateUpdated(function (Get $get, Set $set) {
+                                                self::updateTotal($get, $set);
+                                            })
+                                            ->prefix('₱ ')
 
-                        //                     // ->columnSpanFull()
-                        //                     // ->image()
-                        //                     ->preserveFilenames()
-
-                        //                     ->label('Financial Statement')
-                        //                     ->disk('public')
-                        //                     ->directory('project-expenses-files'),
+                                            ->columnSpan(3)
+                                            ->default(0),
 
 
+                                        FileUpload::make('financial_statements')
+                                            ->columnSpan(3)
+
+                                            // ->columnSpanFull()
+                                            // ->image()
+                                            ->preserveFilenames()
+
+                                            ->label('Financial Statement')
+                                            ->disk('public')
+                                            ->directory('project-expenses-files'),
 
 
 
-                        //             ])
-                        //             ->deleteAction(
-                        //                 fn (Action $action) => $action->requiresConfirmation(),
-                        //                 fn (Get $get, Set $set) => self::updateTotals($get, $set)
-                        //             )
-                        //             ->columnSpanFull()
-                        //             ->columns(2)
-                        //             ->afterStateUpdated(function (Get $get, Set $set) {
-                        //                 self::updateTotal($get, $set);
-                        //             })
-                        //             // ->collapsed()
-                        //             // ->collapsible()
-                        //             ->reorderable(true),
-                        //     ])
-                        //     //  ->hidden(fn (string $operation): bool => $operation === 'create')
-                        //     ->columnSpanFull()
-                        //     ->collapsed()
-                        //     ->collapsible()
-                        //      ->hidden(function(string $operation){  if($operation === 'create'){     return true;
-                        //         }else{
-                        //             return false;
-                        //         }
-                        //     })
-                        //     ,
+
+
+                                    ])
+                                    ->deleteAction(
+                                        fn (Action $action) => $action->requiresConfirmation(),
+                                        fn (Get $get, Set $set) => self::updateTotals($get, $set)
+                                    )
+                                    ->columnSpanFull()
+                                    ->columns(2)
+                                    ->afterStateUpdated(function (Get $get, Set $set) {
+                                        self::updateTotal($get, $set);
+                                    })
+                                    // ->collapsed()
+                                    // ->collapsible()
+                                    ->reorderable(true),
+                            ])
+                            //  ->hidden(fn (string $operation): bool => $operation === 'create')
+                            ->columnSpanFull()
+                            ->collapsed()
+                            ->collapsible()
+                             ->hidden(function(string $operation){  if($operation === 'create'){     return true;
+                                }else{
+                                    return false;
+                                }
+                            })
+                            ,
 
 
                         Section::make('File Attachments')
