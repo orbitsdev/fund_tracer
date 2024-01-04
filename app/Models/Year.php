@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use App\Models\ProjectDevision;
+use App\Models\ProjectYear;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Division extends Model
+class Year extends Model
 {
     use HasFactory;
 
 
-    public function project_divisions(){
-        return $this->hasMany(ProjectDevision::class);
+    public function project_years(){
+        return $this->hasMany(ProjectYear::class);
     }
 }

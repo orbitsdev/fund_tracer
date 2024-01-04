@@ -239,6 +239,20 @@ class ProgramResource extends Resource
             
                     ->columnSpanFull()
                     ->schema([
+
+                        // TextInput::make('remaining_budget')
+                        // ->label('Remaining Budget')
+                        // // ->prefix('₱ ')
+                        // // ->numeric()
+                        // ->columnSpan(3)
+                        // ->readonly(),
+                        // TextInput::make('total used')
+                        // ->label('Total Usage')
+                        // // ->prefix('₱ ')
+                        // // ->numeric()
+                        // ->columnSpan(3)
+                        // ->readonly()
+                        // ,
                         
                         TextInput::make('program_leader_overview')
                         ->label('Program Leader')

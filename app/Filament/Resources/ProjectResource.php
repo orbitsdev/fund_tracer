@@ -3,7 +3,9 @@
 namespace App\Filament\Resources;
 
 use Closure;
+use Carbon\Carbon;
 use Filament\Forms;
+use App\Models\Year;
 use Filament\Tables;
 use App\Models\Program;
 use App\Models\Project;
@@ -18,9 +20,11 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
@@ -83,7 +87,8 @@ class ProjectResource extends Resource
                                         name: 'program',
                                         titleAttribute: 'title'
                                     )
-                                    ->helperText(new HtmlString('Program  & Budget'))
+                                    ->hint('Program  & Budget')
+                                    // ->helperText(new HtmlString('Program  & Budget'))
                                     // ->hintColor('primary')
                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title} - ₱ " . number_format($record->total_budget))
 
@@ -96,7 +101,7 @@ class ProjectResource extends Resource
                                     //         // }
                                     // subtract the allocate ddun to the total budget of 
                                     // })
-                                     ->afterStateUpdated(function (Get $get, Set $set) {
+                                    ->afterStateUpdated(function (Get $get, Set $set) {
                                         self::updateProgramOverviewDetails($get, $set);
                                     })
                                     ->searchable()
@@ -108,7 +113,17 @@ class ProjectResource extends Resource
                                     ->label('Project Title')
                                     ->required()
                                     ->maxLength(191)
-                                    ->columnSpanFull(),
+                                    ->columnSpan(3),
+                                TextInput::make('implementing_agency')
+                                    ->label('Implementing Agency')
+                                    ->required()
+                                    ->maxLength(191)
+                                    ->columnSpan(3),
+                                TextInput::make('monitoring_agency')
+                                    ->label('Monitorin Agency')
+                                    ->required()
+                                    ->maxLength(191)
+                                    ->columnSpan(3),
                                 // Select::make('user_id')
                                 //     ->relationship(
                                 //         name: 'manager',
@@ -125,9 +140,9 @@ class ProjectResource extends Resource
                                 //     ->native(false),
 
                                 TextInput::make('allocated_fund')
-                                ->mask(RawJs::make('$money($input)'))
-                                ->stripCharacters(',')
-                                
+                                    ->mask(RawJs::make('$money($input)'))
+                                    ->stripCharacters(',')
+
                                     // ->mask(RawJs::make('$money($input)'))
                                     // ->stripCharacters(',')
                                     ->prefix('₱')
@@ -146,7 +161,7 @@ class ProjectResource extends Resource
                                     //     // return false;
                                     // })
 
-                                    
+
 
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                         self::updateLeftAllocated($get, $set);
@@ -157,16 +172,16 @@ class ProjectResource extends Resource
                                     ->columnSpan(3)
                                     ->rules([
                                         fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                            
-                                            
+
+
                                             if (empty($get('program_id'))) {
                                                 $fail("Program should be selected first before setting allocated fund");
                                             } else {
                                                 $selected_program = Program::find($get('program_id'));
-                                    
+
                                                 if (!empty($selected_program)) {
                                                     $remaining_budget = $selected_program->total_budget - $selected_program->total_usage;
-                                    
+
                                                     if ($value > $remaining_budget) {
                                                         $fail("The expenses amount should not exceed the remaining budget of the selected program");
                                                     }
@@ -175,14 +190,25 @@ class ProjectResource extends Resource
                                                 }
                                             }
                                         },
-                                    ])
-                                    ,
+                                    ]),
 
 
 
                                 DatePicker::make('start_date')->date()->native(false)->columnSpan(3)
+                                    ->live()
+                                    ->debounce(700)
+                                    ->afterStateUpdated(function (Get $get, Set $set) {
+                                        self::calculateTotalMonthDurationn($get, $set);
+                                        self::setCurrentDuration($get, $set);
+                                    })
                                     ->required(),
                                 DatePicker::make('end_date')->date()->native(false)->columnSpan(3)
+                                    ->live()
+                                    ->debounce(700)
+                                    ->afterStateUpdated(function (Get $get, Set $set) {
+                                        self::calculateTotalMonthDurationn($get, $set);
+                                        self::setCurrentDuration($get, $set);
+                                    })
                                     ->required(),
 
 
@@ -204,84 +230,155 @@ class ProjectResource extends Resource
                             ->collapsed()
                             ->collapsible(),
 
-                        Section::make('Project Expenses')
+
+                        Section::make('Project Expenses Divisions')
                             ->icon('heroicon-m-banknotes')
-                            ->description('Manage and organize project expenses here. You can only add expense in edit')
+                            // ->description('Manage and organize particulars  ')
                             ->columnSpanFull()
                             ->schema([
-                                Repeater::make('expenses')
-                                    
-                                    ->relationship()
-                                    ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
-                                        return $data;
-                                    })
 
-                                    ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
-                                       
-                                 
-                                        return $data;
-                                    })
-                                    ->label('Expenses')
+                                Repeater::make('project_divisions')
+
+                                    ->relationship()
+                                    
+                                    ->label('Particulars')
                                     ->columns([
                                         'sm' => 3,
                                         'xl' => 6,
                                         '2xl' => 9,
                                     ])
                                     ->schema([
-                                        TextInput::make('description')
-                                            ->label('Description')
-                                            ->columnSpan(3)
-                                            ->required()
-                                            ->maxLength(191),
-                                        TextInput::make('amount')
-                                            ->required()
-                                            ->mask(RawJs::make('$money($input)'))
-                                            ->stripCharacters(',')
-                                           ->numeric()
-                                            ->live()
-                                            ->debounce(1000)
-                                            ->afterStateUpdated(function (Get $get, Set $set) {
-                                                self::updateTotal($get, $set);
-                                            })
-                                            ->prefix('₱ ')
-                                       
-                                            ->columnSpan(3)
-                                            ->default(0),
 
 
-                                        FileUpload::make('financial_statements')
-                                            ->columnSpan(3)
+                                        Select::make('division_id')
+                                            ->relationship(name: 'division', titleAttribute: 'title')
+                                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title} - {$record->abbreviation}")
+                                            ->searchable()
+                                            ->label('Choose Division')
+                                            ->preload()
+                                            ->native(false)
+                                            ->columnSpanFull()
+                                            ->unique()
+                                            
+                                            ,
 
-                                            // ->columnSpanFull()
-                                            // ->image()
-                                            ->preserveFilenames()
+                                            Repeater::make('project_division_categories')
 
-                                            ->label('Financial Statement')
-                                            ->disk('public')
-                                            ->directory('project-expenses-files'),
+                                            ->relationship()
+                                            
+                                            ->label('Sub Categories')
+                                            ->columns([
+                                                'sm' => 3,
+                                                'xl' => 6,
+                                                '2xl' => 9,
+                                            ])
+                                            ->schema([
 
+                                            ])
+                                            ->columnSpanFull()
+                                            ,
+                                     
+                                            
+                                           
 
+                                    ]),
 
-
-
-                                    ])
-                                    ->deleteAction(
-                                        fn (Action $action) => $action->requiresConfirmation(),
-                                        fn (Get $get, Set $set) => self::updateTotals($get, $set)
-                                    )
-                                    ->columnSpanFull()
-                                    ->columns(2)
-                                    ->afterStateUpdated(function (Get $get, Set $set) {
-                                        self::updateTotal($get, $set);
-                                    })
-                                    // ->collapsed()
-                                    // ->collapsible()
-                                    ->reorderable(true),
                             ])
-                            //  ->hidden(fn (string $operation): bool => $operation === 'create')
-                            ->columnSpanFull()
+
                             ->collapsed()
-                            ->collapsible(),
+                            ->collapsible()
+                            ->hidden(function (string $operation) {
+                                if ($operation === 'create') {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }),
+
+                        // Section::make('Other Expenses')
+                        //     ->icon('heroicon-m-banknotes')
+                        //     ->description('Manage other expeneses  ')
+                        //     ->columnSpanFull()
+                        //     ->schema([
+                        //         Repeater::make('expenses')
+
+                        //             ->relationship()
+                        //             ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
+                        //                 return $data;
+                        //             })
+
+                        //             ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
+
+
+                        //                 return $data;
+                        //             })
+                        //             ->label('Expenses')
+                        //             ->columns([
+                        //                 'sm' => 3,
+                        //                 'xl' => 6,
+                        //                 '2xl' => 9,
+                        //             ])
+                        //             ->schema([
+                        //                 TextInput::make('description')
+                        //                     ->label('Description')
+                        //                     ->columnSpan(3)
+                        //                     ->required()
+                        //                     ->maxLength(191),
+                        //                 TextInput::make('amount')
+                        //                     ->required()
+                        //                     ->mask(RawJs::make('$money($input)'))
+                        //                     ->stripCharacters(',')
+                        //                     ->numeric()
+                        //                     ->live()
+                        //                     ->debounce(1000)
+                        //                     ->afterStateUpdated(function (Get $get, Set $set) {
+                        //                         self::updateTotal($get, $set);
+                        //                     })
+                        //                     ->prefix('₱ ')
+
+                        //                     ->columnSpan(3)
+                        //                     ->default(0),
+
+
+                        //                 FileUpload::make('financial_statements')
+                        //                     ->columnSpan(3)
+
+                        //                     // ->columnSpanFull()
+                        //                     // ->image()
+                        //                     ->preserveFilenames()
+
+                        //                     ->label('Financial Statement')
+                        //                     ->disk('public')
+                        //                     ->directory('project-expenses-files'),
+
+
+
+
+
+                        //             ])
+                        //             ->deleteAction(
+                        //                 fn (Action $action) => $action->requiresConfirmation(),
+                        //                 fn (Get $get, Set $set) => self::updateTotals($get, $set)
+                        //             )
+                        //             ->columnSpanFull()
+                        //             ->columns(2)
+                        //             ->afterStateUpdated(function (Get $get, Set $set) {
+                        //                 self::updateTotal($get, $set);
+                        //             })
+                        //             // ->collapsed()
+                        //             // ->collapsible()
+                        //             ->reorderable(true),
+                        //     ])
+                        //     //  ->hidden(fn (string $operation): bool => $operation === 'create')
+                        //     ->columnSpanFull()
+                        //     ->collapsed()
+                        //     ->collapsible()
+                        //      ->hidden(function(string $operation){  if($operation === 'create'){     return true;
+                        //         }else{
+                        //             return false;
+                        //         }
+                        //     })
+                        //     ,
 
 
                         Section::make('File Attachments')
@@ -297,10 +394,9 @@ class ProjectResource extends Resource
                                         TextInput::make('file_name')
                                             ->label('Name')
                                             ->maxLength(191)
-                                            ->required()
-                                            ,
+                                            ->required(),
                                         FileUpload::make('file')
-                                        ->required()
+                                            ->required()
 
                                             // ->columnSpanFull()
                                             // ->image()
@@ -391,12 +487,12 @@ class ProjectResource extends Resource
                     ->schema([
 
                         Section::make('Program Overview')
-                        ->columns([
-                            'sm' => 3,
-                            'xl' => 6,
-                            '2xl' => 8,
-                        ])
-                        //  ->icon('heroicon-m-chart-bar')
+                            ->columns([
+                                'sm' => 3,
+                                'xl' => 6,
+                                '2xl' => 8,
+                            ])
+                            //  ->icon('heroicon-m-chart-bar')
                             // ->description('Manage and organize project expenses here. You can only add expense in edit')
                             ->columnSpanFull()
                             ->schema([
@@ -414,7 +510,7 @@ class ProjectResource extends Resource
                                     ->prefix('₱ ')
                                     // ->numeric()
                                     ->columnSpanFull()
-                                  
+
                                     // ->maxLength(191)
                                     ->readOnly(),
                                 TextInput::make('program_use_budget_overview')
@@ -422,7 +518,7 @@ class ProjectResource extends Resource
                                     // ->prefix('₱ ')
                                     // ->numeric()
                                     ->columnSpan(4)
-                                  
+
                                     // ->maxLength(191)
                                     ->readOnly(),
                                 TextInput::make('program_remaining_budget_overview')
@@ -430,22 +526,61 @@ class ProjectResource extends Resource
                                     // ->prefix('₱ ')
                                     // ->numeric()
                                     ->columnSpan(4)
-                                  
+
                                     // ->maxLength(191)
                                     ->readOnly(),
                             ]),
-                                
-                         
+
+                        // Section::make('Overview')
+
+                        // ->columnSpanFull()
+                        // ->schema([
+
+                        //     // TextInput::make('program_leader_overview')
+                        //     // ->label('Program Leader')
+                        //     // // ->prefix('₱ ')
+                        //     // // ->numeric()
+                        //     // ->columnSpan(3)
+
+                        //     // ->columnSpanFull()
+                        //     // // ->maxLength(191)
+                        //     // ->readOnly(), 
+
+
+
+
+
+                        // ]),
+
                         Section::make('Project Overview')
                             //  ->icon('heroicon-m-square-3-stack-3d')
                             // ->description('Manage and organize project expenses here. You can only add expense in edit')
                             ->columnSpanFull()
                             ->schema([
+                                TextInput::make('current_duration_overview')
+                                    ->label('Current Duration')
+                                    // ->prefix('₱ ')
+                                    // ->numeric()
+                                    ->columnSpan(3)
+
+                                    ->columnSpanFull()
+                                    // ->maxLength(191)
+                                    ->readOnly(),
+                                // Placeholder::make('duration')
+                                TextInput::make('duration_overview')
+                                    ->label('Total Duration')
+                                    // ->prefix('₱ ')
+                                    // ->numeric()
+                                    ->columnSpan(3)
+
+                                    ->columnSpanFull()
+                                    // ->maxLength(191)
+                                    ->readOnly(),
 
                                 TextInput::make('project_fund')
                                     ->label('Allocated Amount')
                                     ->mask(RawJs::make('$money($input)'))
-                                     ->stripCharacters(',')
+                                    ->stripCharacters(',')
                                     ->numeric()
                                     ->columnSpan(3)
                                     ->default(0)
@@ -455,7 +590,7 @@ class ProjectResource extends Resource
                                     ->label('Total Expenses')
                                     ->mask(RawJs::make('$money($input)'))
                                     ->stripCharacters(',')
-                                   ->numeric()
+                                    ->numeric()
                                     ->columnSpan(3)
                                     ->default(0)
                                     // ->maxLength(191)
@@ -464,19 +599,25 @@ class ProjectResource extends Resource
                                         fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                                             $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
                                             $cvalue = (float) str_replace(',', '', $value);
-                                    
+
                                             // Assuming you want to check if $cvalue is greater than the allocated fund or less than 0
                                             if ($cvalue > $allocatedFund || $cvalue < 0) {
                                                 $fail("The expenses amount should not exceed the allocated fund or be less than 0");
                                             }
-                                            
                                         },
                                     ]),
 
                             ]),
                     ])
                     // ->hidden(fn (string $operation): bool => $operation === 'create')
-                    ->columnSpan(['lg' => 1]),
+                    ->columnSpan(['lg' => 1])
+                    ->hidden(function (string $operation) {
+                        if ($operation === 'create') {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }),
                 // Placeholder::make('documentation')
                 // // ->live()
                 // ->content(function(Get $get){
@@ -603,8 +744,7 @@ class ProjectResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->badge()
-                    ->color('primary')
-                    ,
+                    ->color('primary'),
 
                 TextColumn::make('title')
                     ->searchable()->label('Project Title')->wrap(),
@@ -617,7 +757,7 @@ class ProjectResource extends Resource
                     ->label('Expected To Start Date')
                     ->sortable(),
                 TextColumn::make('end_date')
-                ->label('Expected To End Date')
+                    ->label('Expected To End Date')
                     ->date()
                     ->sortable(),
 
@@ -629,15 +769,17 @@ class ProjectResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    EditAction::make()->label('Manage Project'),
+
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->latest())
-            ;
+            ->modifyQueryUsing(fn (Builder $query) => $query->latest());
     }
 
     public static function getRelations(): array
@@ -664,39 +806,38 @@ class ProjectResource extends Resource
 
         //  dd($get('program_id'));
 
-        if(!empty($get('program_id'))){
+        if (!empty($get('program_id'))) {
             $program = Program::find($get('program_id'));
-            if(!empty($program)){
-                 $set('program_name_overview', $program->title);
-                 $set('program_budget_overview', number_format($program->total_budget));
-                 $set('program_use_budget_overview', $program->total_usage);
-                 $set('program_remaining_budget_overview', number_format($program->total_budget - $program->total_usage));
-            }else{
+            if (!empty($program)) {
+                $set('program_name_overview', $program->title);
+                $set('program_budget_overview', number_format($program->total_budget));
+                $set('program_use_budget_overview', $program->total_usage);
+                $set('program_remaining_budget_overview', number_format($program->total_budget - $program->total_usage));
+            } else {
                 $set('program_name_overview', null);
                 $set('program_budget_overview', null);
                 $set('program_use_budget_overview', null);
                 $set('program_remaining_budget_overview', null);
             }
-        }else{
+        } else {
             $set('program_name_overview', null);
             $set('program_budget_overview', null);
             $set('program_use_budget_overview', null);
             $set('program_remaining_budget_overview', null);
         }
-     
     }
     public static function updateLeftAllocated(Get $get, Set $set)
     {
 
-        $allocatedFund =  (float) str_replace(',', '', $get('allocated_fund')) ; 
+        $allocatedFund =  (float) str_replace(',', '', $get('allocated_fund'));
         $set('project_fund', number_format($allocatedFund));
         self::updateTotal($get, $set);
-    
+
         // $set('total_expenses', (int)$allocatedFund);
-    //     $allocatedFund = floatval($get('allocated_fund'));
-    // $set('project_fund', number_format($allocatedFund));
-    // $set('total_expenses', (int)$allocatedFund);
-    //self::updateTotal($get, $set);
+        //     $allocatedFund = floatval($get('allocated_fund'));
+        // $set('project_fund', number_format($allocatedFund));
+        // $set('total_expenses', (int)$allocatedFund);
+        //self::updateTotal($get, $set);
 
 
     }
@@ -707,13 +848,13 @@ class ProjectResource extends Resource
 
         $current_fund = (float) str_replace(',', '', $get('allocated_fund')); // Convert to float
         $expenses = collect($get('expenses'))->filter(fn ($item) => !empty($item['amount']));
-    
+
         $totalAmount = $expenses->sum(function ($item) {
             return (float) str_replace(',', '', $item['amount']);
         });
-    
+
         // $left_fund = $current_fund - $totalAmount;
-    
+
         $set('total_expenses', number_format($totalAmount, 2));
 
         // $current_fund = (float)$get('allocated_fund'); // Convert to float
@@ -731,5 +872,41 @@ class ProjectResource extends Resource
 
 
 
+    }
+    public static function setCurrentDuration(Get $get, Set $set)
+    {
+
+        $startDate = $get('start_date');
+        $endDate = $get('end_date');
+        if (!empty($startDate) && !empty($endDate)) {
+
+            // dd(Carbon::parse($startDate)->format('F d, Y'), Carbon::parse($startDate)->format('F d, Y'));
+
+            $currentDuration = Carbon::parse($startDate)->format('F d, Y') . ' - ' . Carbon::parse($endDate)->format('F d, Y');
+
+            $set('current_duration_overview', $currentDuration);
+        }
+    }
+
+    public static function calculateTotalMonthDurationn(Get $get, Set $set)
+    {
+
+
+        $startDate = $get('start_date');
+        $endDate = $get('end_date');
+
+        if (!empty($startDate) && !empty($endDate)) {
+            $startDate = Carbon::parse($startDate);
+            $endDate = Carbon::parse($endDate);
+
+            // Calculate the difference in months
+            $totalMonths = $endDate->diffInMonths($startDate);
+
+            // Set the duration in months
+            $set('duration_overview', $totalMonths . ' months');
+        }
+        // $set('project_fund', number_format($get('allocated_fund')));
+        // // $set('total_expenses', (int)$get('allocated_fund'));
+        // self::updateTotal($get, $set);
     }
 }

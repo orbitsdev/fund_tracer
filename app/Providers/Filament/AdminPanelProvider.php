@@ -84,15 +84,15 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->darkMode(false)
-         ->collapsibleNavigationGroups(true)
-         ->sidebarCollapsibleOnDesktop()
+             ->collapsibleNavigationGroups(true)
+            ->sidebarCollapsibleOnDesktop()
             // ->sidebarFullyCollapsibleOnDesktop()
             // ->sidebarCollapsibleOnDesktop()
             ->spa()
             // ->databaseNotifications()
             // ->databaseNotificationsPolling('30s')
             // ->domain('admin.example.com')
-            // ->maxContentWidth(MaxWidth::Full)
+             ->maxContentWidth(MaxWidth::SevenExtraLarge)
             // ->font('Poppins')
             ;
     }

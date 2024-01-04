@@ -3,7 +3,12 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
+use App\Models\DivisionCategory;
+use Database\Seeders\YearSeeder;
+use Database\Seeders\DivisionSeeder;
+use Database\Seeders\DivisionCategorySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,6 +19,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            YearSeeder::class,
+            DivisionSeeder::class,
+            DivisionCategorySeeder::class,
+           
         ]);
         // \App\Models\User::factory(10)->create();
 

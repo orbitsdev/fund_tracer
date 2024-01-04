@@ -3,34 +3,32 @@
 namespace App\Filament\Resources;
 
 use Filament\Forms;
+use App\Models\Year;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use App\Models\DivisionCategory;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Section;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\YearResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\DivisionCategoryResource\Pages;
-use App\Filament\Resources\DivisionCategoryResource\RelationManagers;
+use App\Filament\Resources\YearResource\RelationManagers;
 
-class DivisionCategoryResource extends Resource
+class YearResource extends Resource
 {
-    protected static ?string $model = DivisionCategory::class;
+    protected static ?string $model = Year::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-inbox';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?string $navigationGroup = 'Content Management';
-    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Section::make('Division Category')
-                ->icon('heroicon-m-pencil-square')
-                ->description('This will be displayed in project expenses form under division')
+                Section::make('Year Information')
+               
+                ->description('This will be displayed project expenses and reports')
 
 
                 ->columns([
@@ -38,15 +36,11 @@ class DivisionCategoryResource extends Resource
                     'xl' => 6,
                     '2xl' => 8,
                 ])
-
-
-                ->schema([
-
+                ->schema( [
                     TextInput::make('title')
-                          ->maxLength(191)
-                          ->columnSpanFull()
-                          ,
+                    ->maxLength(191)->columnSpanFull(),
                 ]),
+
             ]);
     }
 
@@ -54,10 +48,16 @@ class DivisionCategoryResource extends Resource
     {
         return $table
             ->columns([
-              TextColumn::make('title')
-                    ->searchable()
-
-
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -65,7 +65,6 @@ class DivisionCategoryResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -84,9 +83,9 @@ class DivisionCategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDivisionCategories::route('/'),
-            'create' => Pages\CreateDivisionCategory::route('/create'),
-            'edit' => Pages\EditDivisionCategory::route('/{record}/edit'),
+            'index' => Pages\ListYears::route('/'),
+            'create' => Pages\CreateYear::route('/create'),
+            'edit' => Pages\EditYear::route('/{record}/edit'),
         ];
     }
 }
