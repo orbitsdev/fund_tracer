@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('project_division_sub_category_expenses', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('project_division_category_id')->nullable();
             $table->foreignId('project_division_sub_category_id')->nullable();
-            $table->decimal('amount', 10, 2)->nullable();
-            $table->string('description')->nullable();
-            $table->text('financial_statements')->nullable();
+            // $table->decimal('amount', 10, 2)->nullable();
+            $table->string('title')->nullable();
+            // $table->text('file')->nullable();
             $table->timestamps();
         });
     }

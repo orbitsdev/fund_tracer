@@ -247,10 +247,15 @@ class ProjectResource extends Resource
                                         'xl' => 6,
                                         '2xl' => 9,
                                     ])
+                                    ->extraAttributes([
+                                        'class' => 'border-white',
+                                      
+                                    ])
                                     ->schema([
 
 
                                         Select::make('division_id')
+                                        ->live()
                                             ->relationship(name: 'division', titleAttribute: 'title')
                                             ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title} - {$record->abbreviation}")
                                             ->searchable()
@@ -258,28 +263,68 @@ class ProjectResource extends Resource
                                             ->preload()
                                             ->native(false)
                                             ->columnSpanFull()
-                                            ->unique()
-                                            
+                                            ->distinct()
+                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                             ,
 
-                                            Repeater::make('project_division_categories')
-
+                                        Repeater::make('project_division_categories')
+                                   
                                             ->relationship()
-                                            
-                                            ->label('Sub Categories')
+                                        
+                                            ->label('Division Categories')
                                             ->columns([
                                                 'sm' => 3,
                                                 'xl' => 6,
                                                 '2xl' => 9,
                                             ])
                                             ->schema([
+                                                Select::make('division_category_id')
+                                                    ->relationship(name: 'division_category', titleAttribute: 'title')
+                                                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
+                                                    ->searchable()
+                                                    ->label('Choose Category')
+                                                    ->preload()
+                                                    ->native(false)
+                                                    ->columnSpanFull()
+                                                    ->unique()
+                                                    
+                                                    ->live()
+                                                    ,
+
+
+                                                Repeater::make('project_division_sub_category_expenses')
+                                                ->live()
+                                                    ->relationship()
+
+                                                    ->label('Division Sub Categories')
+                                                    ->columns([
+                                                        'sm' => 3,
+                                                        'xl' => 6,
+                                                        '2xl' => 9,
+                                                    ])
+                                                    ->schema([
+
+                                                        TextInput::make('title')
+                                                            ->label('Sub Cateogry Title')
+                                                            ->required()
+                                                            ->maxLength(191)
+                                                            ->columnSpanFull(),
+                                                    ])
+                                                    ->extraAttributes([
+                                                        'class' => 'border-none',
+                                                      
+                                                    ])
+                                                    ->columnSpanFull()
+                                                    ->visible(fn(Get $get)=> !empty($get('division_category_id')) ? true : false)
+
 
                                             ])
                                             ->columnSpanFull()
+                                            ->visible(fn(Get $get)=> !empty($get('division_id')) ? true : false)
                                             ,
-                                     
-                                            
-                                           
+
+
+
 
                                     ]),
 

@@ -7,6 +7,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\DivisionCategory;
 use Database\Seeders\YearSeeder;
+use Database\Seeders\ProgramSeeder;
+use Database\Seeders\ProjectSeeder;
 use Database\Seeders\DivisionSeeder;
 use Database\Seeders\DivisionCategorySeeder;
 
@@ -22,7 +24,8 @@ class DatabaseSeeder extends Seeder
             YearSeeder::class,
             DivisionSeeder::class,
             DivisionCategorySeeder::class,
-           
+            ProgramSeeder::class,
+            ProjectSeeder::class
         ]);
         // \App\Models\User::factory(10)->create();
 
