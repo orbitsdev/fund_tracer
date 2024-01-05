@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Quarter;
 use App\Models\FourthLayer;
+use App\Models\ProjectQuarter;
 use App\Models\ProjectDivisionCategory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ProjectDivisionSubCategory;
@@ -18,5 +20,9 @@ class ProjectDivisionSubCategoryExpense extends Model
 
     public function fourth_layers(){
         return $this->hasMany(FourthLayer::class);
+    }
+
+    public function project_quarter(){
+        return $this->belongsTo(ProjectQuarter::class);
     }
 }

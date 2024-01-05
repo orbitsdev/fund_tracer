@@ -9,6 +9,7 @@ use App\Models\DivisionCategory;
 use Database\Seeders\YearSeeder;
 use Database\Seeders\ProgramSeeder;
 use Database\Seeders\ProjectSeeder;
+use Database\Seeders\QuarterSeeder;
 use Database\Seeders\DivisionSeeder;
 use Database\Seeders\DivisionCategorySeeder;
 
@@ -25,7 +26,8 @@ class DatabaseSeeder extends Seeder
             DivisionSeeder::class,
             DivisionCategorySeeder::class,
             ProgramSeeder::class,
-            ProjectSeeder::class
+            ProjectSeeder::class,
+            QuarterSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

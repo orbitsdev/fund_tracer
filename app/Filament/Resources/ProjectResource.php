@@ -1006,10 +1006,9 @@ class ProjectResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\ViewAction::make()->label('View Details'),
                     EditAction::make()->label('Manage Project'),
-                    Tables\Actions\Action::make('Manage Quarter')
-
+                    Tables\Actions\Action::make('Manage Quarter')->icon('heroicon-m-pencil')->url(fn (Model $record): string => ProjectResource::getUrl('edit-quarter', ['record'=> $record])),
 
 
 
@@ -1038,6 +1037,7 @@ class ProjectResource extends Resource
             'index' => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
+            'manage_quarter' => Pages\ManageQuarter::route('/{record}/manage-quarters'),
             'edit-quarter' => Pages\EditProjectQuarter::route('/{record}/edit/quaters'),
             'view' => Pages\ViewProject::route('/{record}'),
         ];
