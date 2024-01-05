@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('project_devision_id')->nullable();
             $table->foreignId('division_category_id')->nullable();
+            $table->string('from')->nullable();
             $table->timestamps();
         });
     }

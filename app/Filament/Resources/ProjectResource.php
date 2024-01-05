@@ -14,13 +14,16 @@ use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Support\RawJs;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Support\Enums\FontWeight;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
@@ -29,9 +32,14 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Resources\ProjectResource\Pages;
+use Filament\Infolists\Components\RepeatableEntry;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Infolists\Components\Section as InSection;
 use App\Filament\Resources\ProjectResource\RelationManagers;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 
@@ -51,6 +59,143 @@ class ProjectResource extends Resource
     // public function mount(){
     //     dd('dsd');
     // }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Fieldset::make('Program Details')
+
+
+                    ->schema([
+
+                        TextEntry::make('program.title')
+                            ->label('Program Title')
+
+
+
+                            ->columnSpanFull(),
+                        TextEntry::make('program.program_leader')
+
+
+                            ->label('Program Leader')
+
+
+                            ->columnSpanFull(),
+                        TextEntry::make('program.start_date')
+                            ->label('Program Start')
+                            ->date(),
+                        TextEntry::make('program.end_date')
+                            ->label('Program End')
+                            ->date(),
+                        TextEntry::make('program.total_budget')
+                            ->money('PHP')
+                            ->label('Program Budget')
+                             ->size(TextEntry\TextEntrySize::Large)
+                            ,
+
+                        TextEntry::make('program.total_usage')
+                            ->money('PHP')
+                            ->label('Program Budget')
+                             ->size(TextEntry\TextEntrySize::Large)
+
+
+
+                            ,
+                    ]),
+
+                Fieldset::make('Project Details')
+                    ->columns([
+                        'sm' => 3,
+                        'xl' => 6,
+                        '2xl' => 9,
+                    ])
+                    ->schema([
+                        TextEntry::make('title')
+                            ->label('Project Title')
+                            ->columnSpanFull(),
+                        TextEntry::make('project_leader')
+                            ->label('Project Leader')
+                            ->columnSpanFull(),
+                        TextEntry::make('implementing_agency')
+                            ->label('Implementing Agency')
+                            ->columnSpan(3),
+                        TextEntry::make('monitoring_agency')
+                            ->label('Monitorin Agency')
+                            ->columnSpan(3),
+
+                        TextEntry::make('allocated_fund')
+                            ->label('Allocated Fund')
+                            ->money('PHP')
+                            ->badge()
+                            ->columnSpan(3),
+                        TextEntry::make('start_date')
+                            ->label('Project Start')
+                            ->date()
+                            ->columnSpan(3),
+
+                        TextEntry::make('end_date')
+                            ->label('Project End')
+                            ->date()
+                            ->columnSpan(3),
+
+
+                            ViewEntry::make('Total Duration')
+                            ->view('infolists.components.project-duration')
+
+                             ->columnSpanFull(),
+                            ViewEntry::make('Current Duration')
+                            ->view('infolists.components.current-duration')
+
+                             ->columnSpanFull(),
+
+
+
+                    ]),
+
+                // Fieldset::make('Duration')
+                //     ->columns([
+                //         'sm' => 3,
+                //         'xl' => 6,
+                //         '2xl' => 9,
+                //     ])
+                //     ->schema([
+                //         ViewEntry::make('Total Duration')
+                //         ->view('infolists.components.project-duration')
+                //         ->columnSpanFull(),
+                //     ]),
+
+
+
+                    Fieldset::make('Particular Details')
+                    ->columns([
+                        'sm' => 3,
+                        'xl' => 6,
+                        '2xl' => 9,
+                    ])
+                    ->schema([
+
+                        ViewEntry::make('')
+                            ->view('infolists.components.project-division-details')
+                            ->columnSpanFull(),
+                    ]),
+                // RepeatableEntry::make('project_divisions')
+                //     ->schema([
+
+                //         TextEntry::make('division.title'),
+
+                //         RepeatableEntry::make('project_division_categories')
+                //         ->schema([
+                //             TextEntry::make('from'),
+
+                //         ])
+
+                //     ])
+                //     ->columns(2)
+
+            ]);
+    }
+
 
     public static function form(Form $form): Form
     {
@@ -99,7 +244,7 @@ class ProjectResource extends Resource
                                     //         // if(!empty($program)){
                                     //         //      set('allocated_fund', $program->total_budget);
                                     //         // }
-                                    // subtract the allocate ddun to the total budget of 
+                                    // subtract the allocate ddun to the total budget of
                                     // })
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                         self::updateProgramOverviewDetails($get, $set);
@@ -240,7 +385,7 @@ class ProjectResource extends Resource
                                 Repeater::make('project_divisions')
 
                                     ->relationship()
-                                    
+
                                     ->label('Particulars')
                                     ->columns([
                                         'sm' => 3,
@@ -249,13 +394,13 @@ class ProjectResource extends Resource
                                     ])
                                     ->extraAttributes([
                                         'class' => 'border-white',
-                                      
+
                                     ])
                                     ->schema([
 
 
                                         Select::make('division_id')
-                                        ->live()
+                                            ->live()
                                             ->relationship(name: 'division', titleAttribute: 'title')
                                             ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title} - {$record->abbreviation}")
                                             ->searchable()
@@ -264,13 +409,12 @@ class ProjectResource extends Resource
                                             ->native(false)
                                             ->columnSpanFull()
                                             ->distinct()
-                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                            ,
+                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
                                         Repeater::make('project_division_categories')
-                                   
+
                                             ->relationship()
-                                        
+
                                             ->label('Division Categories')
                                             ->columns([
                                                 'sm' => 3,
@@ -278,23 +422,41 @@ class ProjectResource extends Resource
                                                 '2xl' => 9,
                                             ])
                                             ->schema([
-                                                Select::make('division_category_id')
-                                                    ->relationship(name: 'division_category', titleAttribute: 'title')
-                                                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
-                                                    ->searchable()
-                                                    ->label('Choose Category')
-                                                    ->preload()
-                                                    ->native(false)
-                                                    ->columnSpanFull()
-                                                
+
+
+                                                Select::make('from')
+                                                    ->options([
+
+                                                        'Direct Cost' => 'Direct Cost',
+                                                        'Indirect Cost' => 'Indirect Cost',
+                                                    ])
                                                     ->distinct()
                                                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                                    ->live()
-                                                    ,
+                                                    ->columnSpanFull()
+                                                    ->native(false)
+                                                    ->searchable(),
+                                                // Select::make('division_category_id')
+                                                //     ->relationship(name: 'division_category', titleAttribute: 'title')
+                                                //     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
+                                                //     ->searchable()
+                                                //     ->label('Choose Category')
+                                                //     ->preload()
+                                                //     ->native(false)
+                                                //     ->columnSpanFull()
+
+                                                //     ->distinct()
+                                                //     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                                //     ->live()
+                                                //     ->createOptionForm([
+                                                //         TextInput::make('title')
+                                                //             ->required(),
+                                                //     ])
+                                                //     ,
+
 
 
                                                 Repeater::make('project_division_sub_category_expenses')
-                                                ->live()
+                                                    ->live()
                                                     ->relationship()
 
                                                     ->label('Division Sub Categories')
@@ -305,44 +467,50 @@ class ProjectResource extends Resource
                                                     ])
                                                     ->schema([
 
+                                                        TextInput::make('parent_title')
+                                                            ->label('Parent Title')
+
+                                                            ->live()
+                                                            ->maxLength(191)
+                                                            ->columnSpanFull()
+
+                                                            ->hidden(fn (Get $get) => $get('../../from') === 'Indirect Cost' ? false : true),
+
                                                         TextInput::make('title')
-                                                            ->label('Sub Cateogry Title')
+                                                            ->label('Title')
                                                             ->required()
                                                             ->live()
                                                             ->maxLength(191)
                                                             ->columnSpanFull(),
 
 
-                                                            Repeater::make('fourth_layers')
+                                                        Repeater::make('fourth_layers')
                                                             ->live()
-                                                                ->relationship()
-            
-                                                                ->label('Forth Layers')
-                                                                ->columns([
-                                                                    'sm' => 3,
-                                                                    'xl' => 6,
-                                                                    '2xl' => 9,
-                                                                ])
-                                                                ->schema([
-                                                                    TextInput::make('title')
+                                                            ->relationship()
+
+                                                            ->label('Forth Layers')
+                                                            ->columns([
+                                                                'sm' => 3,
+                                                                'xl' => 6,
+                                                                '2xl' => 9,
+                                                            ])
+                                                            ->schema([
+                                                                TextInput::make('title')
                                                                     ->label('Fourth  Title')
                                                                     ->required()
                                                                     ->maxLength(191)
                                                                     ->columnSpanFull(),
-                                                                ])  ->columnSpanFull()
-                                                               
-                                                                ,
+                                                            ])->columnSpanFull(),
                                                     ])
-                                                
+
                                                     ->columnSpanFull()
-                                                    ->visible(fn(Get $get)=> !empty($get('division_category_id')) ? true : false)
+                                                    ->visible(fn (Get $get) => !empty($get('from')) ? true : false)
 
 
                                             ])
                                             ->columns(2)
                                             ->columnSpanFull()
-                                            ->visible(fn(Get $get)=> !empty($get('division_id')) ? true : false)
-                                            ,
+                                            ->visible(fn (Get $get) => !empty($get('division_id')) ? true : false),
 
 
 
@@ -439,12 +607,13 @@ class ProjectResource extends Resource
                             ->columnSpanFull()
                             ->collapsed()
                             ->collapsible()
-                             ->hidden(function(string $operation){  if($operation === 'create'){     return true;
-                                }else{
+                            ->hidden(function (string $operation) {
+                                if ($operation === 'create') {
+                                    return true;
+                                } else {
                                     return false;
                                 }
-                            })
-                            ,
+                            }),
 
 
                         Section::make('File Attachments')
@@ -572,7 +741,7 @@ class ProjectResource extends Resource
                                     ->readOnly(),
                                 TextInput::make('program_budget_overview')
                                     ->label('Budget')
-                                    // ->default(0)    
+                                    // ->default(0)
                                     ->prefix('₱ ')
                                     // ->numeric()
                                     ->columnSpanFull()
@@ -610,7 +779,7 @@ class ProjectResource extends Resource
 
                         //     // ->columnSpanFull()
                         //     // // ->maxLength(191)
-                        //     // ->readOnly(), 
+                        //     // ->readOnly(),
 
 
 
@@ -836,6 +1005,7 @@ class ProjectResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
                     EditAction::make()->label('Manage Project'),
 
                 ]),
@@ -860,7 +1030,7 @@ class ProjectResource extends Resource
         return [
 
             'project' => Pages\Project::route('/project'),
-
+            'view' => Pages\ViewProject::route('/{record}'),
             'index' => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
