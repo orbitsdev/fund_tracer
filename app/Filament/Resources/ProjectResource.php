@@ -14,8 +14,10 @@ use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Support\RawJs;
+use Tables\Actions\ViewAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Actions\CreateAction;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
@@ -23,7 +25,6 @@ use Filament\Forms\Components\Section;
 use Filament\Support\Enums\FontWeight;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
@@ -1007,6 +1008,10 @@ class ProjectResource extends Resource
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     EditAction::make()->label('Manage Project'),
+                    Tables\Actions\Action::make('Manage Quarter')
+                    ->url(fn (Model $record): string => ProjectResource::getUrl('edit-quarter', ['record'=> $record] ))
+
+
 
                 ]),
             ])
@@ -1034,6 +1039,7 @@ class ProjectResource extends Resource
             'index' => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
+            'edit-quarter' => Pages\EditProjectQuarter::route('/{record}/edit/quaters'),
         ];
     }
 
