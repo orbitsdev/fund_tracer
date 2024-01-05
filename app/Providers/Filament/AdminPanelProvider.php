@@ -43,13 +43,13 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
-               
+
                 // NavigationItem::make('Project')
                 // ->icon('heroicon-o-inbox-stack')
                 // ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.projects.project'))
                 // ->url(fn (): string => ProjectResource::getUrl()),
 
-                
+
             ])
             // ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
             //     return $builder->items([

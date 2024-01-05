@@ -36,7 +36,7 @@ class CreateProject extends CreateRecord
         // dd($data);
           return $data;
       }
-  
+
       protected function handleRecordCreation(array $data): Model
   {
     //   $program = Program::first();
@@ -44,11 +44,11 @@ class CreateProject extends CreateRecord
     //  $sum= $program->total_usage =$program->total_usage + $data['allocated_fund'];
     //   // dd($sum);
     //   $program->save();
-     
+
       return static::getModel()::create($data);
   }
-     
-    
+
+
     protected function getRedirectUrl(): string
     {
     return $this->getResource()::getUrl('index');

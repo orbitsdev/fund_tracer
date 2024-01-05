@@ -1009,7 +1009,7 @@ class ProjectResource extends Resource
                     Tables\Actions\ViewAction::make(),
                     EditAction::make()->label('Manage Project'),
                     Tables\Actions\Action::make('Manage Quarter')
-                    ->url(fn (Model $record): string => ProjectResource::getUrl('edit-quarter', ['record'=> $record] ))
+
 
 
 
@@ -1034,12 +1034,12 @@ class ProjectResource extends Resource
     {
         return [
 
-            'project' => Pages\Project::route('/project'),
-            'view' => Pages\ViewProject::route('/{record}'),
+            // 'project' => Pages\Project::route('/project'),
             'index' => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
             'edit-quarter' => Pages\EditProjectQuarter::route('/{record}/edit/quaters'),
+            'view' => Pages\ViewProject::route('/{record}'),
         ];
     }
 
