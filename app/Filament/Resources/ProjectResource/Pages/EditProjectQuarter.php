@@ -6,7 +6,6 @@ use App\Models\Year;
 use Filament\Actions;
 use App\Models\Quarter;
 use Filament\Forms\Get;
-use App\Models\Division;
 use Filament\Forms\Form;
 use Filament\Support\RawJs;
 use Filament\Forms\Components\Group;
@@ -18,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use App\Filament\Resources\ProjectResource;
 use Filament\Forms\Components\CheckboxList;
+use App\Models\Division;
 
 class EditProjectQuarter extends EditRecord
 {
@@ -137,67 +137,6 @@ public function form(Form $form): Form
                                         ->columnSpanFull()
                                         ->native(false)
                                         ->searchable(),
-
-
-                                    Repeater::make('project_division_sub_category_expenses')
-                                        ->live()
-                                        ->relationship()
-
-                                        ->label('Division Sub Categories')
-                                        ->columns([
-                                            'sm' => 3,
-                                            'xl' => 6,
-                                            '2xl' => 9,
-                                        ])
-                                        ->schema([
-                                            TextInput::make('parent_title')
-                                                        ->label('Parent Title')
-
-                                                        ->live()
-                                                        ->maxLength(191)
-                                                        ->columnSpanFull()
-
-                                                        ->hidden(fn (Get $get) => $get('../../from') === 'Indirect Cost' ? false : true),
-
-                                                    TextInput::make('title')
-                                                        ->label('Title')
-                                                        ->required()
-                                                        ->live()
-                                                        ->maxLength(191)
-                                                        ->columnSpanFull(),
-                                                  Repeater::make('fourth_layers')
-                                        ->live()
-                                        ->relationship()
-
-                                        ->label('Division Sub Categories')
-                                        ->columns([
-                                            'sm' => 3,
-                                            'xl' => 6,
-                                            '2xl' => 9,
-                                        ])
-                                        ->schema([
-                                            TextInput::make('title')
-                                                                ->label('Fourth  Title')
-                                                                ->required()
-                                                                ->maxLength(191)
-                                                                ->columnSpanFull(),
-
-                                                                TextInput::make('amount')
-
-                                                                ->mask(RawJs::make('$money($input)'))
-                                                                ->stripCharacters(',')
-                                                                ->numeric()
-                                                                    // ->mask(RawJs::make('$money($input)'))
-                                                                    // ->stripCharacters(',')
-                                                                    ->prefix('₱')
-                                                                    ->numeric()
-                                                                    // ->maxValue(9999999999)
-                                                                    ->default(0)
-                                                                    ->columnSpanFull()
-                                                                    ->required(),
-                                        ])
-
-                                        ])->columnSpanFull(),
                                     // Select::make('division_category_id')
                                     //     ->relationship(name: 'division_category', titleAttribute: 'title')
                                     //     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
@@ -218,70 +157,70 @@ public function form(Form $form): Form
 
 
 
-                                    // Repeater::make('project_division_sub_category_expenses')
-                                    //     ->live()
-                                    //     ->relationship()
+                                    Repeater::make('project_division_sub_category_expenses')
+                                        ->live()
+                                        ->relationship()
 
-                                    //     ->label('Division Sub Categories')
-                                    //     ->columns([
-                                    //         'sm' => 3,
-                                    //         'xl' => 6,
-                                    //         '2xl' => 9,
-                                    //     ])
-                                    //     ->schema([
+                                        ->label('Division Sub Categories')
+                                        ->columns([
+                                            'sm' => 3,
+                                            'xl' => 6,
+                                            '2xl' => 9,
+                                        ])
+                                        ->schema([
 
-                                    //         TextInput::make('parent_title')
-                                    //             ->label('Parent Title')
+                                            TextInput::make('parent_title')
+                                                ->label('Parent Title')
 
-                                    //             ->live()
-                                    //             ->maxLength(191)
-                                    //             ->columnSpanFull()
+                                                ->live()
+                                                ->maxLength(191)
+                                                ->columnSpanFull()
 
-                                    //             ->hidden(fn (Get $get) => $get('../../from') === 'Indirect Cost' ? false : true),
+                                                ->hidden(fn (Get $get) => $get('../../from') === 'Indirect Cost' ? false : true),
 
-                                    //         TextInput::make('title')
-                                    //             ->label('Title')
-                                    //             ->required()
-                                    //             ->live()
-                                    //             ->maxLength(191)
-                                    //             ->columnSpanFull(),
+                                            TextInput::make('title')
+                                                ->label('Title')
+                                                ->required()
+                                                ->live()
+                                                ->maxLength(191)
+                                                ->columnSpanFull(),
 
 
-                                    //         Repeater::make('fourth_layers')
-                                    //             ->live()
-                                    //             ->relationship()
+                                            Repeater::make('fourth_layers')
+                                                ->live()
+                                                ->relationship()
 
-                                    //             ->label('Forth Layers')
-                                    //             ->columns([
-                                    //                 'sm' => 3,
-                                    //                 'xl' => 6,
-                                    //                 '2xl' => 9,
-                                    //             ])
-                                    //             ->schema([
-                                    //                 TextInput::make('title')
-                                    //                     ->label('Fourth  Title')
-                                    //                     ->required()
-                                    //                     ->maxLength(191)
-                                    //                     ->columnSpanFull(),
+                                                ->label('Forth Layers')
+                                                ->columns([
+                                                    'sm' => 3,
+                                                    'xl' => 6,
+                                                    '2xl' => 9,
+                                                ])
+                                                ->schema([
+                                                    TextInput::make('title')
+                                                        ->label('Fourth  Title')
+                                                        ->required()
+                                                        ->maxLength(191)
+                                                        ->columnSpanFull(),
 
-                                    //                     TextInput::make('amount')
+                                                        TextInput::make('amount')
 
-                                    //                     ->mask(RawJs::make('$money($input)'))
-                                    //                     ->stripCharacters(',')
-                                    //                     ->numeric()
-                                    //                         // ->mask(RawJs::make('$money($input)'))
-                                    //                         // ->stripCharacters(',')
-                                    //                         ->prefix('₱')
-                                    //                         ->numeric()
-                                    //                         // ->maxValue(9999999999)
-                                    //                         ->default(0)
-                                    //                         ->columnSpanFull()
-                                    //                         ->required(),
-                                    //             ])->columnSpanFull(),
-                                    //     ])
+                                                        ->mask(RawJs::make('$money($input)'))
+                                                        ->stripCharacters(',')
+                                                        ->numeric()
+                                                            // ->mask(RawJs::make('$money($input)'))
+                                                            // ->stripCharacters(',')
+                                                            ->prefix('₱')
+                                                            ->numeric()
+                                                            // ->maxValue(9999999999)
+                                                            ->default(0)
+                                                            ->columnSpanFull()
+                                                            ->required(),
+                                                ])->columnSpanFull(),
+                                        ])
 
-                                    //     ->columnSpanFull()
-                                    //     ->visible(fn (Get $get) => !empty($get('from')) ? true : false)
+                                        ->columnSpanFull()
+                                        ->visible(fn (Get $get) => !empty($get('from')) ? true : false)
 
 
                                 ])
