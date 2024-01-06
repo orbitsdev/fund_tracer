@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\ProjectResource\Pages;
 
-use App\Filament\Resources\ProjectQuarterResource;
 use App\Models\Year;
 use App\Models\Project;
 use Filament\Forms\Get;
@@ -17,6 +16,7 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,6 +25,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
+use App\Filament\Resources\ProjectQuarterResource;
 
 class ManageYearQuarter extends Page implements HasForms, HasTable
 {
@@ -41,7 +42,6 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
     {
         static::authorizeResourceAccess();
         $this->record = Project::find($record);
-
     }
 
 
@@ -51,8 +51,8 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
             ->query(ProjectYear::query())
             ->columns([
 
-                TextColumn::make('year.title'),
-                TextColumn::make('project_quarters_count')->counts('project_quarters')->label('Quarters Count')
+                TextColumn::make('year.title')->sortable(),
+                TextColumn::make('project_quarters_count')->counts('project_quarters')->label('Quarters Count'),
 
 
 
@@ -60,36 +60,39 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
             ->filters([
                 // ...
             ])->headerActions([
-                CreateAction::make()->label('Quarter Year')->form([
+                CreateAction::make()->label('Create Year')->form([
                     Select::make('year_id')
-                    ->live()
-                    ->options(Year::pluck('title','id'))
-                      ->unique(modifyRuleUsing: function (Unique $rule, Get $get) {
-                     return $rule->where('year_id',$get('year_id'))->where('project_id', $this->record->id);
-    })
-                    // ->relationship(name: 'year', titleAttribute: 'title')
-                    // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
-                    ->searchable()
-                    ->label('Year')
-                    ->preload()
-                    ->native(false)
-                    ->columnSpanFull()
+                        ->live()
+                        ->options(Year::pluck('title', 'id'))
+                        ->unique(modifyRuleUsing: function (Unique $rule, Get $get) {
+                            return $rule->where('year_id', $get('year_id'))->where('project_id', $this->record->id);
+                        })
+                        // ->relationship(name: 'year', titleAttribute: 'title')
+                        // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
+                        ->searchable()
+                        ->label('Year')
+                        ->preload()
+                        ->native(false)
+                        ->columnSpanFull()
 
 
                 ])
-                ->using(function (array $data, string $model): Model {
-                    $data['project_id'] = $this->record->id;
+                    ->using(function (array $data, string $model): Model {
+                        $data['project_id'] = $this->record->id;
 
-                    return $model::create($data);
-                })
-                ->disableCreateAnother()
+                        return $model::create($data);
+                    })
+                    ->disableCreateAnother()
 
             ])
 
             ->actions([
-                Action::make('Manage Quarters')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter',['record'=> $record]))->button(),
+                    Action::make('Manage Quarters')->button()->label('Manage')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('quarter-list', ['record' => $record])),
+                    Action::make('Create Quarter')->button()->outlined()->label('Create Quarters')->icon('heroicon-m-sparkles')->url(fn (Model $record): string => ProjectResource::getUrl('create-quarter', ['record' => $record])),
+                   ActionGroup::make([
+                    DeleteAction::make(),
+                ]),
 
-                DeleteAction::make(),
 
             ])
             ->bulkActions([
@@ -97,8 +100,6 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
                     DeleteBulkAction::make()
                 ]),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('project_id', $this->record->id));
-
-            ;
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('project_id', $this->record->id));;
     }
 }

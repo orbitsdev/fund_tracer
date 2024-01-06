@@ -63,19 +63,42 @@ class ManageQuarter extends Page implements HasForms,  HasActions
     {
 
         $this->record = ProjectYear::find($record);
+        // $this->project_quarter = $this->record->project_quarters->first();
+        // dd($this->project_quarter->project_year->id);
 
 
 
 
-        // $this->record = auth()->user();
+
         $this->form->fill([
-            'project_year_id' => $this->record->id
+            'project_year_id' => $this->record->id,
+            // 'project_year_id' => $this->project_quarter->project_year->id,
         ]);
 
         // dd($this->form);
 
+        // $this->fillForm();
+
     }
 
+//     public function fillForm(): void
+// {
+
+//     $data = $this->project_quarter->attributesToArray();
+
+//      $data = $this->mutateFormDataBeforeFill($data);
+
+//     $this->form->fill($data);
+// }
+
+// public function mutateFormDataBeforeFill(array $data): array
+// {
+//     // STORE TEAMS
+//     $data['project_divisions'] = $this->project_quarter->project_divisions()->get()->toArray();
+//     // dd($data);
+
+//     return $data;
+// }
 
 
     public function createQuarter(): FAction
@@ -87,11 +110,12 @@ class ManageQuarter extends Page implements HasForms,  HasActions
     {
 
         $project_quarter = ProjectQuarter::create($this->form->getState());
-        // dd($this->record);
+
 
 
         // Save the relationships from the form to the post after it is created.
-        $this->form->model($project_quarter)->saveRelationships();
+         $a = $this->form->model($project_quarter)->saveRelationships();
+        // dd($a);
         Notification::make()
             ->title('Saved successfully')
             ->icon('heroicon-o-document-text')
@@ -116,6 +140,9 @@ class ManageQuarter extends Page implements HasForms,  HasActions
                 Select::make('quarter_id')
                     ->required()
                     ->live()
+                    ->unique(modifyRuleUsing: function (Unique $rule, Get $get,  ) {
+                        return $rule->where('quarter_id', $get('quarter_id'))->where('project_year_id', $this->record->id);
+                    })
                     // ->options(Quarter::pluck('title','id'))
                     ->relationship(name: 'quarter', titleAttribute: 'title')
                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
@@ -135,7 +162,7 @@ class ManageQuarter extends Page implements HasForms,  HasActions
                     ->addActionLabel('Add Category')
                     ->label('Expenses By Categories')
                     ->schema([
-
+                        Hidden::make('project_id'),
                         Select::make('division_id')
                             ->live()
                             // ->options(Division::pluck('title','id'))

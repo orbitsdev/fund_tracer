@@ -1100,7 +1100,8 @@ class ProjectResource extends Resource
             'edit' => Pages\EditProject::route('/{record}/edit'),
             // 'edit-quarter' => Pages\EditProjectQuarter::route('/{record}/edit/quaters'),
             'manage-quarter-year' => Pages\ManageYearQuarter::route('/{record}/year-quarters'),
-            'manage-quarter' => Pages\ManageQuarter::route('/{record}/quarters'),
+            'create-quarter' => Pages\ManageQuarter::route('/{record}/quarter/create'),
+            'quarter-list' => Pages\ProjectYearQuarterList::route('/{record}/quarters'),
             'view' => Pages\ViewProject::route('/{record}'),
         ];
     }
