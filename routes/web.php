@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\CreateQuarter;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('create-year-quarter/{record}/create', CreateQuarter::class)->name('create-year-quarter');

@@ -23,6 +23,7 @@ class EditProject extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
 
+        // dd('test');
         $project = Project::find($data['id']);
         $total_expenses = $project->expenses()->sum('amount');
 
@@ -31,25 +32,25 @@ class EditProject extends EditRecord
         $data['program_budget_overview'] = number_format($project->program ? $project->program->total_budget : 0);
         $data['program_use_budget_overview'] = number_format($project->program ? $project->program->total_usage : 0);
         $data['program_remaining_budget_overview'] = number_format(($project->program ? $project->program->total_budget : 0) - ($project->program ? $project->program->total_usage : 0));
-        
+
         //fill project overview
 
         $data['project_fund'] =number_format($project->allocated_fund);
         $data['total_expenses'] = number_format($total_expenses);
         $start_date = $project->start_date;
         $end_date = $project->end_date;
-    
+
         if ($start_date && $end_date) {
             $startDate = Carbon::parse($start_date);
             $endDate = Carbon::parse($end_date);
-    
+
             // Calculate the difference in months
             $totalMonths = $endDate->diffInMonths($startDate);
-    
+
             // Set the duration in months
              $data['duration_overview'] = $totalMonths . ' months';
             }
-            
+
             $data['current_duration_overview'] = Carbon::parse($project->start_date)->format('F d, Y') . ' - ' . Carbon::parse($project->end_date)->format('F d, Y');
 
         return $data;
@@ -65,8 +66,8 @@ class EditProject extends EditRecord
         unset($data['project_fund']);
         unset($data['duration_overview']);
         unset($data['current_duration_overview']);
-        
-        
+
+
         return $data;
     }
     protected function handleRecordUpdate(Model $record, array $data): Model
