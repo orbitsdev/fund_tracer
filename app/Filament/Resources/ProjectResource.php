@@ -377,158 +377,218 @@ class ProjectResource extends Resource
                             ->collapsible(),
 
 
-                        Section::make('Project Expenses Divisions')
-                            ->icon('heroicon-m-banknotes')
-                            // ->description('Manage and organize particulars  ')
-                            ->columnSpanFull()
-                            ->schema([
+                        // Section::make('Manage Quarters')
+                        //     ->icon('heroicon-m-banknotes')
+                        //     // ->description('Manage and organize particulars  ')
+                        //     ->columnSpanFull()
+                        //     ->schema([
 
-                                Repeater::make('project_divisions')
+                        //         Repeater::make('project_years')
 
-                                    ->relationship()
+                        //             ->relationship()
 
-                                    ->label('Particulars')
-                                    ->columns([
-                                        'sm' => 3,
-                                        'xl' => 6,
-                                        '2xl' => 9,
-                                    ])
-                                    ->extraAttributes([
-                                        'class' => 'border-white',
+                        //             ->label('Year & Quarters')
 
-                                    ])
-                                    ->schema([
+                        //             ->extraAttributes([
+                        //                 'class' => 'border-white',
 
-
-                                        Select::make('division_id')
-                                            ->live()
-                                            ->relationship(name: 'division', titleAttribute: 'title')
-                                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title} - {$record->abbreviation}")
-                                            ->searchable()
-                                            ->label('Choose Division')
-                                            ->preload()
-                                            ->native(false)
-                                            ->columnSpanFull()
-                                            ->distinct()
-                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
-
-                                        Repeater::make('project_division_categories')
-
-                                            ->relationship()
-
-                                            ->label('Division Categories')
-                                            ->columns([
-                                                'sm' => 3,
-                                                'xl' => 6,
-                                                '2xl' => 9,
-                                            ])
-                                            ->schema([
+                        //             ])
+                        //             ->schema([
+                        //                   Select::make('year_id')
+                        //                     ->live()
+                        //                     ->relationship(name: 'year', titleAttribute: 'title')
+                        //                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
+                        //                     ->searchable()
+                        //                     ->label('Year')
+                        //                     ->preload()
+                        //                     ->native(false)
+                        //                     ->columnSpanFull()
+                        //                     ->distinct()
+                        //                     ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
 
-                                                Select::make('from')
-                                                    ->options([
+                        //         Repeater::make('project_quarters')
 
-                                                        'Direct Cost' => 'Direct Cost',
-                                                        'Indirect Cost' => 'Indirect Cost',
-                                                    ])
-                                                    ->distinct()
-                                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                                    ->columnSpanFull()
-                                                    ->native(false)
-                                                    ->searchable(),
-                                                // Select::make('division_category_id')
-                                                //     ->relationship(name: 'division_category', titleAttribute: 'title')
-                                                //     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
-                                                //     ->searchable()
-                                                //     ->label('Choose Category')
-                                                //     ->preload()
-                                                //     ->native(false)
-                                                //     ->columnSpanFull()
+                        //         ->relationship()
 
-                                                //     ->distinct()
-                                                //     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                                //     ->live()
-                                                //     ->createOptionForm([
-                                                //         TextInput::make('title')
-                                                //             ->required(),
-                                                //     ])
-                                                //     ,
+                        //         ->label('Quarters')
+
+                        //         ->extraAttributes([
+                        //             'class' => 'border-white',
+
+                        //         ])
+                        //         ->schema([
+                        //             Select::make('quarter_id')
+                        //             ->live()
+                        //             ->relationship(name: 'quarter', titleAttribute: 'title')
+                        //             ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
+                        //             ->searchable()
+                        //             ->label('Quarter')
+                        //             ->preload()
+                        //             ->native(false)
+                        //             ->columnSpanFull()
+                        //             ->distinct()
+                        //             ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
 
+                        //                      Repeater::make('project_divisions')
 
-                                                Repeater::make('project_division_sub_category_expenses')
-                                                    ->live()
-                                                    ->relationship()
+                        //                     ->relationship()
 
-                                                    ->label('Division Sub Categories')
-                                                    ->columns([
-                                                        'sm' => 3,
-                                                        'xl' => 6,
-                                                        '2xl' => 9,
-                                                    ])
-                                                    ->schema([
+                        //                     ->label('Divisions')
 
-                                                        TextInput::make('parent_title')
-                                                            ->label('Parent Title')
+                        //                     ->schema([
 
-                                                            ->live()
-                                                            ->maxLength(191)
-                                                            ->columnSpanFull()
+                        //                           Select::make('division_id')
+                        //                     ->live()
+                        //                     ->relationship(name: 'division', titleAttribute: 'title')
+                        //                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title} - {$record->abbreviation}")
+                        //                     ->searchable()
+                        //                     ->label('Choose Division')
+                        //                     ->preload()
+                        //                     ->native(false)
+                        //                     ->columnSpanFull()
+                        //                     ->distinct()
+                        //                     ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
-                                                            ->hidden(fn (Get $get) => $get('../../from') === 'Indirect Cost' ? false : true),
+                        //                 Repeater::make('project_division_categories')
 
-                                                        TextInput::make('title')
-                                                            ->label('Title')
-                                                            ->required()
-                                                            ->live()
-                                                            ->maxLength(191)
-                                                            ->columnSpanFull(),
+                        //                     ->relationship()
 
-
-                                                        Repeater::make('fourth_layers')
-                                                            ->live()
-                                                            ->relationship()
-
-                                                            ->label('Forth Layers')
-                                                            ->columns([
-                                                                'sm' => 3,
-                                                                'xl' => 6,
-                                                                '2xl' => 9,
-                                                            ])
-                                                            ->schema([
-                                                                TextInput::make('title')
-                                                                    ->label('Fourth  Title')
-                                                                    ->required()
-                                                                    ->maxLength(191)
-                                                                    ->columnSpanFull(),
-                                                            ])->columnSpanFull(),
-                                                    ])
-
-                                                    ->columnSpanFull()
-                                                    ->visible(fn (Get $get) => !empty($get('from')) ? true : false)
+                        //                     ->label('Division Categories')
+                        //                     ->columns([
+                        //                         'sm' => 3,
+                        //                         'xl' => 6,
+                        //                         '2xl' => 9,
+                        //                     ])
+                        //                     ->schema([
 
 
-                                            ])
-                                            ->columns(2)
-                                            ->columnSpanFull()
-                                            ->visible(fn (Get $get) => !empty($get('division_id')) ? true : false),
+                        //                         Select::make('from')
+                        //                             ->options([
+
+                        //                                 'Direct Cost' => 'Direct Cost',
+                        //                                 'Indirect Cost' => 'Indirect Cost',
+                        //                             ])
+                        //                             ->distinct()
+                        //                             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                        //                             ->columnSpanFull()
+                        //                             ->native(false)
+                        //                             ->searchable(),
+                        //                         // Select::make('division_category_id')
+                        //                         //     ->relationship(name: 'division_category', titleAttribute: 'title')
+                        //                         //     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
+                        //                         //     ->searchable()
+                        //                         //     ->label('Choose Category')
+                        //                         //     ->preload()
+                        //                         //     ->native(false)
+                        //                         //     ->columnSpanFull()
+
+                        //                         //     ->distinct()
+                        //                         //     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                        //                         //     ->live()
+                        //                         //     ->createOptionForm([
+                        //                         //         TextInput::make('title')
+                        //                         //             ->required(),
+                        //                         //     ])
+                        //                         //     ,
 
 
 
+                        //                         Repeater::make('project_division_sub_category_expenses')
+                        //                             ->live()
+                        //                             ->relationship()
 
-                                    ]),
+                        //                             ->label('Division Sub Categories')
+                        //                             ->columns([
+                        //                                 'sm' => 3,
+                        //                                 'xl' => 6,
+                        //                                 '2xl' => 9,
+                        //                             ])
+                        //                             ->schema([
 
-                            ])
+                        //                                 TextInput::make('parent_title')
+                        //                                     ->label('Parent Title')
 
-                            ->collapsed()
-                            ->collapsible()
-                            ->hidden(function (string $operation) {
-                                if ($operation === 'create') {
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            }),
+                        //                                     ->live()
+                        //                                     ->maxLength(191)
+                        //                                     ->columnSpanFull()
+
+                        //                                     ->hidden(fn (Get $get) => $get('../../from') === 'Indirect Cost' ? false : true),
+
+                        //                                 TextInput::make('title')
+                        //                                     ->label('Title')
+                        //                                     ->required()
+                        //                                     ->live()
+                        //                                     ->maxLength(191)
+                        //                                     ->columnSpanFull(),
+
+
+                        //                                 Repeater::make('fourth_layers')
+                        //                                     ->live()
+                        //                                     ->relationship()
+
+                        //                                     ->label('Forth Layers')
+                        //                                     ->columns([
+                        //                                         'sm' => 3,
+                        //                                         'xl' => 6,
+                        //                                         '2xl' => 9,
+                        //                                     ])
+                        //                                     ->schema([
+                        //                                         TextInput::make('title')
+                        //                                             ->label('Fourth  Title')
+                        //                                             ->required()
+                        //                                             ->maxLength(191)
+                        //                                             ->columnSpanFull(),
+
+                        //                                             TextInput::make('amount')
+
+                        //                                             ->mask(RawJs::make('$money($input)'))
+                        //                                             ->stripCharacters(',')
+                        //                                             ->numeric()
+                        //                                                 // ->mask(RawJs::make('$money($input)'))
+                        //                                                 // ->stripCharacters(',')
+                        //                                                 ->prefix('₱')
+                        //                                                 ->numeric()
+                        //                                                 // ->maxValue(9999999999)
+                        //                                                 ->default(0)
+                        //                                                 ->columnSpanFull()
+                        //                                                 ->required(),
+                        //                                     ])->columnSpanFull(),
+                        //                             ])
+
+                        //                             ->columnSpanFull()
+                        //                             ->visible(fn (Get $get) => !empty($get('from')) ? true : false)
+
+
+                        //                     ])
+                        //                     ->columns(2)
+                        //                     ->columnSpanFull()
+                        //                     ->visible(fn (Get $get) => !empty($get('division_id')) ? true : false),
+
+
+
+                        //                     ]),
+
+
+
+                        //         ]),
+
+
+
+                        //             ]),
+
+                        //     ])
+
+                        //     ->collapsed()
+                        //     ->collapsible()
+                        //     ->hidden(function (string $operation) {
+                        //         if ($operation === 'create') {
+                        //             return true;
+                        //         } else {
+                        //             return false;
+                        //         }
+                        //     }),
 
                         Section::make('Other Expenses')
                             ->icon('heroicon-m-banknotes')
@@ -1037,8 +1097,8 @@ class ProjectResource extends Resource
             'index' => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
-            'manage_quarter' => Pages\ManageQuarter::route('/{record}/manage-quarters'),
             'edit-quarter' => Pages\EditProjectQuarter::route('/{record}/edit/quaters'),
+            'manage_quarter' => Pages\ManageQuarter::route('/{record}/manage-quarters'),
             'view' => Pages\ViewProject::route('/{record}'),
         ];
     }

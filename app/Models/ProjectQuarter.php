@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Quarter;
 use App\Models\ProjectYear;
+use App\Models\ProjectDevision;
+use App\Models\ProjectDivisionCategory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ProjectDivisionSubCategoryExpense;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,9 +21,19 @@ class ProjectQuarter extends Model
         return $this->belongsTo(Quarter::class);
     }
 
-    public function project_division_sub_category_expenses(){
-        return $this->hasMany(ProjectDivisionSubCategoryExpense::class);
+    public function project_divisions(){
+        return $this->hasMany(ProjectDevision::class);
     }
+
+    // public function project_division_sub_category_expenses(){
+    //     return $this->hasMany(ProjectDivisionSubCategoryExpense::class);
+    // }
+
+    // public function project_division_categories(){
+    //     return $this->hasMany(ProjectDivisionCategory::class);
+    // }
+
+
 
 
 }

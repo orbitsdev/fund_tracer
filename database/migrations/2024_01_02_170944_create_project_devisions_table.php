@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('project_devisions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('division_id')->nullable();
+            $table->foreignId('project_quarter_id')->nullable();
             $table->foreignId('project_id')->nullable();
             $table->timestamps();
         });

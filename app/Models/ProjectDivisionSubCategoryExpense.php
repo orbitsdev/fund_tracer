@@ -14,7 +14,7 @@ class ProjectDivisionSubCategoryExpense extends Model
 {
     use HasFactory;
 
-    public function Project_division_category(){
+    public function project_division_category(){
         return $this->belongsTo(ProjectDivisionCategory::class);
     }
 

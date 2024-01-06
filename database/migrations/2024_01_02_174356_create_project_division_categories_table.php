@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('project_division_categories', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('project_devision_id')->nullable();
             $table->foreignId('division_category_id')->nullable();
             $table->string('from')->nullable();

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 use App\Models\Year;
 use App\Models\Project;
 use App\Models\Quarter;
@@ -19,10 +20,12 @@ class ProjectYear extends Model
     public function year(){
         return $this->belongsTo(Year::class);
     }
+
+    public function project_quarters(){
+        return $this->hasMany(ProjectQuarter::class);
+    }
     // public function quarters(){
     //     return  $this->hasMany(Quarter::class);
     // }
-    public function project_quarters(){
-        return  $this->hasMany(ProjectQuarter::class);
-    }
+
 }

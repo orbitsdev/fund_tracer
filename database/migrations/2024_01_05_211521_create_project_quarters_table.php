@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('project_quarters', function (Blueprint $table) {
             $table->id();
-            $table->string('quarter_id')->nullable();
             $table->foreignId('project_year_id')->nullable();
+            $table->foreignId('quarter_id')->nullable();
             $table->timestamps();
         });
     }
