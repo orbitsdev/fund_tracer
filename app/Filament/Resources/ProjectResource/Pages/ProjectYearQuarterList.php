@@ -26,7 +26,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use App\Filament\Resources\ProjectQuarterResource;
 use Filament\Tables\Actions\HeaderActionsPosition;
-
+use Illuminate\Contracts\View\View;
 class ProjectYearQuarterList extends Page implements HasForms, HasTable
 {
 
@@ -37,7 +37,10 @@ class ProjectYearQuarterList extends Page implements HasForms, HasTable
 
     protected static string $view = 'filament.resources.project-resource.pages.project-year-quarter-list';
 
-
+    public function getHeader(): ?View
+    {
+        return view('filament.settings.custom-header',['title'=> 'Project Year Quarter List', 'first'=> 'Projects' ,'second'=> 'Project Year Quarter List']);
+    }
     public $record = null;
 
     public function mount($record): void
@@ -70,7 +73,7 @@ class ProjectYearQuarterList extends Page implements HasForms, HasTable
             ->actions([
 
 
-              Action::make('Manage Quarters')->button()->label('Manage')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectQuarterResource::getUrl('edit', ['record' => $record])),
+              Action::make('Manage Quarters')->button()->label('Update')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectQuarterResource::getUrl('edit', ['record' => $record])),
 
                 DeleteAction::make(),
 

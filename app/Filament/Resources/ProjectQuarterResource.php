@@ -21,15 +21,18 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProjectQuarterResource\Pages;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use App\Filament\Resources\ProjectQuarterResource\RelationManagers;
-
+use Illuminate\Contracts\View\View;
 class ProjectQuarterResource extends Resource
 {
     protected static ?string $model = ProjectQuarter::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static bool $shouldRegisterNavigation = false;
-
-
+   
+    // public function getHeader(): ?View
+    // {
+    //     return view('filament.settings.custom-header',['title'=> 'Edit Project Quarter', 'first'=> 'Project Quarters' ,'second'=> 'Edit']);
+    // }
 
     public static function form(Form $form): Form
     {
@@ -50,7 +53,7 @@ class ProjectQuarterResource extends Resource
                 Select::make('quarter_id')
 
                     // ->required()
-                    ->unique(modifyRuleUsing: function (Unique $rule, Get $get,  Model $record) {
+                    ->unique( ignoreRecord: true,modifyRuleUsing: function (Unique $rule, Get $get,  Model $record) {
                         return $rule->where('quarter_id', $get('quarter_id'))->where('project_year_id', $record->id);
                     })
 
@@ -262,7 +265,7 @@ class ProjectQuarterResource extends Resource
     {
         return [
             'index' => Pages\ListProjectQuarters::route('/'),
-            'create' => Pages\CreateProjectQuarter::route('/create'),
+            // 'create' => Pages\CreateProjectQuarter::route('/create'),
             'edit' => Pages\EditProjectQuarter::route('/{record}/edit'),
         ];
     }

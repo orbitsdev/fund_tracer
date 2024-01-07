@@ -67,7 +67,7 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
                     Select::make('year_id')
                         ->live()
                         // ->options(Year::pluck('title', 'id'))
-                        ->unique(modifyRuleUsing: function (Unique $rule, Get $get) {
+                        ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get) {
                             return $rule->where('year_id', $get('year_id'))->where('project_id', $this->record->id);
                         })
                         ->required()
@@ -101,7 +101,13 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
                 ],)
 
             ->actions([
-                    Action::make('Manage Quarters')->button()->label('Manage')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('quarter-list', ['record' => $record])),
+                    Action::make('Manage Quarters')->button()->label('Manage Quarter')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('quarter-list', ['record' => $record]))->hidden(function(Model $record){
+                        if($record->project_quarters->count()>0){
+                            return false;
+                        }else{
+                            return true;
+                        }
+                    }),
                     Action::make('Create Quarter')->button()->outlined()->label('Create Quarters')->icon('heroicon-m-sparkles')->url(fn (Model $record): string => ProjectResource::getUrl('create-quarter', ['record' => $record])),
                    ActionGroup::make([
                     DeleteAction::make(),

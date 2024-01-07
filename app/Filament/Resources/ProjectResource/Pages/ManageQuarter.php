@@ -140,7 +140,7 @@ class ManageQuarter extends Page implements HasForms,  HasActions
                 Select::make('quarter_id')
                     ->required()
                     ->live()
-                    ->unique(modifyRuleUsing: function (Unique $rule, Get $get,  ) {
+                    ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get,  ) {
                         return $rule->where('quarter_id', $get('quarter_id'))->where('project_year_id', $this->record->id);
                     })
                     // ->options(Quarter::pluck('title','id'))

@@ -1,6 +1,9 @@
 <x-filament-panels::page>
-<p class="text-lg">
-    {{ $this->record->year->title }}
-</p>
-    {{$this->table}}
+    <div>
+
+        <p class="text-lg mb-2 font-medium text-primary-600">
+            {{ $this->record->year->title }}
+        </p>
+        {{$this->table}}
+    </div>
 </x-filament-panels::page>
