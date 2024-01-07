@@ -2,28 +2,30 @@
 
 namespace App\Filament\Resources\ProjectResource\Pages;
 
-use App\Filament\Resources\ProjectQuarterResource;
 use App\Models\Project;
 use Filament\Tables\Table;
-
 use App\Models\ProjectYear;
+
 use App\Models\ProjectQuarter;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
-
 use Filament\Forms\Contracts\HasForms;
+
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Enums\ActionsPosition;
 use App\Filament\Resources\ProjectResource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\ProjectYearResource;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
+use App\Filament\Resources\ProjectQuarterResource;
+use Filament\Tables\Actions\HeaderActionsPosition;
 
 class ProjectYearQuarterList extends Page implements HasForms, HasTable
 {
@@ -51,7 +53,7 @@ class ProjectYearQuarterList extends Page implements HasForms, HasTable
             ->query(ProjectQuarter::query())
             ->columns([
 
-                 TextColumn::make('quarter.title')->sortable()->searchable(),
+                 TextColumn::make('quarter.title')->sortable()->searchable()->color('info'),
                 // TextColumn::make('project_quarters_count')->counts('project_quarters')->label('Quarters Count'),
 
 
@@ -61,8 +63,9 @@ class ProjectYearQuarterList extends Page implements HasForms, HasTable
                 // ...
             ])->headerActions([
 
+                Action::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')->url(fn (): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $this->record->project_id])),
 
-            ])
+            ], position: HeaderActionsPosition::Bottom)
 
             ->actions([
 

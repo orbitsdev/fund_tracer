@@ -27,7 +27,7 @@ class YearResource extends Resource
         return $form
             ->schema([
                 Section::make('Year Information')
-               
+
                 ->description('This will be displayed project expenses and reports')
 
 
@@ -38,7 +38,9 @@ class YearResource extends Resource
                 ])
                 ->schema( [
                     TextInput::make('title')
-                    ->maxLength(191)->columnSpanFull(),
+                    ->maxLength(191)->columnSpanFull()
+                    ->unique(ignoreRecord: true),
+
                 ]),
 
             ]);

@@ -24,7 +24,7 @@ class ProjectYearResource extends Resource
     protected static ?string $navigationLabel = 'Project Quarters';
     protected static ?string $modelLabel = 'Project Quarters';
     protected static ?int $navigationSort = 5;
-
+    protected static bool $shouldRegisterNavigation = false;
 
 
     public static function form(Form $form): Form

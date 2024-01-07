@@ -16,6 +16,7 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -51,8 +52,8 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
             ->query(ProjectYear::query())
             ->columns([
 
-                TextColumn::make('year.title')->sortable(),
-                TextColumn::make('project_quarters_count')->counts('project_quarters')->label('Quarters Count'),
+                TextColumn::make('year.title')->sortable()->color('info'),
+                TextColumn::make('project_quarters_count')->counts('project_quarters')->label('Current Quarters'),
 
 
 
@@ -60,23 +61,36 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
             ->filters([
                 // ...
             ])->headerActions([
+
+                
                 CreateAction::make()->label('Create Year')->form([
                     Select::make('year_id')
                         ->live()
-                        ->options(Year::pluck('title', 'id'))
+                        // ->options(Year::pluck('title', 'id'))
                         ->unique(modifyRuleUsing: function (Unique $rule, Get $get) {
                             return $rule->where('year_id', $get('year_id'))->where('project_id', $this->record->id);
                         })
-                        // ->relationship(name: 'year', titleAttribute: 'title')
-                        // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
+                        ->required()
+                        ->relationship(name: 'year', titleAttribute: 'title')
+                        ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
                         ->searchable()
                         ->label('Year')
                         ->preload()
                         ->native(false)
                         ->columnSpanFull()
+                        ->createOptionForm([
+                            TextInput::make('title')
+                                ->required()
+                                ->unique(ignoreRecord: true)
+                                ,
+
+                        ])
+                        ->hint('Click plus icon to add more options')
+                        ,
 
 
                 ])
+                ->modalHeading('Create Year For Quarter')
                     ->using(function (array $data, string $model): Model {
                         $data['project_id'] = $this->record->id;
 

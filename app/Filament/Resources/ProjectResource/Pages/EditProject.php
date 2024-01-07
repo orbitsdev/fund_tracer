@@ -79,6 +79,11 @@ class EditProject extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+
+            Actions\Action::make('View')->outlined()->icon('heroicon-m-eye')->url(fn (Model $record): string => ProjectResource::getUrl('view', ['record'=> $record]))->label('View Details'),
+            // Actions\Action::make('Create Quarters')->outlined()->icon('heroicon-m-sparkles')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record]))->label('Create Quarters'),
+            Actions\Action::make('Manage Quarter')->outlined()->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record]))->label('Manage Quarters'),
+
             //  Actions\DeleteAction::make(),
         ];
     }

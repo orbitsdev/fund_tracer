@@ -37,6 +37,7 @@ use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Tables\Grouping\Group as TGroup;
 use App\Filament\Resources\ProjectResource\Pages;
 use Filament\Infolists\Components\RepeatableEntry;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -591,91 +592,91 @@ class ProjectResource extends Resource
                         //         }
                         //     }),
 
-                        Section::make('Other Expenses')
-                            ->icon('heroicon-m-banknotes')
-                            ->description('Manage other expeneses  ')
-                            ->columnSpanFull()
-                            ->schema([
-                                Repeater::make('expenses')
+                        // Section::make('Other Expenses')
+                        //     ->icon('heroicon-m-banknotes')
+                        //     ->description('Manage other expeneses  ')
+                        //     ->columnSpanFull()
+                        //     ->schema([
+                        //         Repeater::make('expenses')
 
-                                    ->relationship()
-                                    ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
-                                        return $data;
-                                    })
+                        //             ->relationship()
+                        //             ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
+                        //                 return $data;
+                        //             })
 
-                                    ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
-
-
-                                        return $data;
-                                    })
-                                    ->label('Expenses')
-                                    ->columns([
-                                        'sm' => 3,
-                                        'xl' => 6,
-                                        '2xl' => 9,
-                                    ])
-                                    ->schema([
-                                        TextInput::make('description')
-                                            ->label('Description')
-                                            ->columnSpan(3)
-                                            ->required()
-                                            ->maxLength(191),
-                                        TextInput::make('amount')
-                                            ->required()
-                                            ->mask(RawJs::make('$money($input)'))
-                                            ->stripCharacters(',')
-                                            ->numeric()
-                                            ->live()
-                                            ->debounce(1000)
-                                            ->afterStateUpdated(function (Get $get, Set $set) {
-                                                self::updateTotal($get, $set);
-                                            })
-                                            ->prefix('₱ ')
-
-                                            ->columnSpan(3)
-                                            ->default(0),
+                        //             ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
 
 
-                                        FileUpload::make('financial_statements')
-                                            ->columnSpan(3)
+                        //                 return $data;
+                        //             })
+                        //             ->label('Expenses')
+                        //             ->columns([
+                        //                 'sm' => 3,
+                        //                 'xl' => 6,
+                        //                 '2xl' => 9,
+                        //             ])
+                        //             ->schema([
+                        //                 TextInput::make('description')
+                        //                     ->label('Description')
+                        //                     ->columnSpan(3)
+                        //                     ->required()
+                        //                     ->maxLength(191),
+                        //                 TextInput::make('amount')
+                        //                     ->required()
+                        //                     ->mask(RawJs::make('$money($input)'))
+                        //                     ->stripCharacters(',')
+                        //                     ->numeric()
+                        //                     ->live()
+                        //                     ->debounce(1000)
+                        //                     ->afterStateUpdated(function (Get $get, Set $set) {
+                        //                         self::updateTotal($get, $set);
+                        //                     })
+                        //                     ->prefix('₱ ')
 
-                                            // ->columnSpanFull()
-                                            // ->image()
-                                            ->preserveFilenames()
-
-                                            ->label('Financial Statement')
-                                            ->disk('public')
-                                            ->directory('project-expenses-files'),
+                        //                     ->columnSpan(3)
+                        //                     ->default(0),
 
 
+                        //                 FileUpload::make('financial_statements')
+                        //                     ->columnSpan(3)
+
+                        //                     // ->columnSpanFull()
+                        //                     // ->image()
+                        //                     ->preserveFilenames()
+
+                        //                     ->label('Financial Statement')
+                        //                     ->disk('public')
+                        //                     ->directory('project-expenses-files'),
 
 
 
-                                    ])
-                                    ->deleteAction(
-                                        fn (Action $action) => $action->requiresConfirmation(),
-                                        fn (Get $get, Set $set) => self::updateTotals($get, $set)
-                                    )
-                                    ->columnSpanFull()
-                                    ->columns(2)
-                                    ->afterStateUpdated(function (Get $get, Set $set) {
-                                        self::updateTotal($get, $set);
-                                    })
-                                    // ->collapsed()
-                                    // ->collapsible()
-                                    ->reorderable(true),
-                            ])
-                            //  ->hidden(fn (string $operation): bool => $operation === 'create')
-                            ->columnSpanFull()
-                            ->collapsed()
-                            ->collapsible()
-                            ->hidden(function (string $operation) {
-                                if ($operation === 'create') {
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            }),
+
+
+                        //             ])
+                        //             ->deleteAction(
+                        //                 fn (Action $action) => $action->requiresConfirmation(),
+                        //                 fn (Get $get, Set $set) => self::updateTotals($get, $set)
+                        //             )
+                        //             ->columnSpanFull()
+                        //             ->columns(2)
+                        //             ->afterStateUpdated(function (Get $get, Set $set) {
+                        //                 self::updateTotal($get, $set);
+                        //             })
+                        //             // ->collapsed()
+                        //             // ->collapsible()
+                        //             ->reorderable(true),
+                        //     ])
+                        //     //  ->hidden(fn (string $operation): bool => $operation === 'create')
+                        //     ->columnSpanFull()
+                        //     ->collapsed()
+                        //     ->collapsible()
+                        //     ->hidden(function (string $operation) {
+                        //         if ($operation === 'create') {
+                        //             return true;
+                        //         } else {
+                        //             return false;
+                        //         }
+                        //     }),
 
 
                         Section::make('File Attachments')
@@ -810,19 +811,19 @@ class ProjectResource extends Resource
 
                                     // ->maxLength(191)
                                     ->readOnly(),
-                                TextInput::make('program_use_budget_overview')
-                                    ->label('Total Used')
-                                    // ->prefix('₱ ')
-                                    // ->numeric()
-                                    ->columnSpan(4)
+                                // TextInput::make('program_use_budget_overview')
+                                //     ->label('Total Used')
+                                //     // ->prefix('₱ ')
+                                //     // ->numeric()
+                                //     ->columnSpan(4)
 
-                                    // ->maxLength(191)
-                                    ->readOnly(),
+                                //     // ->maxLength(191)
+                                //     ->readOnly(),
                                 TextInput::make('program_remaining_budget_overview')
                                     ->label('Remaining')
                                     // ->prefix('₱ ')
                                     // ->numeric()
-                                    ->columnSpan(4)
+                                    ->columnSpanFull()
 
                                     // ->maxLength(191)
                                     ->readOnly(),
@@ -883,26 +884,26 @@ class ProjectResource extends Resource
                                     ->default(0)
                                     // ->maxLength(191)
                                     ->readOnly(),
-                                TextInput::make('total_expenses')
-                                    ->label('Total Expenses')
-                                    ->mask(RawJs::make('$money($input)'))
-                                    ->stripCharacters(',')
-                                    ->numeric()
-                                    ->columnSpan(3)
-                                    ->default(0)
-                                    // ->maxLength(191)
-                                    ->readOnly()
-                                    ->rules([
-                                        fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                            $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
-                                            $cvalue = (float) str_replace(',', '', $value);
+                                // TextInput::make('total_expenses')
+                                //     ->label('Total Expenses')
+                                //     ->mask(RawJs::make('$money($input)'))
+                                //     ->stripCharacters(',')
+                                //     ->numeric()
+                                //     ->columnSpan(3)
+                                //     ->default(0)
+                                //     // ->maxLength(191)
+                                //     ->readOnly()
+                                //     ->rules([
+                                //         fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                //             $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
+                                //             $cvalue = (float) str_replace(',', '', $value);
 
-                                            // Assuming you want to check if $cvalue is greater than the allocated fund or less than 0
-                                            if ($cvalue > $allocatedFund || $cvalue < 0) {
-                                                $fail("The expenses amount should not exceed the allocated fund or be less than 0");
-                                            }
-                                        },
-                                    ]),
+                                //             // Assuming you want to check if $cvalue is greater than the allocated fund or less than 0
+                                //             if ($cvalue > $allocatedFund || $cvalue < 0) {
+                                //                 $fail("The expenses amount should not exceed the allocated fund or be less than 0");
+                                //             }
+                                //         },
+                                //     ]),
 
                             ]),
                     ])
@@ -1068,8 +1069,8 @@ class ProjectResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make()->label('View Details'),
-                    EditAction::make()->label('Manage Year & Quarters'),
-                    Tables\Actions\Action::make('Manage Quarter')->icon('heroicon-m-pencil')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record])),
+                    EditAction::make()->label('Update Basic Information'),
+                    Tables\Actions\Action::make('Manage Quarter')->label('Manage Quarters')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record])),
 
 
 
@@ -1080,6 +1081,16 @@ class ProjectResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
+            // ->groups([
+            //     TGroup::make('program.title')
+            //         ->titlePrefixedWithLabel(false)
+            //         ->getTitleFromRecordUsing(fn (Model $record): string => $record->title ?  ucfirst($record->title) : '')
+            //         ->label('Program')
+            //         ->collapsible()
+            //         ,
+
+
+            // ])
             ->modifyQueryUsing(fn (Builder $query) => $query->latest());
     }
 
