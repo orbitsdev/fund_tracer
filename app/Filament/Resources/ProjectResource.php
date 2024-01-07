@@ -46,6 +46,7 @@ use Filament\Infolists\Components\Section as InSection;
 use App\Filament\Resources\ProjectResource\RelationManagers;
 use Filament\Infolists\Components\Actions\Action as IFAction;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
+use Thiktak\FilamentSimpleListEntry\Infolists\Components\SimpleListEntry;
 
 class ProjectResource extends Resource
 {
@@ -195,9 +196,27 @@ class ProjectResource extends Resource
                     ])
                     ->schema([
 
-                        ViewEntry::make('')
-                            ->view('infolists.components.project-division-details')
-                            ->columnSpanFull(),
+                        // ViewEntry::make('')
+                        //     ->view('infolists.components.project-division-details')
+                        //     ->columnSpanFull(),
+                        // RepeatableEntry::make('project_years')
+                        // ->schema([
+                        //     TextEntry::make('year.title'),
+                        //     RepeatableEntry::make('project_quarters')
+                        //     ->schema([
+                        //         TextEntry::make('quarter.title'),
+                        //         RepeatableEntry::make('project_divisions')
+                        //         ->schema([
+                        //             TextEntry::make('division.title'),
+                        //             RepeatableEntry::make('project_division_categories')
+                        //             ->schema([
+                        //                 TextEntry::make('division.title'),
+                                        
+                        //             ]),
+                                    
+                        //         ]),
+                        //     ]),
+                        // ])->columnSpanFull()
                     ]),
                 // RepeatableEntry::make('project_divisions')
                 //     ->schema([

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf5e019074eaeff53ee46f85f4b933b5",
+    "content-hash": "eddcf089903dc147eb11828d648249d4",
     "packages": [
         {
             "name": "awcodes/filament-table-repeater",
@@ -7604,6 +7604,82 @@
                 }
             ],
             "time": "2023-12-28T19:16:56+00:00"
+        },
+        {
+            "name": "thiktak/filament-simple-list-entry",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Thiktak/filament-simple-list-entry.git",
+                "reference": "8d7a8286b1ba5905e2d76c686e8ebcad89c63dcb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Thiktak/filament-simple-list-entry/zipball/8d7a8286b1ba5905e2d76c686e8ebcad89c63dcb",
+                "reference": "8d7a8286b1ba5905e2d76c686e8ebcad89c63dcb",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0",
+                "illuminate/contracts": "^10.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^7.9",
+                "nunomaduro/larastan": "^2.0.1",
+                "orchestra/testbench": "^8.0",
+                "pestphp/pest": "^2.0",
+                "pestphp/pest-plugin-arch": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "spatie/laravel-ray": "^1.26"
+            },
+            "type": "project",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Thiktak\\FilamentSimpleListEntry\\FilamentSimpleListEntryServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Thiktak\\FilamentSimpleListEntry\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Georges OLIVARES",
+                    "email": "georges.olivares@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Simple List Entry for Infolist",
+            "homepage": "https://github.com/Thiktak/filament-simple-list-entry",
+            "keywords": [
+                "filament",
+                "filament-plugin",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/Thiktak/filament-simple-list-entry/issues",
+                "source": "https://github.com/Thiktak/filament-simple-list-entry"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/:vendor_name",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-09-09T17:35:06+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

@@ -1,6 +1,26 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
+    
+    <div style="display: block !important;">   
 
-    <div class="container mx-auto ">
+        {{-- <h2>Vertical Headings:</h2> --}}
+
+        <table style="width:100%" class="border border-primary-600" border="2">
+          <tr>
+            <th>Name:</th>
+            <td>Bill Gates</td>
+          </tr>
+          <tr>
+            <th>Telephone:</th>
+            <td>555 77 854</td>
+          </tr>
+          <tr>
+            <th>Telephone:</th>
+            <td>555 77 855</td>
+          </tr>
+        </table>
+    {{$getRecord()}}
+    </div>
+    {{-- <div class="container mx-auto ">
         <div class="border border-black p-6 text-warning rounded-md">
 
             @foreach ($getRecord()->project_divisions as $first)
@@ -33,78 +53,15 @@
                 @endforeach
 
 
-                {{-- <div class="mb-4 ">
-
-
-
-
-            </div>
-
-            <div >
-                @foreach ($first->project_division_categories as $secondlayer)
-
-               <div >
-                   {{$secondlayer->from}}
-                        @foreach ($secondlayer->project_division_sub_category_expenses as $thirdlayer)
-                        <br>
-                        @if ($secondlayer->from === 'Indirect Cost')
-                                 {{$thirdlayer->title}}
-
-                                 @foreach ($thirdlayer->fourth_layers as $fourtlayer)
-                                 <br>
-                                 {{$fourtlayer->title}}
-                                 @endforeach
-
-                        @endif
-
-
-                        @endforeach
-               </div>
-                @endforeach
-            </div> --}}
             @endforeach
         </div>
 
         <div>
             <div>
-                {{-- <div >
+               --}}
 
 
 
-
-    @foreach ($getRecord()->project_divisions as $first)
-    <div class="mb-4 ">
-        {{$first->division->title}}
-
-
-
-
-    </div>
-
-    <div >
-        @foreach ($first->project_division_categories as $secondlayer)
-
-       <div >
-           {{$secondlayer->from}}
-                @foreach ($secondlayer->project_division_sub_category_expenses as $thirdlayer)
-                <br>
-                @if ($secondlayer->from === 'Indirect Cost')
-                         {{$thirdlayer->title}}
-
-                         @foreach ($thirdlayer->fourth_layers as $fourtlayer)
-                         <br>
-                         {{$fourtlayer->title}}
-                         @endforeach
-
-                @endif
-
-
-                @endforeach
-       </div>
-        @endforeach
-    </div>
-    @endforeach
-    </div> --}}
 
 
 </x-dynamic-component>
