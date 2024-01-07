@@ -188,17 +188,11 @@ class ProjectResource extends Resource
 
 
 
-                    Fieldset::make('Particular Details')
-                    ->columns([
-                        'sm' => 3,
-                        'xl' => 6,
-                        '2xl' => 9,
-                    ])
-                    ->schema([
+                   
 
-                        // ViewEntry::make('')
-                        //     ->view('infolists.components.project-division-details')
-                        //     ->columnSpanFull(),
+                        ViewEntry::make('')
+                            ->view('infolists.components.project-division-details')
+                            ->columnSpanFull(),
                         // RepeatableEntry::make('project_years')
                         // ->schema([
                         //     TextEntry::make('year.title'),
@@ -217,7 +211,7 @@ class ProjectResource extends Resource
                         //         ]),
                         //     ]),
                         // ])->columnSpanFull()
-                    ]),
+                    
                 // RepeatableEntry::make('project_divisions')
                 //     ->schema([
 
