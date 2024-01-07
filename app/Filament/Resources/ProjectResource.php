@@ -33,6 +33,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
@@ -43,6 +44,7 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Infolists\Components\Section as InSection;
 use App\Filament\Resources\ProjectResource\RelationManagers;
+use Filament\Infolists\Components\Actions\Action as IFAction;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 
 class ProjectResource extends Resource
@@ -67,6 +69,21 @@ class ProjectResource extends Resource
     {
         return $infolist
             ->schema([
+                // Actions::make([
+                //     IFAction::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')->url(fn (): string => ProjectResource::getUrl('index')),
+
+                //         // IFAction::make('resetStars')
+                //         // ->icon('heroicon-m-arrow-down-tray')
+                //         // // ->color('danger')
+                //         // // ->requiresConfirmation()
+                //         // ->action(function () {
+                //         //     dd('test');
+                //         //     // $resetStars();
+                //         // })
+                //         // ->outlined()
+                //         // ->label('Export To Excel'),
+                // ]),
+
                 Fieldset::make('Program Details')
 
 

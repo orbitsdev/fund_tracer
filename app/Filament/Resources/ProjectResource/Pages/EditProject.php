@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Filament\Actions;
 use App\Models\Program;
 use App\Models\Project;
+use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\EditRecord;
 use App\Filament\Resources\ProjectResource;
@@ -79,6 +80,7 @@ class EditProject extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')->url(fn (): string => ProjectResource::getUrl('index')),
 
             Actions\Action::make('View')->outlined()->icon('heroicon-m-eye')->url(fn (Model $record): string => ProjectResource::getUrl('view', ['record'=> $record]))->label('View Details'),
             // Actions\Action::make('Create Quarters')->outlined()->icon('heroicon-m-sparkles')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record]))->label('Create Quarters'),

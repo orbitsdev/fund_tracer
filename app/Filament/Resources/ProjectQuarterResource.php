@@ -195,6 +195,7 @@ class ProjectQuarterResource extends Resource
                                                     ->required(),
                                             ])->columnSpanFull()
                                             ->withoutHeader()
+                                            ->reorderable(true)
                                             ,
                                     ])
                                     // ->withoutHeader()
