@@ -48,7 +48,10 @@
                                                             <!-- Subcategory and Expense Details -->
                                                             <td class="border text-xs border-gray-500 px-4 py-2">
                                                                 @if ($project_division_category->from === 'Indirect Cost')
+                                                                <p class="font-bold ">
+
                                                                     {{ $thirdlayer->parent_title }}
+                                                                </p>
                                                                 @endif
                                                                 {{ $thirdlayer->title }}
                                                             </td>
