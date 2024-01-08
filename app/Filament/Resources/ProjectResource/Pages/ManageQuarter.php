@@ -98,7 +98,7 @@ class ManageQuarter extends Page implements HasForms,  HasActions
 //     // dd($data);
 
 //     return $data;
-// }    
+// }
 
 
     public function createQuarter(): FAction
@@ -284,18 +284,18 @@ class ManageQuarter extends Page implements HasForms,  HasActions
                                     ])
                                     // ->withoutHeader()
                                     ->columnSpanFull()
-                                    // ->visible(fn (Get $get) => !empty($get('from')) ? true : false)
+                                     ->visible(fn (Get $get) => !empty($get('from')) ? true : false)
 
 
                             ])
                             ->columns(2)
                             ->columnSpanFull()
-                            // ->visible(fn (Get $get) => !empty($get('division_id')) ? true : false),
+                            ->visible(fn (Get $get) => !empty($get('division_id')) ? true : false),
 
 
 
                     ])
-                    // ->visible(fn (Get $get) => !empty($get('quarter_id')) ? true : false),
+                    ->visible(fn (Get $get) => !empty($get('quarter_id')) ? true : false),
 
                 // ...
             ])
