@@ -30,10 +30,12 @@
                                         <td class="text-sm border border-gray-500 px-4 py-2">{{ $secondlayer->from }}</td>
                                         <td class="text-sm border border-gray-500 px-4 py-2">
                                             @if ($secondlayer->from === 'Indirect Cost')
-                                                {{ $thirdlayer->parent_title }}
+                                                <span style="font-weight: bold; color: blue;">{{ $thirdlayer->parent_title }}</span>
                                             @endif
-                                            {{ $thirdlayer->title }}
+                                            <span style="font-weight: normal; color: black;">{{ $thirdlayer->title }}</span>
                                         </td>
+
+
                                         <td class="text-sm border border-gray-500 px-4 py-2">
                                             {{ number_format($thirdlayer->fourth_layers->sum('amount')) }}
                                         </td>
