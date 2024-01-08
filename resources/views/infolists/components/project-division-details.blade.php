@@ -24,7 +24,7 @@
                             <tr>
                                 <!-- Quarter -->
                                 <td
-                                    class="border text-xs border-gray-500 px-4 py-2 text-md  text-primary-600">
+                                    class="border text-xs border-gray-500 px-4 py-2 text-md font-medium ">
                                     {{ $project_quarter->quarter->title }}
                                 </td>
                                 @foreach ($project_quarter->project_divisions as $project_division)
@@ -57,17 +57,27 @@
                                                             </td>
                                                         </tr>
                                                         @foreach ($thirdlayer->fourth_layers as $fourthlayer)
-                                                            <!-- Fourth Layer Details -->
-                                                            <tr>
-                                                                <td class="border text-xs border-gray-500 px-8 py-2"></td>
-                                                                <td class="border text-xs border-gray-500 px-8 px-4 py-2">
-                                                                    {{ $fourthlayer->title }}
-                                                                </td>
-                                                                <td class="border text-xs border-gray-500 px-8 px-4 py-2">
-                                                                    {{ number_format($fourthlayer->amount) }}
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
+                                                        <!-- Fourth Layer Details -->
+                                                        <tr>
+                                                            <td class="border text-xs border-gray-500 px-8 py-2"></td>
+                                                            <td class="border text-xs border-gray-500 px-8 px-4 py-2">
+                                                                {{ $fourthlayer->title }}
+                                                            </td>
+                                                            <td class="border text-xs border-gray-500 px-8 px-4 py-2">
+                                                                {{ number_format($fourthlayer->amount) }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+
+                                                    <!-- Total for Fourth Layer -->
+                                                    <tr>
+                                                        <td class="border text-xs border-gray-500 px-8 py-2"></td>
+                                                        <td class="border text-xs border-gray-500 px-8 px-4 py-2 font-bold">Total</td>
+                                                        <td class="border text-xs border-gray-500 px-8 px-4 py-2 font-bold">
+                                                            {{ number_format($thirdlayer->fourth_layers->sum('amount')) }}
+                                                        </td>
+                                                    </tr>
+
                                                     @endforeach
                                                 </table>
                                             </td>
