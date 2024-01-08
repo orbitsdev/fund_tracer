@@ -42,47 +42,63 @@
                                             </td>
                                             <!-- Subcategory and Expense Table -->
                                             <td class="border text-xs border-gray-500 px-4 py-2">
-                                                <table class="border text-xs border-gray-500 w-full" >
+                                                <table class="border text-xs border-gray-500 w-full">
                                                     @foreach ($project_division_category->project_division_sub_category_expenses as $thirdlayer)
                                                         <tr>
                                                             <!-- Subcategory and Expense Details -->
                                                             <td class="border text-xs border-gray-500 px-4 py-2">
                                                                 @if ($project_division_category->from === 'Indirect Cost')
-                                                                <p class="font-bold ">
-
-                                                                    {{ $thirdlayer->parent_title }}
-                                                                </p>
+                                                                    <p class="font-bold">
+                                                                        {{ $thirdlayer->parent_title }}
+                                                                    </p>
                                                                 @endif
                                                                 {{ $thirdlayer->title }}
                                                             </td>
                                                             <td class="border text-xs border-gray-500 px-4 py-2">
-                                                                {{-- {{ $thirdlayer}} --}}
+                                                                {{-- Display a download link for each expense --}}
+                                                                @if ($thirdlayer->file_path)
+                                                                    <a href="{{ asset($thirdlayer->file_path) }}" download>Download Receipt</a>
+                                                                @else
+                                                                    No Receipt Available
+                                                                @endif
                                                             </td>
                                                         </tr>
                                                         @foreach ($thirdlayer->fourth_layers as $fourthlayer)
-                                                        <!-- Fourth Layer Details -->
+                                                            <!-- Fourth Layer Details -->
+                                                            <tr>
+                                                                <td class="border text-xs border-gray-500 px-8 py-2"></td>
+                                                                <td class="border text-xs border-gray-500 px-8 py-2"></td>
+                                                                <td class="border text-xs border-gray-500 px-8 px-4 py-2">
+                                                                    {{ $fourthlayer->title }}
+                                                                </td>
+                                                                <td class="border text-xs border-gray-500 px-8 px-4 py-2">
+                                                                    {{ number_format($fourthlayer->amount) }}
+                                                                </td>
+                                                                <!-- Download link for each fourth layer -->
+                                                                {{-- <td class="border  text-xs border-gray-500 text-blue underline  px-8 px-4 py-2">
+                                                                    Download
+
+                                                                        @if ($fourthlayer->file_path)
+                                                                        <a href="{{ asset($fourthlayer->file_path) }}" download>Download Receipt</a>
+                                                                    @else
+                                                                    @endif
+
+                                                                </td> --}}
+                                                            </tr>
+                                                        @endforeach
+
+                                                        <!-- Total for Fourth Layer -->
                                                         <tr>
                                                             <td class="border text-xs border-gray-500 px-8 py-2"></td>
-                                                            <td class="border text-xs border-gray-500 px-8 px-4 py-2">
-                                                                {{ $fourthlayer->title }}
+                                                            <td class="border text-xs border-gray-500 px-8 px-4 py-2 font-bold">Total</td>
+                                                            <td class="border text-xs border-gray-500 px-8 px-4 py-2 font-bold">
+                                                                {{ number_format($thirdlayer->fourth_layers->sum('amount')) }}
                                                             </td>
-                                                            <td class="border text-xs border-gray-500 px-8 px-4 py-2">
-                                                                {{ number_format($fourthlayer->amount) }}
-                                                            </td>
+                                                            <td class="border text-xs border-gray-500 px-8 px-4 py-2"></td> <!-- Empty column for consistency -->
                                                         </tr>
                                                     @endforeach
-
-                                                    <!-- Total for Fourth Layer -->
-                                                    <tr>
-                                                        <td class="border text-xs border-gray-500 px-8 py-2"></td>
-                                                        <td class="border text-xs border-gray-500 px-8 px-4 py-2 font-bold">Total</td>
-                                                        <td class="border text-xs border-gray-500 px-8 px-4 py-2 font-bold">
-                                                            {{ number_format($thirdlayer->fourth_layers->sum('amount')) }}
-                                                        </td>
-                                                    </tr>
-
-                                                    @endforeach
                                                 </table>
+
                                             </td>
                                         </tr>
                                         @endforeach
