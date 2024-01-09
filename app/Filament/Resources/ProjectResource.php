@@ -188,7 +188,7 @@ class ProjectResource extends Resource
 
 
 
-                   
+
 
                         ViewEntry::make('')
                             ->view('infolists.components.project-division-details')
@@ -205,13 +205,13 @@ class ProjectResource extends Resource
                         //             RepeatableEntry::make('project_division_categories')
                         //             ->schema([
                         //                 TextEntry::make('division.title'),
-                                        
+
                         //             ]),
-                                    
+
                         //         ]),
                         //     ]),
                         // ])->columnSpanFull()
-                    
+
                 // RepeatableEntry::make('project_divisions')
                 //     ->schema([
 
@@ -1100,7 +1100,8 @@ class ProjectResource extends Resource
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make()->label('View Details'),
                     EditAction::make()->label('Update Basic Information'),
-                    Tables\Actions\Action::make('Manage Quarter')->label('Manage Quarters')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record])),
+                    // Tables\Actions\Action::make('Manage Quarter')->label('Manage Quarters')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record])),
+                    Tables\Actions\Action::make('budget_division')->label('Budget Division')->icon('heroicon-m-banknotes')->url(fn (Model $record): string => ProjectResource::getUrl('budget-division', ['record'=> $record])),
 
 
 
@@ -1139,7 +1140,8 @@ class ProjectResource extends Resource
             'index' => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
-            // 'edit-quarter' => Pages\EditProjectQuarter::route('/{record}/edit/quaters'),
+             'budget-division' => Pages\EditProjectQuarter::route('/{record}/edit/budget-division'),
+            // 'budget-division' => Pages\BudgetDivision::route('/{record}/budget-division'),
             'manage-quarter-year' => Pages\ManageYearQuarter::route('/{record}/year-quarters'),
             'create-quarter' => Pages\ManageQuarter::route('/{record}/quarter/create'),
             'quarter-list' => Pages\ProjectYearQuarterList::route('/{record}/quarters'),
