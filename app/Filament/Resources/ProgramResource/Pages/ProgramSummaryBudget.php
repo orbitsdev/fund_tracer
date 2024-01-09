@@ -20,7 +20,7 @@ class ProgramSummaryBudget extends Page
 
         $this->record = Program::with(['projects.project_years.project_quarters.project_divisions.project_division_categories.project_division_sub_category_expenses.fourth_layers'])->find($record);
 
-        $this->constructObject($this->record );
+       // $this->constructObject($this->record );
     }
 
 
