@@ -77,8 +77,10 @@ class Program extends Model
 
 
 
-      //BudgetQuarter
+      //ProjectQuarter
        // QuaterExpenses
+
+            //BudgetExpenses
 
 
         //1. User will select the year
@@ -105,6 +107,14 @@ class Program extends Model
 
 
 
+            // final soution is
+
+            // ProjectQuarter
+                // ProjectQuarterExpenses
+                //    has amount
+                //    belongs to project expenses
+
+                // and re arange the relationship back to the originala again
 
 
 }
