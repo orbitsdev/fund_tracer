@@ -91,10 +91,10 @@
                                                         <tr>
                                                             <td class="border text-xs border-gray-500 px-8 py-2"></td>
                                                             <td class="border text-xs border-gray-500 px-8 px-4 py-2 font-bold">Total</td>
-                                                            <td class="border text-xs border-gray-500 px-8 px-4 py-2 font-bold">
+                                                            <td class="border text-xs border-gray-500 px-8 px-4 py-2 font-bold" rowspan="">
                                                                 {{ number_format($thirdlayer->fourth_layers->sum('amount')) }}
                                                             </td>
-                                                            <td class="border text-xs border-gray-500 px-8 px-4 py-2"></td> <!-- Empty column for consistency -->
+                                                            {{-- <td class="border text-xs border-gray-500 px-8 px-4 py-2"></td> <!-- Empty column for consistency --> --}}
                                                         </tr>
                                                     @endforeach
                                                 </table>
