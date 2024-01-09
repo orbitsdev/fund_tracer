@@ -9,14 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-
-     // independent table
     public function up(): void
     {
         Schema::create('project_division_sub_categories', function (Blueprint $table) {
             $table->id();
             $table->string('title')->nullable();
-           
+
             $table->timestamps();
         });
     }
