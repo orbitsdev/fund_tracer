@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('project_years', function (Blueprint $table) {
+        Schema::create('quarter_expenses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('year_id')->nullable();
-            $table->foreignId('project_id')->nullable();
+            $table->foreignId('project_year')->nullable();
+            $table->foreignId('fourth_layer_id')->nullable();
+            $table->decimal('amount', 10, 2)->nullable();
             $table->timestamps();
         });
-}
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('project_years');
+        Schema::dropIfExists('quarter_expenses');
     }
 };

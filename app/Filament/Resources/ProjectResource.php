@@ -1102,6 +1102,7 @@ class ProjectResource extends Resource
                     EditAction::make()->label('Update Basic Information'),
                     // Tables\Actions\Action::make('Manage Quarter')->label('Manage Quarters')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record])),
                     Tables\Actions\Action::make('budget_division')->label('Budget Division')->icon('heroicon-m-banknotes')->url(fn (Model $record): string => ProjectResource::getUrl('budget-division', ['record'=> $record])),
+                    Tables\Actions\Action::make('quarter_budget')->label('Quarter Expenses')->icon('heroicon-m-chart-bar')->url(fn (Model $record): string => ProjectResource::getUrl('quarter-budget', ['record'=> $record])),
 
 
 
@@ -1141,6 +1142,7 @@ class ProjectResource extends Resource
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
              'budget-division' => Pages\EditProjectQuarter::route('/{record}/edit/budget-division'),
+             'quarter-budget' => Pages\ProjectQuarterBudjet::route('/{record}/edit/quarter-budget'),
             // 'budget-division' => Pages\BudgetDivision::route('/{record}/budget-division'),
             'manage-quarter-year' => Pages\ManageYearQuarter::route('/{record}/year-quarters'),
             'create-quarter' => Pages\ManageQuarter::route('/{record}/quarter/create'),
