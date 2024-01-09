@@ -421,7 +421,7 @@ class ProgramResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                         Tables\Actions\Action::make('Summary Budget')->label('Summary Budget')->button()->outlined()->icon('heroicon-o-banknotes')->url(fn (Model $record): string => ProgramResource::getUrl('summary-budget', ['record'=> $record])),
+                    Tables\Actions\Action::make('Summary Budget')->label('Summary Budget')->icon('heroicon-o-banknotes')->url(fn (Model $record): string => ProgramResource::getUrl('summary-budget', ['record'=> $record])),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                 ])

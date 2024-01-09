@@ -1,3 +1,4 @@
+
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
 
 
