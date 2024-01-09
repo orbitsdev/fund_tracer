@@ -223,7 +223,6 @@ class ManageQuarter extends Page implements HasForms,  HasActions
                                 Repeater::make('project_division_sub_category_expenses')
                                     ->live()
                                     ->relationship()
-
                                     ->label('Expense Categories')
                                     ->columns([
                                         'sm' => 3,

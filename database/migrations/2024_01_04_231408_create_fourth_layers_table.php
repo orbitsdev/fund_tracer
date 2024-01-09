@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('project_division_sub_category_expense_id')->nullable();
             // $table->foreignId('project_division_sub_category_id')->nullable();
             $table->string('title')->nullable();
-               $table->decimal('amount', 10, 2)->nullable();
-                $table->text('file')->nullable();
+            $table->decimal('amount', 10, 2)->nullable();
+            $table->text('file')->nullable();
             $table->timestamps();
         });
     }

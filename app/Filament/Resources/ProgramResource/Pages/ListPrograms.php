@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\ProgramResource\Pages;
 
-use App\Filament\Resources\ProgramResource;
 use Filament\Actions;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\ProgramResource;
 
 class ListPrograms extends ListRecords
 {
@@ -13,6 +14,7 @@ class ListPrograms extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+
             Actions\CreateAction::make(),
         ];
     }

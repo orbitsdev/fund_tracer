@@ -51,7 +51,7 @@ class ProgramResource extends Resource
 
                 Group::make()
                 ->schema([
-                
+
                     Section::make('Program Information')
                     ->icon('heroicon-m-pencil-square')
 
@@ -71,7 +71,7 @@ class ProgramResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                         TextInput::make('program_leader')
-                        
+
                         ->live()
                         ->debounce(700)
                         ->afterStateUpdated(function (Get $get, Set $set) {
@@ -86,7 +86,7 @@ class ProgramResource extends Resource
 
                         ->mask(RawJs::make('$money($input)'))
                         ->stripCharacters(',')
-                        ->numeric()
+
                             // ->mask(RawJs::make('$money($input)'))
                             // ->stripCharacters(',')
                             ->prefix('₱')
@@ -116,7 +116,7 @@ class ProgramResource extends Resource
                             self::setCurrentDuration($get, $set);
                         })
                             ->required(),
-                            
+
                         DatePicker::make('end_date')->date()->native(false)->columnSpan(4)
                         ->live()
                         ->debounce(700)
@@ -236,24 +236,10 @@ class ProgramResource extends Resource
                 ->schema([
 
                     Section::make('Overview')
-            
+
                     ->columnSpanFull()
                     ->schema([
 
-                        // TextInput::make('remaining_budget')
-                        // ->label('Remaining Budget')
-                        // // ->prefix('₱ ')
-                        // // ->numeric()
-                        // ->columnSpan(3)
-                        // ->readonly(),
-                        // TextInput::make('total used')
-                        // ->label('Total Usage')
-                        // // ->prefix('₱ ')
-                        // // ->numeric()
-                        // ->columnSpan(3)
-                        // ->readonly()
-                        // ,
-                        
                         TextInput::make('program_leader_overview')
                         ->label('Program Leader')
                         // ->prefix('₱ ')
@@ -262,7 +248,7 @@ class ProgramResource extends Resource
 
                         ->columnSpanFull()
                         // ->maxLength(191)
-                        ->readOnly(), 
+                        ->readOnly(),
                         TextInput::make('current_duration_overview')
                         ->label('Current Duration')
                         // ->prefix('₱ ')
@@ -271,7 +257,7 @@ class ProgramResource extends Resource
 
                         ->columnSpanFull()
                         // ->maxLength(191)
-                        ->readOnly(), 
+                        ->readOnly(),
                         // Placeholder::make('duration')
                         TextInput::make('duration_overview')
                         ->label('Total Duration')
@@ -281,16 +267,16 @@ class ProgramResource extends Resource
 
                         ->columnSpanFull()
                         // ->maxLength(191)
-                        ->readOnly(), 
+                        ->readOnly(),
 
-                       
-                    
+
+
 
                     ])
 
                 ])->columnSpan(['lg' => 1]),
 
-                
+
 
             ])
             ->columns(3)
@@ -306,7 +292,7 @@ class ProgramResource extends Resource
                     ->searchable(
                         // isIndividual:true,
                     )
-                    
+
                     ,
                 TextColumn::make('program_leader')
                     ->label('Program Leader')
@@ -320,7 +306,7 @@ class ProgramResource extends Resource
                     // ->badge()
                     ->sortable(),
 
- 
+
                     // TextColumn::make('projects_count')
                     // ->counts('projects')
                     // ->badge()
@@ -329,9 +315,9 @@ class ProgramResource extends Resource
                     //         return ($index + 1) . ". {$project->title}";
                     //     })->implode("\n");
                     // }),
-                
-                
-                
+
+
+
                     TextColumn::make('projects')
                     ->listWithLineBreaks()
                     ->label('Project & Allocated Fund')
@@ -352,9 +338,9 @@ class ProgramResource extends Resource
                         })->implode("\n");
                     })
                     ,
-                    
-                    
-                    
+
+
+
                     // TextColumn::make('total_usage')
                     //     ->label('Total Usage')
                     //     ->prefix('₱ ')
@@ -362,8 +348,8 @@ class ProgramResource extends Resource
                     //     // ->badge()
                     //     // ->color('info')
                     //     ->sortable(),
-               
-               
+
+
 
                 // TextColumn::make('total_usage')
                 // ->label('Total Distribute')
@@ -384,7 +370,7 @@ class ProgramResource extends Resource
 
 
 
-             
+
 
 
                 // TextColumn::make('files')
@@ -404,7 +390,7 @@ class ProgramResource extends Resource
                 // ->color(fn (string $state): string => match ($state) {
                 //     'Pending' => 'gray',
                 //     'Planning' => 'info',
-                //     'Active' => 'success',  
+                //     'Active' => 'success',
                 //     'Cancelled' => 'danger',
                 //     'On Hold' => 'warning',
                 //     'Completed' => 'sucess',
@@ -413,19 +399,19 @@ class ProgramResource extends Resource
 
                 // ->searchable(),
 
-                
+
                 TextColumn::make('start_date')
-               
+
                     ->date()
                     ->label('Start')
-                   
+
                     ,
                 TextColumn::make('end_date')
-             
-              
+
+
                     ->date()
                     ->label('End')
-                    
+
                     ,
 
 
@@ -435,6 +421,7 @@ class ProgramResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
+                         Tables\Actions\Action::make('Summary Budget')->label('Summary Budget')->button()->outlined()->icon('heroicon-o-banknotes')->url(fn (Model $record): string => ProgramResource::getUrl('summary-budget', ['record'=> $record])),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                 ])
@@ -450,7 +437,7 @@ class ProgramResource extends Resource
             ->modifyQueryUsing(fn (Builder $query) => $query->latest())
             ->groups([
                 'status',
-                
+
             ])
             ->defaultGroup('status')
             ;
@@ -468,6 +455,7 @@ class ProgramResource extends Resource
         return [
             'index' => Pages\ListPrograms::route('/'),
             'create' => Pages\CreateProgram::route('/create'),
+            'summary-budget' => Pages\ProgramSummaryBudget::route('/summary-budget/{record}'),
             'edit' => Pages\EditProgram::route('/{record}/edit'),
         ];
     }
@@ -484,13 +472,13 @@ class ProgramResource extends Resource
         $startDate = $get('start_date');
         $endDate = $get('end_date');
         if (!empty($startDate) && !empty($endDate)) {
-              
+
             // dd(Carbon::parse($startDate)->format('F d, Y'), Carbon::parse($startDate)->format('F d, Y'));
 
             $currentDuration = Carbon::parse($startDate)->format('F d, Y') . ' - '. Carbon::parse($endDate)->format('F d, Y');
 
             $set('current_duration_overview', $currentDuration);
-            
+
 
 
         }
@@ -499,17 +487,17 @@ class ProgramResource extends Resource
     public static function calculateTotalMonthDurationn(Get $get, Set $set)
     {
 
-       
+
         $startDate = $get('start_date');
         $endDate = $get('end_date');
-    
+
         if (!empty($startDate) && !empty($endDate)) {
             $startDate = Carbon::parse($startDate);
             $endDate = Carbon::parse($endDate);
-    
+
             // Calculate the difference in months
             $totalMonths = $endDate->diffInMonths($startDate);
-    
+
             // Set the duration in months
             $set('duration_overview', $totalMonths . ' months');
         }
