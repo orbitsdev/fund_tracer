@@ -27,9 +27,7 @@ class ProjectYear extends Model
     }
 
     // add quarter divison epxenses
-public function quarter_expense(){
-        return $this->hasMany(QuarterExpense::class);
-    }
+
     // public function quarters(){
     //     return  $this->hasMany(Quarter::class);
     // }

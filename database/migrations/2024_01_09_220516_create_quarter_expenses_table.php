@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('quarter_expenses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_year')->nullable();
+            $table->foreignId('project_quarter_id')->nullable();
             $table->foreignId('fourth_layer_id')->nullable();
             $table->decimal('amount', 10, 2)->nullable();
             $table->timestamps();
