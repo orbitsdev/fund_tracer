@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quarter_expenses', function (Blueprint $table) {
+        Schema::create('quarter_expense_budget_divisions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quarter_expense_budget_division_id')->nullable();
-            $table->foreignId('fourth_layer_id')->nullable();
-            $table->decimal('amount', 10, 2)->nullable();
+            $table->foreignId('project_quarter_id')->nullable();
+            $table->foreignId('project_division_id')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quarter_expenses');
+        Schema::dropIfExists('quarter_expense_budget_divisions');
     }
 };

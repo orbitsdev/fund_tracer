@@ -29,10 +29,18 @@ class ProjectDivisionCategory extends Model
 
 
 
-
     public function project_division_sub_category_expenses(){
         return $this->hasMany(ProjectDivisionSubCategoryExpense::class);
     }
+
+
+    public function quarter_expenses(){
+        return $this->hasMany(QuarterExpense::class);
+    }
+
+
+
+
 
 
 
