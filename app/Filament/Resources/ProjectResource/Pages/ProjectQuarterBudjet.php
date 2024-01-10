@@ -135,8 +135,8 @@ class ProjectQuarterBudjet extends EditRecord
                                                     ->relationship(
                                                         name: 'fourth_layer',
                                                          titleAttribute: 'title',
-                                                         modifyQueryUsing: fn (Builder $query) => $query->whereHas('project_division_sub_category_expense.project_division_category', function($query){
-                                                            $query->where('from', 'Direct Cost');
+                                                         modifyQueryUsing: fn (Builder $query , Get $get, Set $set) => $query->whereHas('project_division_sub_category_expense.project_division_category', function($query) use($get ,$set){
+                                                            $query->where('from', 'Direct Cost')->where('project_devision_id', $get('../../project_devision_id'));
                                                         }),
                                                          )
                                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
@@ -165,8 +165,10 @@ class ProjectQuarterBudjet extends EditRecord
 
                                                 ])
                                                 ->collapsible()
-                                                ->collapsed()
-                                                ->columnSpanFull(),
+
+                                                ->columnSpanFull()
+                                                ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
+
                                                 Repeater::make('indirect_cost_expenses')
                                                 ->relationship('quarter_expenses')
                                                 ->label('Indrect Cost Expenses')
@@ -183,8 +185,8 @@ class ProjectQuarterBudjet extends EditRecord
                                                     ->relationship(
                                                         name: 'fourth_layer',
                                                         titleAttribute: 'title',
-                                                        modifyQueryUsing: fn (Builder $query) => $query->whereHas('project_division_sub_category_expense.project_division_category', function($query){
-                                                            $query->where('from', 'Indirect Cost');
+                                                        modifyQueryUsing: fn (Builder $query , Get $get, Set $set) => $query->whereHas('project_division_sub_category_expense.project_division_category', function($query) use($get,$set){
+                                                            $query->where('from', 'Indirect Cost')->where('project_devision_id', $get('../../project_devision_id'));;
                                                         }),
                                                         )
                                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
@@ -213,8 +215,10 @@ class ProjectQuarterBudjet extends EditRecord
 
                                                 ])
                                                 ->collapsible()
-                                                ->collapsed()
-                                                ->columnSpanFull(),
+
+                                                ->columnSpanFull()
+                                                ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false)
+                                                ,
 
 
                                         ])
