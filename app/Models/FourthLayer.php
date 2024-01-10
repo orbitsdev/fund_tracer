@@ -15,7 +15,7 @@ class FourthLayer extends Model
         return $this->belongsTo(ProjectDivisionSubCategoryExpense::class);
     }
 
-    public function QuarterExpense(){
+    public function quarter_expenses(){
         return $this->hasMany(QuarterExpense::class);
     }
 }

@@ -7,9 +7,10 @@ use App\Models\Division;
 use App\Models\ProjectQuarter;
 use App\Models\ProjectDivisionCategory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\QuarterExpenseBudgetDivision;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ProjectDevision extends Model 
+class ProjectDevision extends Model
 {
     use HasFactory;
 
@@ -29,6 +30,7 @@ class ProjectDevision extends Model
     }
 
 
-
-
+    public function quarter_expense_budget_divisions(){
+        return $this->hasMany(QuarterExpenseBudgetDivision::class);
+    }
 }

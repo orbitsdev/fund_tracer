@@ -47,7 +47,7 @@ class BudgetDivision extends Page implements HasForms,  HasActions
 
         // $project = ProjectQuarter::create($this->form->getState());
     }
-    
+
     public function form(Form $form): Form
     {
         return $form

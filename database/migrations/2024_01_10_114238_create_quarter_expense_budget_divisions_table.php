@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('quarter_expense_budget_divisions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_quarter_id')->nullable();
-            $table->foreignId('project_division_id')->nullable();
+            $table->foreignId('project_devision_id')->nullable();
             $table->timestamps();
         });
     }

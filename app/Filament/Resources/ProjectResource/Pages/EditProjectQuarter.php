@@ -26,6 +26,7 @@ class EditProjectQuarter extends EditRecord
     protected static string $resource = ProjectResource::class;
 
 
+    protected static ?string $title = 'Buget Divisions';
 
 
 

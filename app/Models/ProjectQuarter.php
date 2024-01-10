@@ -31,6 +31,7 @@ class ProjectQuarter extends Model
     }
 
 
+
     // public function quarter_expenses(){
     //     return $this->hasMany(QuarterExpense::class);
     // }
