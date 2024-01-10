@@ -137,8 +137,9 @@ class ProjectQuarterBudjet extends EditRecord
                                                          titleAttribute: 'title',
                                                          modifyQueryUsing: fn (Builder $query , Get $get, Set $set) => $query->whereHas('project_division_sub_category_expense.project_division_category', function($query) use($get ,$set){
                                                             $query->where('from', 'Direct Cost')
-                                                            
-                                                            // ->where('project_devision_id', $get('../../project_devision_id'))
+
+                                                            // ->where('project_devision_id',   $get('../../project_devision_id'))
+
                                                             ;
                                                         }),
                                                          )
