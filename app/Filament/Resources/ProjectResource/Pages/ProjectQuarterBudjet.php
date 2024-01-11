@@ -9,23 +9,32 @@ use App\Models\Division;
 use Filament\Forms\Form;
 use App\Models\FourthLayer;
 use Filament\Support\RawJs;
+use App\Models\QuarterExpense;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Builder;
+
 use App\Filament\Resources\ProjectResource;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 
-use Illuminate\Database\Eloquent\Builder;
 class ProjectQuarterBudjet extends EditRecord
 {
     protected static string $resource = ProjectResource::class;
 
     protected static ?string $title = 'Quarters Expenses';
 
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
 
+        // dd($data);
+        // $data['user_id'] = auth()->id();
+
+        return $data;
+    }
 
     protected function getRedirectUrl(): string
     {
@@ -86,7 +95,10 @@ class ProjectQuarterBudjet extends EditRecord
                                         ->required()
                                         ->live()
                                         // ->options(Quarter::pluck('title','id'))
-                                        ->relationship(name: 'quarter', titleAttribute: 'title')
+                                        ->relationship(
+                                            name: 'quarter',
+                                            titleAttribute: 'title',
+                                            )
                                         ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
                                         ->searchable()
                                         ->label('Select Quarter')
@@ -109,7 +121,11 @@ class ProjectQuarterBudjet extends EditRecord
                                                 ->required()
                                                 ->required()
                                                 ->live()
-                                                ->relationship(name: 'project_division', titleAttribute: 'title')
+                                                ->relationship(
+                                                    name: 'project_division',
+                                                     titleAttribute: 'title',
+                                                     modifyQueryUsing: fn (Builder $query , Get $get, Set $set) => $query->where('project_id', $this->getRecord()->id)
+                                                     )
                                                 ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->division->title}")
                                                 ->searchable()
                                                 ->label('Division')
@@ -120,7 +136,21 @@ class ProjectQuarterBudjet extends EditRecord
                                                 ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
                                                 Repeater::make('direct_cost_expenses')
-                                                ->relationship('quarter_expenses')
+                                                ->relationship('quarter_expenses',
+                                                modifyQueryUsing: fn (Builder $query , Get $get, Set $set) =>
+
+                                                $query->whereHas('fourth_layer.project_division_sub_category_expense.project_division_category', function($query){
+                                                    $query->where('from', 'Direct Cost');
+                                                })
+
+                                                                 //    $f = QuarterExpense::first();
+
+                                                    //    dd($f->fourth_layer->project_division_sub_category_expense->project_division_category);
+
+                                                        // $find = QuarterExpense::find($state);
+                                                        // dd($find->fourth_layer->project_division_sub_category_expense->project_division_category->from);
+
+                                                )
                                                 ->label('Direct Cost Expenses')
                                                 ->columns([
                                                     'sm' => 3,
@@ -135,13 +165,17 @@ class ProjectQuarterBudjet extends EditRecord
                                                     ->relationship(
                                                         name: 'fourth_layer',
                                                          titleAttribute: 'title',
-                                                         modifyQueryUsing: fn (Builder $query , Get $get, Set $set) => $query->whereHas('project_division_sub_category_expense.project_division_category', function($query) use($get ,$set){
+                                                         modifyQueryUsing: fn (Builder $query , Get $get, Set $set) =>
+
+                                                          $query->whereHas('project_division_sub_category_expense.project_division_category', function($query) use($get,$set){
                                                             $query->where('from', 'Direct Cost')
+                                                            ->where('project_devision_id', $get('../../project_devision_id'))
+                                                            ->whereHas('project_devision', function($query){
+                                                                $query->where('project_id', $this->getRecord()->id);
+                                                              });
 
-                                                            // ->where('project_devision_id',   $get('../../project_devision_id'))
-
-                                                            ;
-                                                        }),
+                                                        })
+                                                          ,
                                                          )
                                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
                                                     ->searchable()
@@ -151,7 +185,17 @@ class ProjectQuarterBudjet extends EditRecord
                                                     ->columnSpan(4)
 
                                                     ->distinct()
-                                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
+
+                                                        //    $f = QuarterExpense::first();
+
+                                                    //    dd($f->fourth_layer->project_division_sub_category_expense->project_division_category);
+
+                                                        // $find = QuarterExpense::find($state);
+                                                        // dd($find->fourth_layer->project_division_sub_category_expense->project_division_category->from);
+                                                    })
+                                                    ,
 
                                                     TextInput::make('amount')
 
@@ -174,7 +218,13 @@ class ProjectQuarterBudjet extends EditRecord
                                                 ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
 
                                                 Repeater::make('indirect_cost_expenses')
-                                                ->relationship('quarter_expenses')
+                                                ->relationship('quarter_expenses',
+                                                 modifyQueryUsing: fn (Builder $query , Get $get, Set $set) =>
+
+                                                $query->whereHas('fourth_layer.project_division_sub_category_expense.project_division_category', function($query){
+                                                    $query->where('from', 'Indirect Cost');
+                                                })
+                                                )
                                                 ->label('Indrect Cost Expenses')
                                                 ->columns([
                                                     'sm' => 3,
@@ -189,9 +239,18 @@ class ProjectQuarterBudjet extends EditRecord
                                                     ->relationship(
                                                         name: 'fourth_layer',
                                                         titleAttribute: 'title',
-                                                        modifyQueryUsing: fn (Builder $query , Get $get, Set $set) => $query->whereHas('project_division_sub_category_expense.project_division_category', function($query) use($get,$set){
-                                                            $query->where('from', 'Indirect Cost')->where('project_devision_id', $get('../../project_devision_id'));;
-                                                        }),
+
+                                                        modifyQueryUsing: fn (Builder $query , Get $get, Set $set) =>
+
+                                                        $query->whereHas('project_division_sub_category_expense.project_division_category', function($query) use($get,$set){
+                                                          $query->where('from', 'Indirect Cost')
+                                                          ->where('project_devision_id', $get('../../project_devision_id'))
+                                                          ->whereHas('project_devision', function($query){
+                                                              $query->where('project_id', $this->getRecord()->id);
+                                                            });
+
+                                                      })
+                                                        ,
                                                         )
                                                     ->getOptionLabelFromRecordUsing(function (Model $record) {
                                                         return $record->title;
