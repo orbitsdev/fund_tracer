@@ -225,8 +225,13 @@ class ProjectQuarterBudjet extends EditRecord
                                                 ->relationship('quarter_expenses',
                                                  modifyQueryUsing: fn (Builder $query , Get $get, Set $set) =>
 
-                                                $query->whereHas('fourth_layer.project_division_sub_category_expense.project_division_category', function($query){
-                                                    $query->where('from', 'Indirect Cost');
+                                                $query->whereHas('fourth_layer.project_division_sub_category_expense', function($query){
+                                                    
+                                                    $query
+                                                    ->where('parent_title', 'SKSU')
+                                                    ->whereHas('project_division_category', function($query){
+                                                        $query->where('from', 'Indirect Cost');
+                                                    });
                                                 })
                                                 )
                                                 ->label('Indrect Cost Expenses')

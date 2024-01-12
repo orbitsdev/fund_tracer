@@ -128,6 +128,8 @@ class EditProjectQuarter extends EditRecord
                                             'PCAARRD' => 'PCAARRD',
                                         ])
                                         ->label('Source')
+                                        ->distinct()
+                                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->columnSpanFull()
 
                                             ->hidden(fn (Get $get) => $get('../../from') === 'Indirect Cost' ? false : true),
