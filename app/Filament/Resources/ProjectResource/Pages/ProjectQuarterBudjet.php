@@ -219,7 +219,7 @@ class ProjectQuarterBudjet extends EditRecord
                                                 ->columnSpanFull()
                                                 ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
 
-                                            Repeater::make('indirect_cost_expenses')
+                                            Repeater::make('indirect_cost_expenses_sksu')
                                                 ->relationship(
                                                     'quarter_expenses',
                                                     modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
@@ -293,7 +293,7 @@ class ProjectQuarterBudjet extends EditRecord
 
                                                 ->columnSpanFull()
                                                 ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
-                                            Repeater::make('indirect_cost_expenses')
+                                            Repeater::make('indirect_cost_expenses_pcaarrd')
                                                 ->relationship(
                                                     'quarter_expenses',
                                                     modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
