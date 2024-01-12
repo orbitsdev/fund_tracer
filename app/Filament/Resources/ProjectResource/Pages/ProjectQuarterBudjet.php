@@ -232,7 +232,7 @@ class ProjectQuarterBudjet extends EditRecord
                                                             });
                                                     })
                                                 )
-                                                ->label('Indrect Cost Expenses')
+                                                ->label('Indrect Cost Expenses SKSU')
                                                 ->columns([
                                                     'sm' => 3,
                                                     'xl' => 6,
@@ -253,7 +253,81 @@ class ProjectQuarterBudjet extends EditRecord
                                                             $query->whereHas('project_division_sub_category_expense',function($query)use ($get ,$set){
 
                                                                 $query->where('parent_title', 'SKSU')
-                                                                ->where()
+                                                               
+                                                                ->whereHas('project_division_category', function ($query) use ($get, $set) {
+                                                                    $query->where('from', 'Indirect Cost')
+                                                                        ->where('project_devision_id', $get('../../project_devision_id'))
+                                                                        ->whereHas('project_devision', function ($query) {
+                                                                            $query->where('project_id', $this->getRecord()->id);
+                                                                        });
+                                                                });
+                                                            }),
+                                                        )
+                                                        ->getOptionLabelFromRecordUsing(function (Model $record) {
+                                                            return $record->title;
+                                                        })
+                                                        ->searchable()
+                                                        ->label('Expenses')
+                                                        ->preload()
+                                                        ->native(false)
+                                                        ->columnSpan(4)
+
+                                                        ->distinct()
+                                                        ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+
+                                                    TextInput::make('amount')
+
+                                                        ->mask(RawJs::make('$money($input)'))
+                                                        ->stripCharacters(',')
+
+
+                                                        ->prefix('₱')
+                                                        ->numeric()
+                                                        // ->maxValue(9999999999)
+                                                        ->default(0)
+                                                        ->columnSpan(4)
+                                                        ->required(),
+
+                                                ])
+                                                ->collapsible()
+
+                                                ->columnSpanFull()
+                                                ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
+                                            Repeater::make('indirect_cost_expenses')
+                                                ->relationship(
+                                                    'quarter_expenses',
+                                                    modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
+
+                                                    $query->whereHas('fourth_layer.project_division_sub_category_expense', function ($query) {
+                                                        $query
+                                                            ->where('parent_title', 'PCAARRD')
+                                                            ->whereHas('project_division_category', function ($query) {
+                                                                $query->where('from', 'Indirect Cost');
+                                                            });
+                                                    })
+                                                )
+                                                ->label('Indrect Cost Expenses PCAARRD')
+                                                ->columns([
+                                                    'sm' => 3,
+                                                    'xl' => 6,
+                                                    '2xl' => 8,
+                                                ])
+                                                ->schema([
+                                                    Select::make('fourth_layer_id')
+                                                        ->required()
+                                                        ->required()
+                                                        ->live()
+                                                        ->relationship(
+
+                                                            name: 'fourth_layer',
+                                                            titleAttribute: 'title',
+
+                                                            modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
+
+                                                            $query->whereHas('project_division_sub_category_expense',function($query)use ($get ,$set){
+
+                                                                $query->where('parent_title', 'PCAARRD')
+                                                               
                                                                 ->whereHas('project_division_category', function ($query) use ($get, $set) {
                                                                     $query->where('from', 'Indirect Cost')
                                                                         ->where('project_devision_id', $get('../../project_devision_id'))

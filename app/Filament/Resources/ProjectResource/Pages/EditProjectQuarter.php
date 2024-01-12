@@ -125,7 +125,7 @@ class EditProjectQuarter extends EditRecord
                                         ->options([
 
                                             'SKSU' => 'SKSU',
-                                            'PCAARRD' => 'PCAARRD',
+                                        'PCAARRD' => 'PCAARRD',
                                         ])
                                         ->label('Source')
                                         ->distinct()
