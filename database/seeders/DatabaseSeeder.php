@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
             DivisionSeeder::class,
             DivisionCategorySeeder::class,
             ProgramSeeder::class,
-            ProjectSeeder::class,
+            // ProjectSeeder::class,
             QuarterSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
