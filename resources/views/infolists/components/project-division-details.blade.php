@@ -16,14 +16,14 @@
                         {{ $project_budget_division->project_division->division->title }}
 
                     </p>
-                    @foreach ($project_budget_division->quarter_expenses->groupBy('fourth_layer.project_division_sub_category_expense.project_division_category.from') as $fromKey => $fromGroup)
+                    @foreach ($project_budget_division->quarter_expenses->groupBy('fourth_layer.project_division_sub_category_expense.project_division_category.from') as $division_category => $expensesByDivision)
                         <p class="border border-black p-2 font-bold">
-                            {{ $fromKey }}
+                            {{ $division_category }}
                         </p>
-                        @foreach ($fromGroup->groupBy(['fourth_layer.project_division_sub_category_expense.parent_title', 'fourth_layer.project_division_sub_category_expense.title']) as $titleKey => $titleGroup)
-                            @if (!empty($titleKey) && $fromKey === 'Indirect Cost')
+                        @foreach ($expensesByDivision->groupBy(['fourth_layer.project_division_sub_category_expense.parent_title', 'fourth_layer.project_division_sub_category_expense.title']) as $title => $titleGroup)
+                            @if (!empty($title) && $division_category === 'Indirect Cost')
                                 <p class="border border-black p-2 font-bold">
-                                    {{ $titleKey }}
+                                    {{ $title }}
                                 </p>
                             @endif
 
@@ -44,7 +44,7 @@
 
                     @endforeach
                     <p class="font-bold">
-                        Grant Total {{number_format($project_budget_division->quarter_expenses->sum('amount') , 2)}}
+                        Grand Total {{number_format($project_budget_division->quarter_expenses->sum('amount') , 2)}}
 
                     </p>
                     <p class="font-bold">
