@@ -253,7 +253,7 @@ class ProjectQuarterBudjet extends EditRecord
                                                             $query->whereHas('project_division_sub_category_expense',function($query)use ($get ,$set){
 
                                                                 $query->where('parent_title', 'SKSU')
-                                                               
+
                                                                 ->whereHas('project_division_category', function ($query) use ($get, $set) {
                                                                     $query->where('from', 'Indirect Cost')
                                                                         ->where('project_devision_id', $get('../../project_devision_id'))
@@ -327,7 +327,7 @@ class ProjectQuarterBudjet extends EditRecord
                                                             $query->whereHas('project_division_sub_category_expense',function($query)use ($get ,$set){
 
                                                                 $query->where('parent_title', 'PCAARRD')
-                                                               
+
                                                                 ->whereHas('project_division_category', function ($query) use ($get, $set) {
                                                                     $query->where('from', 'Indirect Cost')
                                                                         ->where('project_devision_id', $get('../../project_devision_id'))
