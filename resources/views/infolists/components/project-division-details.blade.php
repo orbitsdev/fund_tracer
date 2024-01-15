@@ -4,30 +4,57 @@
 
     <div>
         @foreach ($getRecord()->project_years as $project_year)
-            @foreach ( $project_year->project_quarters as $project_quarter)
-                @foreach ($project_quarter->quarter_expense_budget_divisions as $project_budget_division )
-                    {{$project_budget_division->project_division->division->title}}
-                    @php
-                    $groupedExpenses = $project_budget_division->quarter_expenses->groupBy('fourth_layer.project_division_sub_category_expense.project_division_category.from');
-                @endphp
+            @foreach ($project_year->project_quarters as $project_quarter)
+                @foreach ($project_quarter->quarter_expense_budget_divisions as $project_budget_division)
+                    {{ $project_budget_division->project_division->division->title }}
+                    {{-- @php
+                        $groupedExpenses = $project_budget_division->quarter_expenses->groupBy('fourth_layer.project_division_sub_category_expense.project_division_category.from');
+                    @endphp
 
-                @foreach ($groupedExpenses as $fromKey => $expenses)
-                    <p>
-                        From: {{$fromKey}}
-                    </p>
-                    @foreach ($expenses->groupBy('fourth_layer.project_division_sub_category_expense.title') as $titleKey => $subCategoryExpenses)
+                    @foreach ($groupedExpenses as $fromKey => $expenses)
                         <p>
-                            Title: {{$titleKey}}
+                            From: {{ $fromKey }}
                         </p>
-                        @foreach ($subCategoryExpenses as $data)
+                        @foreach ($expenses->groupBy('fourth_layer.project_division_sub_category_expense.title') as $titleKey => $subCategoryExpenses)
                             <p>
-                                {{$data->fourth_layer->title}}
-                                {{$data->fourth_layer->amount}}
+                                Title: {{ $titleKey }}
                             </p>
+                            @foreach ($subCategoryExpenses as $data)
+                                <p>
+                                    {{ $data->fourth_layer->title }}
+                                    {{ $data->amount }}
+                                </p>
+                            @endforeach
+                        @endforeach
+                    @endforeach --}}
+
+                    @foreach ($project_budget_division->quarter_expenses->groupBy('fourth_layer.project_division_sub_category_expense.project_division_category.from') as $fromKey => $fromGroup)
+                        <p>
+                            From: {{ $fromKey }}
+                        </p>
+                        @foreach ($fromGroup->groupBy(['fourth_layer.project_division_sub_category_expense.title', 'fourth_layer.project_division_sub_category_expense.parent_title']) as $titleKey => $titleGroup)
+                            <p>
+                                Title: {{ $titleKey }}
+                            </p>
+                            @foreach ($titleGroup as $kd=> $data)
+                            @if (!empty($kd) && $fromKey === 'Indirect Cost')
+                                    {{$kd}}
+                            @endif
+                                @foreach ($data as $ka => $a)
+                                    <p>
+                                        {{ $a->fourth_layer->title }}
+                                        {{ $a->amount }}
+                                    </p>
+                                    {{-- {{dump($a->fourth_layer->title)}}
+                                {{dump($a->amount)}} --}}
+                                @endforeach
+                                {{-- <p>
+                                    {{ $data->fourth_layer->title }}
+                                    {{ $data->fourth_layer->amount }}
+                                </p> --}}
+                            @endforeach
                         @endforeach
                     @endforeach
-                @endforeach
-
                 @endforeach
             @endforeach
         @endforeach
