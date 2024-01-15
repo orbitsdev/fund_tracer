@@ -32,27 +32,36 @@
                         <p>
                             From: {{ $fromKey }}
                         </p>
-                        @foreach ($fromGroup->groupBy(['fourth_layer.project_division_sub_category_expense.title', 'fourth_layer.project_division_sub_category_expense.parent_title']) as $titleKey => $titleGroup)
+                        @foreach ($fromGroup->groupBy(['fourth_layer.project_division_sub_category_expense.title']) as $titleKey => $titleGroup)
+                            @foreach ($titleGroup->groupBy('fourth_layer.project_division_sub_category_expense.parent_title') as $k => $ls)
+                                {{-- {{dump($k)}} --}}
+                                @if (!empty($k) && $fromKey === 'Indirect Cost')
+                                    {{ $k }}
+                                @endif
+                                @foreach ($ls as $a)
+                                    <p>
+                                        {{ $a->fourth_layer->title }}
+                                        {{ $a->amount }}
+                                    </p>
+                                @endforeach
+                            @endforeach
+                            {{-- {{dd($titleGroup->groupBy('fourth_layer.project_division_sub_category_expense.parent_title'))}}
                             <p>
-                                Title: {{ $titleKey }}
-                            </p>
-                            @foreach ($titleGroup as $kd=> $data)
-                            @if (!empty($kd) && $fromKey === 'Indirect Cost')
-                                    {{$kd}}
-                            @endif
+                                Title: {{ dump($titleKey) }}
+                            </p> --}}
+                            {{-- @foreach ($titleGroup as $kd => $data)
+
+                                @if (!empty($kd) && $fromKey === 'Indirect Cost')
+                                    {{ dd($kd) }}
+                                @endif
                                 @foreach ($data as $ka => $a)
                                     <p>
                                         {{ $a->fourth_layer->title }}
                                         {{ $a->amount }}
                                     </p>
-                                    {{-- {{dump($a->fourth_layer->title)}}
-                                {{dump($a->amount)}} --}}
+
                                 @endforeach
-                                {{-- <p>
-                                    {{ $data->fourth_layer->title }}
-                                    {{ $data->fourth_layer->amount }}
-                                </p> --}}
-                            @endforeach
+                            @endforeach --}}
                         @endforeach
                     @endforeach
                 @endforeach
