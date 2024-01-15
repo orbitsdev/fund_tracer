@@ -82,20 +82,28 @@
                         <tr>
                             <td class="border border-black p-2 text-xs" >{{ $project_budget_division->project_division->division->title }}</td>
                             <td>
-                                <table class="w-full">
+                                <table class="w-full  p-2 text-xs">
                                     @foreach ($project_budget_division->quarter_expenses->groupBy('fourth_layer.project_division_sub_category_expense.project_division_category.from') as $division_category => $expensesByDivision)
                                         <tr>
-                                            <td class="font-bold border border-black p-2 text-xs" >{{ $division_category }}</td>
+                                            <td class="" >{{ $division_category }}</td>
+
+
                                         </tr>
-                                        @foreach ($expensesByDivision->groupBy(['fourth_layer.project_division_sub_category_expense.parent_title', 'fourth_layer.project_division_sub_category_expense.title']) as $title => $titleGroup)
+                                        <tr>
+                                            @foreach ($expensesByDivision->groupBy(['fourth_layer.project_division_sub_category_expense.parent_title', 'fourth_layer.project_division_sub_category_expense.title']) as $title => $titleGroup)
+                                            <td class=" text-xs " >{{ $title }}</td>
+                                            @endforeach
+                                        </tr>
+
+                                        {{-- @foreach ($expensesByDivision->groupBy(['fourth_layer.project_division_sub_category_expense.parent_title', 'fourth_layer.project_division_sub_category_expense.title']) as $title => $titleGroup)
                                             @if (!empty($title) && $division_category === 'Indirect Cost')
                                                 <tr>
-                                                    <td class="border border-black p-2 text-xs" >{{ $title }}</td>
+                                                    <td class="border border-black p-4 text-xs font-bold" >{{ $title }}</td>
                                                 </tr>
                                             @endif
                                             @foreach ($titleGroup as $kd => $pr)
                                                 <tr>
-                                                    <td class="border border-black p-2 text-xs" >{{ $kd }}</td>
+                                                    <td class="p-2 text-xs font-medium border border-black" >{{ $kd }}</td>
                                                 </tr>
                                                 @foreach ($pr as $a)
                                                     <tr>
@@ -104,12 +112,13 @@
                                                     </tr>
                                                 @endforeach
                                             @endforeach
-                                        @endforeach
+                                        @endforeach --}}
+
                                     @endforeach
                                 </table>
                             </td>
                         </tr>
-                        <tr>
+                        {{-- <tr>
                             <td class="font-bold">Grand Total</td>
                             <td class="border border-black p-2 text-xs" >{{ number_format($project_budget_division->quarter_expenses->sum('amount'), 2) }}</td>
                         </tr>
@@ -124,7 +133,7 @@
                             <td class="border border-black p-2 text-xs" >{{ number_format($project_budget_division->quarter_expenses()->whereHas('fourth_layer.project_division_sub_category_expense.project_division_category', function($query) {
                                 $query->where('from', 'Indirect Cost');
                             })->sum('amount'), 2) }}</td>
-                        </tr>
+                        </tr> --}}
                     @endforeach
                 @endforeach
             </table>
