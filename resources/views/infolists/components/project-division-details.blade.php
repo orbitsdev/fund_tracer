@@ -4,47 +4,56 @@
 
     <div>
         @foreach ($getRecord()->project_years as $project_year)
+        <p class="border border-black p-2">
+            {{$project_year->year->title}}
+        </p>
             @foreach ($project_year->project_quarters as $project_quarter)
+            <p class="border border-black p-2">
+                {{$project_quarter->quarter->title}}
+            </p>
                 @foreach ($project_quarter->quarter_expense_budget_divisions as $project_budget_division)
+                <p class="border border-black p-2">
                     {{ $project_budget_division->project_division->division->title }}
-                    {{-- @php
-                        $groupedExpenses = $project_budget_division->quarter_expenses->groupBy('fourth_layer.project_division_sub_category_expense.project_division_category.from');
-                    @endphp
 
-                    @foreach ($groupedExpenses as $fromKey => $expenses)
-                        <p>
-                            From: {{ $fromKey }}
-                        </p>
-                        @foreach ($expenses->groupBy('fourth_layer.project_division_sub_category_expense.title') as $titleKey => $subCategoryExpenses)
-                            <p>
-                                Title: {{ $titleKey }}
-                            </p>
-                            @foreach ($subCategoryExpenses as $data)
-                                <p>
-                                    {{ $data->fourth_layer->title }}
-                                    {{ $data->amount }}
-                                </p>
-                            @endforeach
-                        @endforeach
-                    @endforeach --}}
+                </p>
+
 
                     @foreach ($project_budget_division->quarter_expenses->groupBy('fourth_layer.project_division_sub_category_expense.project_division_category.from') as $fromKey => $fromGroup)
-                        <p>
-                            From: {{ $fromKey }}
+                        <p class="border border-black p-2 font-bold">
+                            {{ $fromKey }}
                         </p>
-                        @foreach ($fromGroup->groupBy(['fourth_layer.project_division_sub_category_expense.title']) as $titleKey => $titleGroup)
-                            @foreach ($titleGroup->groupBy('fourth_layer.project_division_sub_category_expense.parent_title') as $k => $ls)
-                                {{-- {{dump($k)}} --}}
-                                @if (!empty($k) && $fromKey === 'Indirect Cost')
-                                    {{ $k }}
-                                @endif
-                                @foreach ($ls as $a)
-                                    <p>
-                                        {{ $a->fourth_layer->title }}
-                                        {{ $a->amount }}
-                                    </p>
+                        @foreach ($fromGroup->groupBy(['fourth_layer.project_division_sub_category_expense.parent_title', 'fourth_layer.project_division_sub_category_expense.title']) as $titleKey => $titleGroup)
+
+
+                        @if (!empty($titleKey) && $fromKey === 'Indirect Cost')
+                        <p class="border border-black p-2 font-bold">
+                            {{$titleKey}}
+                        </p>
+                    @endif
+
+                        @foreach ($titleGroup as $kd => $pr)
+
+                        <p class=" border border-black p-2 font-bold">
+                            {{$kd}}
+
+                        </p>
+
+                                @foreach ($pr as $a)
+                                <p class="border border-black p-2">
+                                    {{ $a->fourth_layer->title }}
+                                    {{ $a->amount }}
+                                </p>
                                 @endforeach
-                            @endforeach
+                        @endforeach
+                        {{-- @if (!empty($k) && $fromKey === 'Indirect Cost')
+                        {{ $k }}
+                    @endif
+                    @foreach ($ls as $a)
+                        <p>
+                            {{ $a->fourth_layer->title }}
+                            {{ $a->amount }}
+                        </p>
+                    @endforeach --}}
                             {{-- {{dd($titleGroup->groupBy('fourth_layer.project_division_sub_category_expense.parent_title'))}}
                             <p>
                                 Title: {{ dump($titleKey) }}
