@@ -44,8 +44,8 @@ class EditProjectQuarter extends EditRecord
                 [
 
                     Repeater::make('project_divisions')
-
                     ->relationship()
+                    ->addActionLabel('Budget Division')
 
                     ->label('Budget Divisions')
 
@@ -68,7 +68,8 @@ class EditProjectQuarter extends EditRecord
 
                             ->relationship()
 
-                            ->label('Division Category')
+                            ->label('Category')
+                            ->addActionLabel('Budget Category')
                             ->columns([
                                 'sm' => 3,
                                 'xl' => 6,
@@ -112,7 +113,7 @@ class EditProjectQuarter extends EditRecord
                                 Repeater::make('project_division_sub_category_expenses')
                                     ->live()
                                     ->relationship()
-
+                                    ->addActionLabel('Expenses Category')
                                     ->label('Budget Division Expenses')
                                     ->columns([
                                         'sm' => 3,
@@ -145,7 +146,7 @@ class EditProjectQuarter extends EditRecord
                                         TableRepeater::make('fourth_layers')
                                             ->live()
                                             ->relationship()
-
+                                            ->addActionLabel('Expenses')
                                             ->label('Expenses')
                                             ->columns([
                                                 'sm' => 3,
@@ -161,6 +162,7 @@ class EditProjectQuarter extends EditRecord
 
 
                                             ])
+                                            ->addActionLabel('Expenses')
                                             ->withoutheader()
                                             ->columnSpanFull(),
                                     ])
