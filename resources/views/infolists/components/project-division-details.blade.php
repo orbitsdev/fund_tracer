@@ -93,7 +93,7 @@
                                         @endphp
                                         @foreach ($project_budget_division->quarter_expenses->groupBy('fourth_layer.project_division_sub_category_expense.project_division_category.from') as $division_category => $expensesByDivision)
                                             <tr class="border border-black p-2 m-2">
-                                                <td class="font-bold px-2">{{ $division_category }}</td>
+                                                <td class="font-bold px-2 ">{{ $division_category }}</td>
                                                 <td class="border border-black">
                                                     @foreach ($expensesByDivision->groupBy(['fourth_layer.project_division_sub_category_expense.parent_title', 'fourth_layer.project_division_sub_category_expense.title']) as $title => $expensesDivisionSub)
                                                         @if (!empty($title) && $division_category === 'Indirect Cost')
