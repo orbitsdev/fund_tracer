@@ -24,6 +24,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Support\Enums\FontWeight;
 use Filament\Forms\Components\Repeater;
+use Filament\Infolists\Components\Tabs;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
@@ -187,12 +188,36 @@ class ProjectResource extends Resource
                 //     ]),
 
 
-
-
-
-                        ViewEntry::make('')
+                Tabs::make('Tabs')
+                ->tabs([
+                    Tabs\Tab::make('Project Yearly Expenses')
+                        ->schema([
+                            ViewEntry::make('')
                             ->view('infolists.components.project-division-details')
                             ->columnSpanFull(),
+                        ]),
+                    Tabs\Tab::make('Summary Budget')
+                        ->schema([
+                            ViewEntry::make('')
+                            ->view('infolists.components.summary-budget  ')
+                            ->columnSpanFull(),
+                        ]),
+                    Tabs\Tab::make('Summary')
+                        ->schema([
+                            // ...
+                        ]),
+                    Tabs\Tab::make('MOOE')
+                        ->schema([
+                            // ...
+                        ]),
+                    Tabs\Tab::make('Summary EO')
+                        ->schema([
+                            // ...
+                        ]),
+                ])->columnSpanFull(),
+
+
+
                         // RepeatableEntry::make('project_years')
                         // ->schema([
                         //     TextEntry::make('year.title'),
@@ -225,6 +250,8 @@ class ProjectResource extends Resource
 
                 //     ])
                 //     ->columns(2)
+
+
 
             ]);
     }
