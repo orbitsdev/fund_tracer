@@ -214,7 +214,9 @@ class ProjectResource extends Resource
                         ->schema([
                             // ...
                         ]),
-                ])->columnSpanFull(),
+                ])
+                ->activeTab(1)
+                ->columnSpanFull(),
 
 
 
