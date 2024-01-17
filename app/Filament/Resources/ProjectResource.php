@@ -202,18 +202,11 @@ class ProjectResource extends Resource
                             ->view('infolists.components.summary-budget  ')
                             ->columnSpanFull(),
                         ]),
-                    Tabs\Tab::make('PS')
+                    Tabs\Tab::make('Other')
                         ->schema([
                             // ...
                         ]),
-                    Tabs\Tab::make('MOOE')
-                        ->schema([
-                            // ...
-                        ]),
-                    Tabs\Tab::make('EO')
-                        ->schema([
-                            // ...
-                        ]),
+
                 ])
                 ->activeTab(1)
                 ->columnSpanFull(),
