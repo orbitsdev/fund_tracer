@@ -10,8 +10,16 @@ use Illuminate\Contracts\View\View;
 class EditProjectQuarter extends EditRecord
 {
     protected static string $resource = ProjectQuarterResource::class;
+
+    protected function mutateFormDataBeforeFill(array $data): array
+{
+    // dd($this->getRecord()->project_year);
+    return $data;
+}
+
     protected function getRedirectUrl(): string
     {
+
 
         // dd($this->getOwnerRecord());
         // return redirect()->route('filament.admin.resources.projects.index');
