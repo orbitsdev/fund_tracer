@@ -27,7 +27,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use App\Filament\Resources\ProjectQuarterResource;
 use Filament\Tables\Actions\HeaderActionsPosition;
 use Illuminate\Contracts\View\View;
-class ProjectYearQuarterList extends Page implements HasForms, HasTable
+ class ProjectYearQuarterList extends Page implements HasForms, HasTable
 {
 
     use InteractsWithTable;

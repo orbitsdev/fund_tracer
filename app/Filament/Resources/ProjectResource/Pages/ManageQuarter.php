@@ -58,14 +58,6 @@ class ManageQuarter extends Page implements HasForms,  HasActions
 
     public $record = null;
 
-    public function back(): FAction
-    {
-        return FAction::make('back')
-            ->requiresConfirmation()
-            ->action(function(){
-                dd('test');
-            });
-    }
 
     public function mount($record): void
     {
@@ -88,6 +80,19 @@ class ManageQuarter extends Page implements HasForms,  HasActions
         // $this->fillForm();
 
     }
+    public function back(): FAction
+    {
+        return FAction::make('back')
+            ->button()
+            ->outlined()
+            ->color('gray')
+            ->action(function(){
+                dd('test');
+            })
+            ->url(fn (): string => ProjectResource::getUrl('manage-quarter-year', ['record' => $this->record->project->id]))
+            ;
+    }
+
 
 //     public function fillForm(): void
 // {

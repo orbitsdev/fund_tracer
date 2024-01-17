@@ -3,6 +3,10 @@
 
 
  <p class="text-lg"> {{ $record->project->title }}</p>
+ <div>
+
+     {{$this->back}}
+ </div>
 <form wire:submit="create">
     {{ $this->form }}
 
