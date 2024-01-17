@@ -30,6 +30,13 @@ class ProjectObserver
         $project->files->each(function ($file) {
             $file->delete();
         });
+
+        $project->project_years->each(function ($year) {
+            $year->delete();
+        });
+        $project->project_divisions->each(function ($project_division) {
+            $project_division->delete();
+        });
     }
 
     /**

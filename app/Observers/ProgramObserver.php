@@ -30,7 +30,10 @@ class ProgramObserver
         $program->files->each(function ($file) {
             $file->delete();
         });
-    }
+        $program->projects->each(function ($project) {
+            $project->delete();
+        });
+     }
 
     /**
      * Handle the Program "restored" event.
