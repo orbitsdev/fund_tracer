@@ -71,7 +71,12 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
                             return $rule->where('year_id', $get('year_id'))->where('project_id', $this->record->id);
                         })
                         ->required()
-                        ->relationship(name: 'year', titleAttribute: 'title')
+                        ->relationship(
+                            name: 'year', titleAttribute: 'title',
+                            modifyQueryUsing: fn (Builder $query) => $query->whereDoesntHave('project_years', function($query){
+                                $query->where('project_id', $this->record->id);
+                            }),
+                            )
                         ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
                         ->searchable()
                         ->label('Year')

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ProjectResource\Pages;
 
 use App\Models\Quarter;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use App\Models\Division;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -57,7 +58,14 @@ class ManageQuarter extends Page implements HasForms,  HasActions
 
     public $record = null;
 
-
+    public function back(): FAction
+    {
+        return FAction::make('back')
+            ->requiresConfirmation()
+            ->action(function(){
+                dd('test');
+            });
+    }
 
     public function mount($record): void
     {
@@ -137,164 +145,304 @@ class ManageQuarter extends Page implements HasForms,  HasActions
 
                 Hidden::make('project_year_id'),
 
+
                 Select::make('quarter_id')
-                    ->required()
-                    ->live()
-                    ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get,  ) {
-                        return $rule->where('quarter_id', $get('quarter_id'))->where('project_year_id', $this->record->id);
-                    })
-                    // ->options(Quarter::pluck('title','id'))
-                    ->relationship(name: 'quarter', titleAttribute: 'title')
-                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
-                    ->searchable()
-                    ->label('Quarter')
-                    ->preload()
-                    ->native(false)
-                    ->columnSpanFull()
-                    ->distinct()
-                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
+                // ->required()
+                // ->unique( ignoreRecord: true,modifyRuleUsing: function (Unique $rule, Get $get,  Model $record) {
+                //     return $rule->where('quarter_id', $get('quarter_id'))->where('project_year_id', $record->id);
+                // })
+                ->required()
+                ->live()
+                // ->options(Quarter::pluck('title','id'))
+                ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get) {
+                    return $rule->where('quarter_id', $get('quarter_id'))->where('project_quarters.project_year', $this->record->id);
+                })
+                ->relationship(
+                    name: 'quarter',
+                    titleAttribute: 'title',
+                    modifyQueryUsing: fn (Builder $query) => $query->whereDoesntHave('project_quarters.project_year', function($query){
+                        $query->where('project_year_id', $this->record->id);
+                    }),
 
-                 Repeater::make('project_divisions')
+                )
+                ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
+                ->searchable()
+                ->label('Select Quarter')
+                ->preload()
+                ->native(false)
+                ->columnSpanFull()
+                ->distinct()
+                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+            // ->disable()
+            // ->disabled()
+            ,
+            Repeater::make('quarter_expense_budget_divisions')
 
-                    ->relationship()
+                ->relationship()
 
-                    ->addActionLabel('Add Category')
-                    ->label('Expenses By Categories')
-                    ->schema([
-                        Hidden::make('project_id'),
-                        Select::make('division_id')
-                            ->live()
-                            // ->options(Division::pluck('title','id'))
-                            ->relationship(name: 'division', titleAttribute: 'title')
-                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title} - {$record->abbreviation}")
-                            ->searchable()
-                            ->label('Choose Category')
-                            ->preload()
-                            ->native(false)
-                            ->columnSpanFull()
-                            ->distinct()
-                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
-
-                        Repeater::make('project_division_categories')
-
-                            ->relationship()
-
-                            ->columns([
-                                'sm' => 3,
-                                'xl' => 6,
-                                '2xl' => 9,
-                            ])
-                            ->schema([
-
-
-                                Select::make('from')
-                                ->label('Cost Type')
-                                    ->options([
-
-                                        'Direct Cost' => 'Direct Cost',
-                                        'Indirect Cost' => 'Indirect Cost',
-                                    ])
-                                    ->distinct()
-                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                    ->columnSpanFull()
-                                    ->native(false)
-                                    ->searchable(),
-                                // Select::make('division_category_id')
-                                //     ->relationship(name: 'division_category', titleAttribute: 'title')
-                                //     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
-                                //     ->searchable()
-                                //     ->label('Choose Category')
-                                //     ->preload()
-                                //     ->native(false)
-                                //     ->columnSpanFull()
-
-                                //     ->distinct()
-                                //     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                //     ->live()
-                                //     ->createOptionForm([
-                                //         TextInput::make('title')
-                                //             ->required(),
-                                //     ])
-                                //     ,
+                ->label('Budget Divisions')
+                ->addActionLabel('Budget Division')
+                ->schema([
+                    Select::make('project_devision_id')
+                        ->required()
+                        ->required()
+                        ->live()
+                        ->relationship(
+                            name: 'project_division',
+                            titleAttribute: 'title',
+                            modifyQueryUsing: fn (Builder $query, Get $get, Set $set) => $query->where('project_id', $this->record->id)
+                        )
+                        ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->division->title}")
+                        ->searchable()
+                        ->label('Division')
+                        ->preload()
+                        ->native(false)
+                        ->columnSpanFull()
+                        ->distinct()
+                        ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
 
 
-                                Repeater::make('project_division_sub_category_expenses')
-                                    ->live()
-                                    ->relationship()
-                                    ->label('Expense Categories')
-                                    ->columns([
-                                        'sm' => 3,
-                                        'xl' => 6,
-                                        '2xl' => 9,
-                                    ])
-                                    ->schema([
+                    Repeater::make('direct_cost_expenses')
+                    ->addActionLabel('Direct Cost')
+                        ->relationship(
+                            'quarter_expenses',
+                            modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
 
-                                        TextInput::make('parent_title')
-                                            ->label('Source')
+                            $query->whereHas('fourth_layer.project_division_sub_category_expense.project_division_category', function ($query) {
+                                $query->where('from', 'Direct Cost');
+                            })
 
-                                            ->live()
-                                            ->maxLength(191)
-                                            ->columnSpanFull()
+                            //    $f = QuarterExpense::first();
 
-                                            ->hidden(fn (Get $get) => $get('../../from') === 'Indirect Cost' ? false : true),
+                            //    dd($f->fourth_layer->project_division_sub_category_expense->project_division_category);
 
-                                        TextInput::make('title')
-                                            ->label('Expense Title')
-                                            ->required()
-                                            ->live()
-                                            ->maxLength(191)
-                                            ->columnSpanFull(),
+                            // $find = QuarterExpense::find($state);
+                            // dd($find->fourth_layer->project_division_sub_category_expense->project_division_category->from);
 
-
-                                        TableRepeater::make('fourth_layers')
-                                            ->live()
-                                            ->relationship()
-                                            ->label('Expenses')
-                                            ->columns([
-                                                'sm' => 3,
-                                                'xl' => 6,
-                                                '2xl' => 9,
-                                            ])
-                                            ->schema([
-                                                TextInput::make('title')
-                                                    ->label('Expenses Description')
-                                                    ->required()
-                                                    ->maxLength(191)
-                                                    ->columnSpanFull(),
-
-                                                TextInput::make('amount')
-
-                                                    ->mask(RawJs::make('$money($input)'))
-                                                    ->stripCharacters(',')
-                                                    ->numeric()
-                                                    // ->mask(RawJs::make('$money($input)'))
-                                                    // ->stripCharacters(',')
-                                                    ->prefix('₱')
-                                                    ->numeric()
-                                                    // ->maxValue(9999999999)
-                                                    ->default(0)
-                                                    ->columnSpanFull()
-                                                    ->required(),
-                                            ])->columnSpanFull()
-                                            ->withoutHeader()
-                                            ,
-                                    ])
-                                    // ->withoutHeader()
-                                    ->columnSpanFull()
-                                     ->visible(fn (Get $get) => !empty($get('from')) ? true : false)
+                        )
+                        ->label('Direct Cost Expenses')
+                        ->columns([
+                            'sm' => 3,
+                            'xl' => 6,
+                            '2xl' => 8,
+                        ])
+                        ->schema([
 
 
-                            ])
-                            ->columns(2)
-                            ->columnSpanFull()
-                            ->visible(fn (Get $get) => !empty($get('division_id')) ? true : false),
+                            Select::make('fourth_layer_id')
+                                ->required()
+                                ->required()
+                                ->live()
+                                ->relationship(
+                                    name: 'fourth_layer',
+                                    titleAttribute: 'title',
+                                    modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
+
+                                    $query->whereHas('project_division_sub_category_expense.project_division_category', function ($query) use ($get, $set) {
+                                        $query->where('from', 'Direct Cost')
+                                            ->where('project_devision_id', $get('../../project_devision_id'))
+                                            ->whereHas('project_devision', function ($query) {
+                                                $query->where('project_id', $this->record->id);
+                                            });
+                                    }),
+                                )
+                                ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
+                                ->searchable()
+                                ->label('Expenses')
+                                ->preload()
+                                ->native(false)
+                                ->columnSpan(4)
+
+                                ->distinct()
+                                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                ->afterStateUpdated(function (Get $get, Set $set, $state) {
+
+                                    //    $f = QuarterExpense::first();
+
+                                    //    dd($f->fourth_layer->project_division_sub_category_expense->project_division_category);
+
+                                    // $find = QuarterExpense::find($state);
+                                    // dd($find->fourth_layer->project_division_sub_category_expense->project_division_category->from);
+                                }),
+
+                            TextInput::make('amount')
+
+                                ->mask(RawJs::make('$money($input)'))
+                                ->stripCharacters(',')
+
+                                // ->mask(RawJs::make('$money($input)'))
+                                // ->stripCharacters(',')
+                                ->prefix('₱')
+                                ->numeric()
+                                // ->maxValue(9999999999)
+                                ->default(0)
+                                ->columnSpan(4)
+                                ->required(),
+
+                        ])
+                        ->collapsible()
+
+                        ->columnSpanFull()
+                        ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
+
+                    Repeater::make('indirect_cost_expenses_sksu')
+                    ->addActionLabel('IC SKSU')
+
+                        ->relationship(
+                            'quarter_expenses',
+                            modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
+
+                            $query->whereHas('fourth_layer.project_division_sub_category_expense', function ($query) {
+                                $query
+                                    ->where('parent_title', 'SKSU')
+                                    ->whereHas('project_division_category', function ($query) {
+                                        $query->where('from', 'Indirect Cost');
+                                    });
+                            })
+                        )
+                        ->label('Indrect Cost Expenses SKSU')
+                        ->columns([
+                            'sm' => 3,
+                            'xl' => 6,
+                            '2xl' => 8,
+                        ])
+                        ->schema([
+                            Select::make('fourth_layer_id')
+                                ->required()
+                                ->required()
+                                ->live()
+                                ->relationship(
+
+                                    name: 'fourth_layer',
+                                    titleAttribute: 'title',
+
+                                    modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
+
+                                    $query->whereHas('project_division_sub_category_expense',function($query)use ($get ,$set){
+
+                                        $query->where('parent_title', 'SKSU')
+
+                                        ->whereHas('project_division_category', function ($query) use ($get, $set) {
+                                            $query->where('from', 'Indirect Cost')
+                                                ->where('project_devision_id', $get('../../project_devision_id'))
+                                                ->whereHas('project_devision', function ($query) {
+                                                    $query->where('project_id', $this->record->id);
+                                                });
+                                        });
+                                    }),
+                                )
+                                ->getOptionLabelFromRecordUsing(function (Model $record) {
+                                    return $record->title;
+                                })
+                                ->searchable()
+                                ->label('Expenses')
+                                ->preload()
+                                ->native(false)
+                                ->columnSpan(4)
+
+                                ->distinct()
+                                ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+
+                            TextInput::make('amount')
+
+                                ->mask(RawJs::make('$money($input)'))
+                                ->stripCharacters(',')
 
 
+                                ->prefix('₱')
+                                ->numeric()
+                                // ->maxValue(9999999999)
+                                ->default(0)
+                                ->columnSpan(4)
+                                ->required(),
 
-                    ])
-                    ->visible(fn (Get $get) => !empty($get('quarter_id')) ? true : false),
+                        ])
+                        ->collapsible()
+
+                        ->columnSpanFull()
+                        ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
+                    Repeater::make('indirect_cost_expenses_pcaarrd')
+                    ->addActionLabel('IC PCAARRD')
+                        ->relationship(
+                            'quarter_expenses',
+                            modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
+
+                            $query->whereHas('fourth_layer.project_division_sub_category_expense', function ($query) {
+                                $query
+                                    ->where('parent_title', 'PCAARRD')
+                                    ->whereHas('project_division_category', function ($query) {
+                                        $query->where('from', 'Indirect Cost');
+                                    });
+                            })
+                        )
+                        ->label('Indrect Cost Expenses PCAARRD')
+                        ->columns([
+                            'sm' => 3,
+                            'xl' => 6,
+                            '2xl' => 8,
+                        ])
+                        ->schema([
+                            Select::make('fourth_layer_id')
+                                ->required()
+                                ->required()
+                                ->live()
+                                ->relationship(
+
+                                    name: 'fourth_layer',
+                                    titleAttribute: 'title',
+
+                                    modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
+
+                                    $query->whereHas('project_division_sub_category_expense',function($query)use ($get ,$set){
+
+                                        $query->where('parent_title', 'PCAARRD')
+
+                                        ->whereHas('project_division_category', function ($query) use ($get, $set) {
+                                            $query->where('from', 'Indirect Cost')
+                                                ->where('project_devision_id', $get('../../project_devision_id'))
+                                                ->whereHas('project_devision', function ($query) {
+                                                    $query->where('project_id', $this->record->id);
+                                                });
+                                        });
+                                    }),
+                                )
+                                ->getOptionLabelFromRecordUsing(function (Model $record) {
+                                    return $record->title;
+                                })
+                                ->searchable()
+                                ->label('Expenses')
+                                ->preload()
+                                ->native(false)
+                                ->columnSpan(4)
+
+                                ->distinct()
+                                ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+
+                            TextInput::make('amount')
+
+                                ->mask(RawJs::make('$money($input)'))
+                                ->stripCharacters(',')
+
+
+                                ->prefix('₱')
+                                ->numeric()
+                                // ->maxValue(9999999999)
+                                ->default(0)
+                                ->columnSpan(4)
+                                ->required(),
+
+                        ])
+                        ->collapsible()
+
+                        ->columnSpanFull()
+                        ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
+
+                ])
+                ->columnSpanFull()
+                ->visible(fn (Get $get) => !empty($get('quarter_id')) ? true : false),
+
 
                 // ...
             ])

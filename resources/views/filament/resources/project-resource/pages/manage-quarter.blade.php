@@ -1,6 +1,8 @@
 <x-filament-panels::page>
 
-    <p class="text-lg"> {{ $record->project->title }}</p>
+
+
+ <p class="text-lg"> {{ $record->project->title }}</p>
 <form wire:submit="create">
     {{ $this->form }}
 
