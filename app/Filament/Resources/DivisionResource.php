@@ -28,6 +28,7 @@ class DivisionResource extends Resource
      protected static ?string $navigationLabel = 'Expenses Divisions';
     protected static ?string $modelLabel = 'Expenses Divisions';
     protected static ?int $navigationSort = 2;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {
