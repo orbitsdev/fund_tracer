@@ -318,7 +318,7 @@ class ProjectQuarterResource extends Resource
                     ])
                     ->columnSpanFull()
                     ->visible(function(Get $get, Model $record){
-                        dd($record->whereHas    ('project_divisions'));
+                        // dd($record->whereHas    ('project_divisions'));
 
                     //    return !empty($get('quarter_id')) ? true : false;
                     }),
