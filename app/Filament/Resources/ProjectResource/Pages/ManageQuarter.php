@@ -122,19 +122,20 @@ class ManageQuarter extends Page implements HasForms,  HasActions
     public function create()
     {
 
-        $project_quarter = ProjectQuarter::create($this->form->getState());
+
+        // dd($this->data);
+         $project_quarter = ProjectQuarter::create($this->data);
 
 
 
         // Save the relationships from the form to the post after it is created.
-         $a = $this->form->model($project_quarter)->saveRelationships();
+        //  $a = $this->form->model($project_quarter)->saveRelationships();
         // dd($a);
         Notification::make()
             ->title('Saved successfully')
             ->icon('heroicon-o-document-text')
             ->iconColor('success')
             ->send();
-
             $this->form->fill();
         // dd(ProjectResource::getUrl('manage-quarter-year', ['record'=>$this->record->project->id]));
         return redirect(ProjectResource::getUrl('manage-quarter-year', ['record' => $this->record->project->id]));
@@ -171,6 +172,12 @@ class ManageQuarter extends Page implements HasForms,  HasActions
                     }),
 
                 )
+                ->createOptionForm([
+                    TextInput::make('title')
+                    ->maxLength(191)
+                    ->required()
+                    ->unique()
+                ])
                 ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
                 ->searchable()
                 ->label('Select Quarter')
@@ -182,7 +189,7 @@ class ManageQuarter extends Page implements HasForms,  HasActions
             // ->disable()
             // ->disabled()
             ,
-            
+
 
                 // ...
             ])

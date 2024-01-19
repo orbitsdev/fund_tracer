@@ -73,9 +73,9 @@ use Illuminate\Contracts\View\View;
             ->actions([
 
 
-              Action::make('Manage Quarters')->button()->label('Update')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectQuarterResource::getUrl('edit', ['record' => $record])),
+              Action::make('Manage Quarters')->button()->label('Manage')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectQuarterResource::getUrl('edit', ['record' => $record])),
 
-                DeleteAction::make(),
+                DeleteAction::make()->button(),
 
 
             ])

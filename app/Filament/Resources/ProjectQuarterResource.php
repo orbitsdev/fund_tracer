@@ -69,10 +69,11 @@ class ProjectQuarterResource extends Resource
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     // ->disable()
                     ->disabled(),
+
+
                 Repeater::make('quarter_expense_budget_divisions')
 
                     ->relationship()
-
                     ->label('Budget Divisions')
                     ->addActionLabel('Budget Division')
                     ->schema([
@@ -83,7 +84,7 @@ class ProjectQuarterResource extends Resource
                             ->relationship(
                                 name: 'project_division',
                                 titleAttribute: 'title',
-                                modifyQueryUsing: fn (Builder $query, Get $get, Set $set, Model $record) => $query->where('project_id', $record->project_quarter->project_year->project_id)
+                                modifyQueryUsing: fn (Builder $query, Get $get, Set $set, Model $record) => $query->where('project_id',      $record->project_quarter->project_year->project_id)
                             )
                             ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->division->title}")
                             ->searchable()
@@ -117,7 +118,6 @@ class ProjectQuarterResource extends Resource
                             ])
                             ->schema([
 
-
                                 Select::make('fourth_layer_id')
                                     ->required()
                                     ->required()
@@ -125,12 +125,11 @@ class ProjectQuarterResource extends Resource
                                     ->relationship(
                                         name: 'fourth_layer',
                                         titleAttribute: 'title',
-                                        modifyQueryUsing: fn (Builder $query, Get $get, Set $set ) =>
+                                        modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
 
-                                        $query->whereHas('project_division_sub_category_expense.project_division_category', function ($query) use($get) {
+                                        $query->whereHas('project_division_sub_category_expense.project_division_category', function ($query) use ($get) {
                                             $query->where('from', 'Direct Cost')->where('project_devision_id', $get('../../project_devision_id'));
-                                        })
-                                        ,
+                                        }),
                                     )
                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
                                     ->searchable()
@@ -142,14 +141,8 @@ class ProjectQuarterResource extends Resource
                                     ->distinct()
                                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                     ->afterStateUpdated(function (Get $get, Set $set, $state) {
-
-                                        //    $f = QuarterExpense::first();
-
-                                        //    dd($f->fourth_layer->project_division_sub_category_expense->project_division_category);
-
-                                        // $find = QuarterExpense::find($state);
-                                        // dd($find->fourth_layer->project_division_sub_category_expense->project_division_category->from);
                                     }),
+
 
                                 TextInput::make('amount')
 
@@ -167,165 +160,168 @@ class ProjectQuarterResource extends Resource
 
                             ])
                             ->collapsible()
-
                             ->columnSpanFull()
                             ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
 
-                        Repeater::make('indirect_cost_expenses_sksu')
-                        ->addActionLabel('IC SKSU')
+                        //             Repeater::make('indirect_cost_expenses_sksu')
+                        //             ->addActionLabel('IC SKSU')
 
-                            ->relationship(
-                                'quarter_expenses',
-                                modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
+                        //                 ->relationship(
+                        //                     'quarter_expenses',
+                        //                     modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
 
-                                $query->whereHas('fourth_layer.project_division_sub_category_expense', function ($query) {
-                                    $query
-                                        ->where('parent_title', 'SKSU')
-                                        ->whereHas('project_division_category', function ($query) {
-                                            $query->where('from', 'Indirect Cost');
-                                        });
-                                })
-                            )
-                            ->label('Indrect Cost Expenses SKSU')
-                            ->columns([
-                                'sm' => 3,
-                                'xl' => 6,
-                                '2xl' => 8,
-                            ])
-                            ->schema([
-                                Select::make('fourth_layer_id')
-                                    ->required()
-                                    ->required()
-                                    ->live()
-                                    ->relationship(
+                        //                     $query->whereHas('fourth_layer.project_division_sub_category_expense', function ($query) {
+                        //                         $query
+                        //                             ->where('parent_title', 'SKSU')
+                        //                             ->whereHas('project_division_category', function ($query) {
+                        //                                 $query->where('from', 'Indirect Cost');
+                        //                             });
+                        //                     })
+                        //                 )
+                        //                 ->label('Indrect Cost Expenses SKSU')
+                        //                 ->columns([
+                        //                     'sm' => 3,
+                        //                     'xl' => 6,
+                        //                     '2xl' => 8,
+                        //                 ])
+                        //                 ->schema([
+                        //                     Select::make('fourth_layer_id')
+                        //                         ->required()
+                        //                         ->required()
+                        //                         ->live()
+                        //                         ->relationship(
 
-                                        name: 'fourth_layer',
-                                        titleAttribute: 'title',
+                        //                             name: 'fourth_layer',
+                        //                             titleAttribute: 'title',
 
-                                        modifyQueryUsing: fn (Builder $query, Get $get, Set $set, Model $record) =>
+                        //                             modifyQueryUsing: fn (Builder $query, Get $get, Set $set, Model $record) =>
 
-                                        $query->whereHas('project_division_sub_category_expense',function($query)use ($get ,$set, $record){
+                        //                             $query->whereHas('project_division_sub_category_expense',function($query)use ($get ,$set, $record){
 
-                                            $query->where('parent_title', 'SKSU')
+                        //                                 $query->where('parent_title', 'SKSU')
 
-                                            ->whereHas('project_division_category', function ($query) use ($get, $set, $record) {
-                                                $query->where('from', 'Indirect Cost')
-                                                    ->where('project_devision_id', $get('../../project_devision_id'));
-                                                    // ->whereHas('project_devision', function ($query, $record) {
-                                                    //     $query->where('project_id', $record->quarter_expense_budget_division->project_division->project_id);
-                                                    // });
-                                            });
-                                        }),
-                                    )
-                                    ->getOptionLabelFromRecordUsing(function (Model $record) {
-                                        return $record->title;
-                                    })
-                                    ->searchable()
-                                    ->label('Expenses')
-                                    ->preload()
-                                    ->native(false)
-                                    ->columnSpan(4)
+                        //                                 ->whereHas('project_division_category', function ($query) use ($get, $set, $record) {
+                        //                                     $query->where('from', 'Indirect Cost')
+                        //                                         ->where('project_devision_id', $get('../../project_devision_id'));
+                        //                                         // ->whereHas('project_devision', function ($query, $record) {
+                        //                                         //     $query->where('project_id', $record->quarter_expense_budget_division->project_division->project_id);
+                        //                                         // });
+                        //                                 });
+                        //                             }),
+                        //                         )
+                        //                         ->getOptionLabelFromRecordUsing(function (Model $record) {
+                        //                             return $record->title;
+                        //                         })
+                        //                         ->searchable()
+                        //                         ->label('Expenses')
+                        //                         ->preload()
+                        //                         ->native(false)
+                        //                         ->columnSpan(4)
 
-                                    ->distinct()
-                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                        //                         ->distinct()
+                        //                         ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
-                                TextInput::make('amount')
+                        //                     TextInput::make('amount')
 
-                                    ->mask(RawJs::make('$money($input)'))
-                                    ->stripCharacters(',')
-
-
-                                    ->prefix('₱')
-                                    ->numeric()
-                                    // ->maxValue(9999999999)
-                                    ->default(0)
-                                    ->columnSpan(4)
-                                    ->required(),
-
-                            ])
-                            ->collapsible()
-
-                            ->columnSpanFull()
-                            ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
-                        Repeater::make('indirect_cost_expenses_pcaarrd')
-                        ->addActionLabel('IC PCAARRD')
-                            ->relationship(
-                                'quarter_expenses',
-                                modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
-
-                                $query->whereHas('fourth_layer.project_division_sub_category_expense', function ($query) {
-                                    $query
-                                        ->where('parent_title', 'PCAARRD')
-                                        ->whereHas('project_division_category', function ($query) {
-                                            $query->where('from', 'Indirect Cost');
-                                        });
-                                })
-                            )
-                            ->label('Indrect Cost Expenses PCAARRD')
-                            ->columns([
-                                'sm' => 3,
-                                'xl' => 6,
-                                '2xl' => 8,
-                            ])
-                            ->schema([
-                                Select::make('fourth_layer_id')
-                                    ->required()
-                                    ->required()
-                                    ->live()
-                                    ->relationship(
-
-                                        name: 'fourth_layer',
-                                        titleAttribute: 'title',
-
-                                        modifyQueryUsing: fn (Builder $query, Get $get, Set $set, Model $record) =>
-
-                                        $query->whereHas('project_division_sub_category_expense',function($query)use ($get ,$set, $record){
-
-                                            $query->where('parent_title', 'PCAARRD')
-
-                                            ->whereHas('project_division_category', function ($query) use ($get, $set, $record) {
-                                                $query->where('from', 'Indirect Cost')
-                                                    ->where('project_devision_id', $get('../../project_devision_id'));
-                                                    // ->whereHas('project_devision', function ($query) use($record) {
-                                                    //     $query->where('project_id', $record->quarter_expense_budget_division->project_division->project_id);
-                                                    // });
-                                            });
-                                        }),
-                                    )
-                                    ->getOptionLabelFromRecordUsing(function (Model $record) {
-                                        return $record->title;
-                                    })
-                                    ->searchable()
-                                    ->label('Expenses')
-                                    ->preload()
-                                    ->native(false)
-                                    ->columnSpan(4)
-
-                                    ->distinct()
-                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
-
-                                TextInput::make('amount')
-
-                                    ->mask(RawJs::make('$money($input)'))
-                                    ->stripCharacters(',')
+                        //                         ->mask(RawJs::make('$money($input)'))
+                        //                         ->stripCharacters(',')
 
 
-                                    ->prefix('₱')
-                                    ->numeric()
-                                    // ->maxValue(9999999999)
-                                    ->default(0)
-                                    ->columnSpan(4)
-                                    ->required(),
+                        //                         ->prefix('₱')
+                        //                         ->numeric()
+                        //                         // ->maxValue(9999999999)
+                        //                         ->default(0)
+                        //                         ->columnSpan(4)
+                        //                         ->required(),
 
-                            ])
-                            ->collapsible()
+                        //                 ])
+                        //                 ->collapsible()
 
-                            ->columnSpanFull()
-                            ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
+                        //                 ->columnSpanFull()
+                        //                 ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
+                        //             Repeater::make('indirect_cost_expenses_pcaarrd')
+                        //             ->addActionLabel('IC PCAARRD')
+                        //                 ->relationship(
+                        //                     'quarter_expenses',
+                        //                     modifyQueryUsing: fn (Builder $query, Get $get, Set $set) =>
+
+                        //                     $query->whereHas('fourth_layer.project_division_sub_category_expense', function ($query) {
+                        //                         $query
+                        //                             ->where('parent_title', 'PCAARRD')
+                        //                             ->whereHas('project_division_category', function ($query) {
+                        //                                 $query->where('from', 'Indirect Cost');
+                        //                             });
+                        //                     })
+                        //                 )
+                        //                 ->label('Indrect Cost Expenses PCAARRD')
+                        //                 ->columns([
+                        //                     'sm' => 3,
+                        //                     'xl' => 6,
+                        //                     '2xl' => 8,
+                        //                 ])
+                        //                 ->schema([
+                        //                     Select::make('fourth_layer_id')
+                        //                         ->required()
+                        //                         ->required()
+                        //                         ->live()
+                        //                         ->relationship(
+
+                        //                             name: 'fourth_layer',
+                        //                             titleAttribute: 'title',
+
+                        //                             modifyQueryUsing: fn (Builder $query, Get $get, Set $set, Model $record) =>
+
+                        //                             $query->whereHas('project_division_sub_category_expense',function($query)use ($get ,$set, $record){
+
+                        //                                 $query->where('parent_title', 'PCAARRD')
+
+                        //                                 ->whereHas('project_division_category', function ($query) use ($get, $set, $record) {
+                        //                                     $query->where('from', 'Indirect Cost')
+                        //                                         ->where('project_devision_id', $get('../../project_devision_id'));
+                        //                                         // ->whereHas('project_devision', function ($query) use($record) {
+                        //                                         //     $query->where('project_id', $record->quarter_expense_budget_division->project_division->project_id);
+                        //                                         // });
+                        //                                 });
+                        //                             }),
+                        //                         )
+                        //                         ->getOptionLabelFromRecordUsing(function (Model $record) {
+                        //                             return $record->title;
+                        //                         })
+                        //                         ->searchable()
+                        //                         ->label('Expenses')
+                        //                         ->preload()
+                        //                         ->native(false)
+                        //                         ->columnSpan(4)
+
+                        //                         ->distinct()
+                        //                         ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+
+                        //                     TextInput::make('amount')
+
+                        //                         ->mask(RawJs::make('$money($input)'))
+                        //                         ->stripCharacters(',')
+
+
+                        //                         ->prefix('₱')
+                        //                         ->numeric()
+                        //                         // ->maxValue(9999999999)
+                        //                         ->default(0)
+                        //                         ->columnSpan(4)
+                        //                         ->required(),
+
+                        //                 ])
+                        //                 ->collapsible()
+
+                        //                 ->columnSpanFull()
+                        //                 ->visible(fn (Get $get) => !empty($get('project_devision_id')) ? true : false),
 
                     ])
                     ->columnSpanFull()
-                    ->visible(fn (Get $get) => !empty($get('quarter_id')) ? true : false),
+                    ->visible(function(Get $get, Model $record){
+                        dd($record->whereHas    ('project_divisions'));
+
+                    //    return !empty($get('quarter_id')) ? true : false;
+                    }),
 
 
 
