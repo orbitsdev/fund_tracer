@@ -5,7 +5,7 @@
 
     <div>
         @foreach ($record->projects as $project)
-        <div>
+        <div class="mt-6">
 
             <table class="w-full text-xs border">
                 <thead>
@@ -65,11 +65,11 @@
                 </tbody>
 
                 <tfoot>
-                    <tr style="background: rgb(53, 33, 128) !important; color:white;" class="border p-1">
-                        <td  class="text-xs text-left p-1 ">Grand Total</th>
-                        <td class="text-xs text-right p-1 border border-white ">{{ number_format($GPS, 2) }}</td>
-                        <td class="text-xs text-right p-1 border border-white ">{{ number_format($GMOOE, 2) }}</td>
-                        <td class="text-xs text-right p-1 border border-white ">{{ number_format($GEO, 2) }}</td>
+                    <tr style="background: rgb(53, 33, 128) !important; color:white;" class="border p-2">
+                        <td  class="text-xs text-left p-4 ">Grand Total</th>
+                        <td class="text-xs text-right p-4 border border-white ">{{ number_format($GPS, 2) }}</td>
+                        <td class="text-xs text-right p-4 border border-white ">{{ number_format($GMOOE, 2) }}</td>
+                        <td class="text-xs text-right p-4 border border-white ">{{ number_format($GEO, 2) }}</td>
                     </tr>
                 </tfoot>
             </table>

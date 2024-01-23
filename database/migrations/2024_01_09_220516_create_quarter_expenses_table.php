@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('quarter_expense_budget_division_id')->nullable();
             $table->foreignId('fourth_layer_id')->nullable();
             $table->decimal('amount', 10, 2)->nullable();
+            $table->text('file')->nullable();
             $table->timestamps();
         });
     }
