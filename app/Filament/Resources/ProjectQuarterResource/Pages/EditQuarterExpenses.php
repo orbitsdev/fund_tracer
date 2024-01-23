@@ -64,6 +64,16 @@ class EditQuarterExpenses extends EditRecord
                         ->distinct()
                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                         // ->disable()
+                        ->hint(function (Get $get, Model $record) {
+                            if( $this->getRecord()->project_year &&
+                            $this->getRecord()->project_year->project &&
+                            $this->getRecord()->project_year->project->project_divisions->isNotEmpty()){
+                                return '';
+                            }else{
+                                return 'If you don\'t see any data below, it might be because the division was not set up first.';
+                            }
+                           ;
+                        })
                         ->disabled(),
 
 
