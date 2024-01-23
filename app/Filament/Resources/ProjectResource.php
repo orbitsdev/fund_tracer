@@ -1203,6 +1203,7 @@ class ProjectResource extends Resource
             $set('program_remaining_budget_overview', null);
         }
     }
+    
     public static function updateLeftAllocated(Get $get, Set $set)
     {
 

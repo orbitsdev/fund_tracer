@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProjectQuarterResource\Pages;
 
+use Closure;
 use Filament\Actions;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -9,7 +10,9 @@ use Filament\Forms\Form;
 use Filament\Support\RawJs;
 use Filament\Actions\Action;
 use Illuminate\Contracts\View\View;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Unique;
@@ -39,42 +42,61 @@ class EditQuarterExpenses extends EditRecord
         return ProjectResource::getUrl('quarter-list', ['record' => $this->getRecord()]);
     }
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        unset($data['current_duration_overview']);
+        unset($data['duration_overview']);
+        unset($data['project_fund']);
+        unset($data['total_expenses']);
+
+        return $data;
+    }
+
     public function form(Form $form): Form
     {
         return $form
             ->schema(
                 [
 
-                    Select::make('quarter_id')
+                    Group::make()
+                    ->schema([
 
-                        // ->required()
-                        ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get,  Model $record) {
-                            return $rule->where('quarter_id', $get('quarter_id'))->where('project_year_id', $record->id);
-                        })
 
-                        ->live()
-                        // ->options(Quarter::pluck('title','id'))
-                        ->relationship(name: 'quarter', titleAttribute: 'title')
-                        ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
-                        ->searchable()
-                        ->label('Quarter')
-                        ->preload()
-                        ->native(false)
+                        Section::make('')
                         ->columnSpanFull()
-                        ->distinct()
-                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                        // ->disable()
-                        ->hint(function (Get $get, Model $record) {
-                            if( $this->getRecord()->project_year &&
-                            $this->getRecord()->project_year->project &&
-                            $this->getRecord()->project_year->project->project_divisions->isNotEmpty()){
-                                return '';
-                            }else{
-                                return 'If you don\'t see any data below, it might be because the division was not set up first.';
-                            }
-                           ;
-                        })
-                        ->disabled(),
+                        ->schema([
+                            Select::make('quarter_id')
+
+                            // ->required()
+                            ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get,  Model $record) {
+                                return $rule->where('quarter_id', $get('quarter_id'))->where('project_year_id', $record->id);
+                            })
+
+                            ->live()
+                            // ->options(Quarter::pluck('title','id'))
+                            ->relationship(name: 'quarter', titleAttribute: 'title')
+                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
+                            ->searchable()
+                            ->label('Quarter')
+                            ->preload()
+                            ->native(false)
+                            ->columnSpanFull()
+                            ->distinct()
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                            // ->disable()
+                            ->hint(function (Get $get, Model $record) {
+                                if( $this->getRecord()->project_year &&
+                                $this->getRecord()->project_year->project &&
+                                $this->getRecord()->project_year->project->project_divisions->isNotEmpty()){
+                                    return '';
+                                }else{
+                                    return 'If you don\'t see any data below, it might be because the division was not set up first.';
+                                }
+                               ;
+                            })
+                            ->disabled(),
+                        ]),
+
 
 
                     Repeater::make('quarter_expense_budget_divisions')
@@ -105,6 +127,10 @@ class EditQuarterExpenses extends EditRecord
 
                             TableRepeater::make('direct_cost_expenses')
                                 ->withoutHeader()
+                                ->columnWidths([
+                                    'fourth_layer_id' => '200px',
+                                    'amount' => '200px',
+                                ])
                                 ->addActionLabel('Direct Cost')
                                 ->relationship(
                                     'quarter_expenses',
@@ -153,7 +179,7 @@ class EditQuarterExpenses extends EditRecord
                                         ->label('Expenses')
                                         ->preload()
                                         ->native(false)
-                                        ->columnSpan(4)
+                                        ->columnSpanFull()
 
                                         ->distinct()
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
@@ -165,6 +191,12 @@ class EditQuarterExpenses extends EditRecord
 
                                         ->mask(RawJs::make('$money($input)'))
                                         ->stripCharacters(',')
+                                        ->live()
+                                            ->debounce(1000)
+                                            ->afterStateUpdated(function (Get $get, Set $set) {
+
+                                                 self::updateTotal($get, $set);
+                                            })
 
                                         // ->mask(RawJs::make('$money($input)'))
                                         // ->stripCharacters(',')
@@ -172,7 +204,7 @@ class EditQuarterExpenses extends EditRecord
                                         ->numeric()
                                         // ->maxValue(9999999999)
                                         ->default(0)
-                                        ->columnSpan(4)
+                                        ->columnSpanFull()
                                         ->required(),
 
                                 ])
@@ -385,8 +417,99 @@ class EditQuarterExpenses extends EditRecord
                                 $this->getRecord()->project_year->project->project_divisions->isNotEmpty();
                         }),
 
+                    ])->columnSpan(['lg' => 2]),
+
+                    Group::make()
+                    ->schema([
+
+                        Section::make('Project Overview')
+                            //  ->icon('heroicon-m-square-3-stack-3d')
+                            // ->description('Manage and organize project expenses here. You can only add expense in edit')
+                            ->columnSpanFull()
+                            ->schema([
+                                TextInput::make('current_duration_overview')
+                                    ->label('Current Duration')
+                                    // ->prefix('₱ ')
+                                    // ->numeric()
+                                    ->columnSpan(3)
+
+                                    ->columnSpanFull()
+                                    // ->maxLength(191)
+                                    ->readOnly(),
+                                // Placeholder::make('duration')
+                                TextInput::make('duration_overview')
+                                    ->label('Total Duration')
+                                    // ->prefix('₱ ')
+                                    // ->numeric()
+                                    ->columnSpan(3)
+
+                                    ->columnSpanFull()
+                                    // ->maxLength(191)
+                                    ->readOnly(),
+
+                                TextInput::make('project_fund')
+                                    ->label('Allocated Amount')
+                                    ->mask(RawJs::make('$money($input)'))
+                                    ->stripCharacters(',')
+                                    ->numeric()
+                                    ->columnSpan(3)
+                                    ->default(0)
+                                    // ->maxLength(191)
+                                    ->readOnly(),
+
+                                    TextInput::make('total_expenses')
+                                    ->label('Total Expenses')
+                                    ->mask(RawJs::make('$money($input)'))
+                                    ->stripCharacters(',')
+                                    ->numeric()
+                                    ->columnSpan(3)
+                                    ->default(0)
+                                    // ->maxLength(191)
+                                    ->readOnly(),
+
+
+                            ]),
+
+                    ])->columnSpan(['lg' => 1]),
+
+
 
                 ]
-            );
+            )
+              ->columns(3)
+              ;
+    }
+
+    public static function updateTotal(Get $get, Set $set)
+    {
+
+
+        // dd($get('direct_cost_expenses'));
+        // $current_fund = (float) str_replace(',', '', $this->getRecord); // Convert to float
+
+
+        // $totalAmount = $expenses->sum(function ($item) {
+        //     return (float) str_replace(',', '', $item['amount']);
+        // });
+
+        // $left_fund = $current_fund - $totalAmount;
+
+
+
+        // $current_fund = (float)$get('allocated_fund'); // Convert to float
+        // $expenses = collect($get('expenses'))->filter(fn ($item) => !empty($item['amount']));
+
+
+        // $totalAmount = $expenses->sum(function ($item) {
+        //     return (float)$item['amount'];
+        // });
+
+        // // $left_fund = $current_fund - $totalAmount;
+
+        // $set('total_expenses', number_format($totalAmount));
+
+
+
+
     }
 }
