@@ -29,7 +29,28 @@ class EditQuarterExpenses extends EditRecord
     protected static string $resource = ProjectQuarterResource::class;
 
 
+    protected function mutateFormDataBeforeFill(array $data): array
+{
 
+    // $total_dc = $this->getRecord()
+    // ->project_year
+    // ->project
+    // ->project_divisions;
+
+
+// $total_dc now holds the sum of 'amount' for all project_division_categories related to the project.
+
+
+    // dd($total_dc);
+
+
+// $total_dc now holds the sum of 'amount' for 'Direct Cost' project division categories.
+
+
+    // $data['user_id'] = auth()->id();
+
+    return $data;
+}
 
     public function getHeader(): ?View
     {
@@ -44,9 +65,12 @@ class EditQuarterExpenses extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        unset($data['current_duration_overview']);
-        unset($data['duration_overview']);
-        unset($data['project_fund']);
+        // unset($data['current_duration_overview']);
+        // unset($data['duration_overview']);
+        // unset($data['project_fund']);
+        unset($data['total_dc']);
+        unset($data['total_ic_sksu']);
+        unset($data['total_ic_pcaarrd']);
         unset($data['total_expenses']);
 
         return $data;
@@ -126,6 +150,7 @@ class EditQuarterExpenses extends EditRecord
 
 
                             TableRepeater::make('direct_cost_expenses')
+                             ->emptyLabel('No Data')
                                 ->withoutHeader()
                                 ->columnWidths([
                                     'fourth_layer_id' => '200px',
@@ -149,6 +174,9 @@ class EditQuarterExpenses extends EditRecord
                                     'xl' => 6,
                                     '2xl' => 8,
                                 ])
+                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                    self::updateTotal($get, $set);
+                  })
                                 ->schema([
 
                                     Select::make('fourth_layer_id')
@@ -222,7 +250,12 @@ class EditQuarterExpenses extends EditRecord
                                 }),
 
                             TableRepeater::make('indirect_cost_expenses_sksu')
+                            ->columnWidths([
+                                'fourth_layer_id' => '200px',
+                                'amount' => '200px',
+                            ])
                                 ->withoutHeader()
+                                ->emptyLabel('No Data')
                                 ->addActionLabel('IC SKSU')
 
                                 ->relationship(
@@ -243,6 +276,9 @@ class EditQuarterExpenses extends EditRecord
                                     'xl' => 6,
                                     '2xl' => 8,
                                 ])
+                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                    self::updateTotal($get, $set);
+                  })
                                 ->schema([
                                     Select::make('fourth_layer_id')
                                         ->required()
@@ -284,7 +320,12 @@ class EditQuarterExpenses extends EditRecord
 
                                         ->mask(RawJs::make('$money($input)'))
                                         ->stripCharacters(',')
+                                        ->live()
+                                        ->debounce(1000)
+                                        ->afterStateUpdated(function (Get $get, Set $set) {
 
+                                             self::updateTotal($get, $set);
+                                        })
 
                                         ->prefix('₱')
                                         ->numeric()
@@ -311,6 +352,11 @@ class EditQuarterExpenses extends EditRecord
                                 }),
 
                             TableRepeater::make('indirect_cost_expenses_pcaarrd')
+                            ->columnWidths([
+                                'fourth_layer_id' => '200px',
+                                'amount' => '200px',
+                            ])
+                            ->emptyLabel('No Data')
                                 ->columnWidths([
                                     'file' => '200px',
                                 ])
@@ -336,6 +382,9 @@ class EditQuarterExpenses extends EditRecord
                                     'xl' => 6,
                                     '2xl' => 9,
                                 ])
+                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                                    self::updateTotal($get, $set);
+                                  })
                                 ->schema([
                                     Select::make('fourth_layer_id')
                                         ->required()
@@ -378,7 +427,12 @@ class EditQuarterExpenses extends EditRecord
                                         ->mask(RawJs::make('$money($input)'))
                                         ->stripCharacters(',')
 
+                                        ->live()
+                                            ->debounce(1000)
+                                            ->afterStateUpdated(function (Get $get, Set $set) {
 
+                                                 self::updateTotal($get, $set);
+                                            })
                                         ->prefix('₱')
                                         ->numeric()
                                         // ->maxValue(9999999999)
@@ -427,28 +481,56 @@ class EditQuarterExpenses extends EditRecord
                             // ->description('Manage and organize project expenses here. You can only add expense in edit')
                             ->columnSpanFull()
                             ->schema([
-                                TextInput::make('current_duration_overview')
-                                    ->label('Current Duration')
-                                    // ->prefix('₱ ')
-                                    // ->numeric()
-                                    ->columnSpan(3)
+                                // TextInput::make('current_duration_overview')
+                                //     ->label('Current Duration')
+                                //     // ->prefix('₱ ')
+                                //     // ->numeric()
+                                //     ->columnSpan(3)
 
-                                    ->columnSpanFull()
+                                //     ->columnSpanFull()
+                                //     // ->maxLength(191)
+                                //     ->readOnly(),
+                                // // Placeholder::make('duration')
+                                // TextInput::make('duration_overview')
+                                //     ->label('Total Duration')
+                                //     // ->prefix('₱ ')
+                                //     // ->numeric()
+                                //     ->columnSpan(3)
+
+                                //     ->columnSpanFull()
+                                //     // ->maxLength(191)
+                                //     ->readOnly(),
+
+                                // TextInput::make('project_fund')
+                                //     ->label('Allocated Amount')
+                                //     ->mask(RawJs::make('$money($input)'))
+                                //     ->stripCharacters(',')
+                                //     ->numeric()
+                                //     ->columnSpan(3)
+                                //     ->default(0)
+                                //     // ->maxLength(191)
+                                //     ->readOnly(),
+
+                                    TextInput::make('total_dc')
+                                    ->label('Total DC')
+                                    ->mask(RawJs::make('$money($input)'))
+                                    ->stripCharacters(',')
+                                    ->numeric()
+                                    ->columnSpan(3)
+                                    ->default(0)
                                     // ->maxLength(191)
                                     ->readOnly(),
-                                // Placeholder::make('duration')
-                                TextInput::make('duration_overview')
-                                    ->label('Total Duration')
-                                    // ->prefix('₱ ')
-                                    // ->numeric()
+                                    TextInput::make('total_ic_sksu')
+                                    ->label('IC SKSU')
+                                    ->mask(RawJs::make('$money($input)'))
+                                    ->stripCharacters(',')
+                                    ->numeric()
                                     ->columnSpan(3)
-
-                                    ->columnSpanFull()
+                                    ->default(0)
                                     // ->maxLength(191)
                                     ->readOnly(),
-
-                                TextInput::make('project_fund')
-                                    ->label('Allocated Amount')
+                                    TextInput::make('total_ic_pcaarrd')
+                                    ->label('IC PCAARRD')
                                     ->mask(RawJs::make('$money($input)'))
                                     ->stripCharacters(',')
                                     ->numeric()
@@ -484,13 +566,49 @@ class EditQuarterExpenses extends EditRecord
     {
 
 
-        // dd($get('direct_cost_expenses'));
-        // $current_fund = (float) str_replace(',', '', $this->getRecord); // Convert to float
+        //  dd($get('../../direct_cost_expenses'));
+       // Convert to float
+
+       //DC
+       $dc_expenses = collect($get('../../direct_cost_expenses'))->filter(fn ($item) => !empty($item['amount']));
+
+       // IC SKSU
+       $ic_expenses_sksu = collect($get('../../indirect_cost_expenses_sksu'))->filter(fn ($item) => !empty($item['amount']));
+
+       // IC PCAARRD
+       $ic_expenses_pcaarrd = collect($get('../../indirect_cost_expenses_pcaarrd'))->filter(fn ($item) => !empty($item['amount']));
+
+       $dc_total = $dc_expenses->sum(function ($item) {
+           return (float) str_replace(',', '', $item['amount']);
+       });
+
+       $ic_sksu_total = $ic_expenses_sksu->sum(function ($item) {
+           return (float) str_replace(',', '', $item['amount']);
+       });
+
+       $ic_pcaarrd_total = $ic_expenses_pcaarrd->sum(function ($item) {
+           return (float) str_replace(',', '', $item['amount']);
+       });
+
+       $expenses = collect([
+           'dc_total' => $dc_total,
+           'ic_sksu_total' => $ic_sksu_total,
+           'ic_pcaarrd_total' => $ic_pcaarrd_total,
+       ]);
+
+       $total_expenses = $expenses->sum();
 
 
-        // $totalAmount = $expenses->sum(function ($item) {
-        //     return (float) str_replace(',', '', $item['amount']);
-        // });
+       // Now $total_expenses holds the sum of all expenses.
+
+
+
+
+
+        $set('../../../../total_dc', number_format($dc_total, 2));
+        $set('../../../../total_ic_sksu', number_format($ic_sksu_total, 2));
+        $set('../../../../total_ic_pcaarrd', number_format($ic_pcaarrd_total, 2));
+        $set('../../../../total_expenses', number_format($total_expenses, 2));
 
         // $left_fund = $current_fund - $totalAmount;
 
