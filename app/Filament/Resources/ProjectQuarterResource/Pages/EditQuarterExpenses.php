@@ -35,20 +35,30 @@ class EditQuarterExpenses extends EditRecord
     // $total_dc = $this->getRecord()
     // ->project_year
     // ->project
-    // ->project_divisions;
-
-
-// $total_dc now holds the sum of 'amount' for all project_division_categories related to the project.
-
-
+    // ->project_divisions()->with(['quarter_expense_budget_divisions.quarter_expenses'])->get();
     // dd($total_dc);
 
 
-// $total_dc now holds the sum of 'amount' for 'Direct Cost' project division categories.
+    $total = $this->getRecord()
+    ->project_year
+    ->project
+    ->project_divisions()
+    ->with(['quarter_expense_budget_divisions.quarter_expenses'])
+    ->get();
+
+    $totalAmount = $total->flatMap(function ($projectDivision) {
+        return $projectDivision->quarter_expense_budget_divisions->flatMap(function ($budgetDivision) {
+            return $budgetDivision->quarter_expenses->pluck('amount');
+        });
+
+        
+    })->sum();
+
+$data['total_expenses'] = number_format($totalAmount,2);
 
 
-    // $data['user_id'] = auth()->id();
 
+// dd($totalAmount);
     return $data;
 }
 
