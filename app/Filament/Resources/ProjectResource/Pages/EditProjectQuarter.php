@@ -9,6 +9,7 @@ use Filament\Forms\Get;
 use App\Models\Division;
 use Filament\Forms\Form;
 use Filament\Support\RawJs;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -28,7 +29,14 @@ class EditProjectQuarter extends EditRecord
 
     protected static ?string $title = 'Buget Divisions';
 
+    protected function getHeaderActions(): array
+    {
+        return [
 
+
+            // Action::make('year_quarter_budget')->label('Manage Expenses')->icon('heroicon-m-banknotes')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record])),
+        ];
+    }
 
     protected function getRedirectUrl(): string
     {
