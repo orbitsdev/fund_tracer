@@ -961,6 +961,7 @@ class ProjectResource extends Resource
                     ])
                     // ->hidden(fn (string $operation): bool => $operation === 'create')
                     ->columnSpan(['lg' => 1])
+
                     ->hidden(function (string $operation) {
                         if ($operation === 'create') {
                             return true;
@@ -1135,7 +1136,9 @@ class ProjectResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                ])
+                ->label('Actions')
+                ,
             ])
             // ->groups([
             //     TGroup::make('program.title')
