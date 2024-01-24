@@ -15,7 +15,7 @@ return new class extends Migration
 
 
             $table->id();
- 
+
             // $table->string('status')->nullable()->default('pending');
             $table->string('title')->nullable();
             $table->string('program_leader')->nullable();
@@ -23,6 +23,8 @@ return new class extends Migration
             $table->date('end_date')->nullable();
             $table->decimal('total_budget', 20, 2)->nullable()->default(0);
             $table->decimal('total_usage', 20, 2)->nullable()->default(0);
+            $table->string('implementing_agency')->nullable();
+            $table->string('monitoring_agency')->nullable();
             $table->string('status')->nullable()->default('Pending');
             $table->timestamps();
         });

@@ -92,7 +92,8 @@ class AdminPanelProvider extends PanelProvider
             // ->databaseNotifications()
             // ->databaseNotificationsPolling('30s')
             // ->domain('admin.example.com')
-             ->maxContentWidth(MaxWidth::SevenExtraLarge)
+            ->maxContentWidth(MaxWidth::Full)
+            //  ->maxContentWidth(MaxWidth::SevenExtraLarge)
             // ->font('Poppins')
             ;
     }

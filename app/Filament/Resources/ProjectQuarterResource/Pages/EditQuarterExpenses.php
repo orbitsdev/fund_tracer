@@ -39,22 +39,46 @@ class EditQuarterExpenses extends EditRecord
     // dd($total_dc);
 
 
-    $total = $this->getRecord()
-    ->project_year
-    ->project
-    ->project_divisions()
-    ->with(['quarter_expense_budget_divisions.quarter_expenses'])
-    ->get();
+    // $dc = $this->getRecord()
+    // ->project_year
+    // ->project
+    // ->project_divisions()
+    // ->whereHas('quarter_expense_budget_divisions.project_division.project_division_categories', function($query){
+    //     $query->where('from', 'Direct Cost');
+    // })
+    // ->with(['quarter_expense_budget_divisions.quarter_expenses'])
+    // ->get();
+    // $total = $this->getRecord()
+    // ->project_year
+    // ->project
+    // ->project_divisions()
 
-    $totalAmount = $total->flatMap(function ($projectDivision) {
-        return $projectDivision->quarter_expense_budget_divisions->flatMap(function ($budgetDivision) {
-            return $budgetDivision->quarter_expenses->pluck('amount');
-        });
+    // ->with(['quarter_expense_budget_divisions.quarter_expenses'])
+    // ->get();
 
-        
-    })->sum();
 
-$data['total_expenses'] = number_format($totalAmount,2);
+
+    // $total_dc = $dc->flatMap(function ($projectDivision) {
+    //         return $projectDivision->quarter_expense_budget_divisions()->whereHas('project_division_category', function($query){
+    //             $query->where('from', 'Direct Cost');
+    //         })->flatMap(function ($budgetDivision) {
+    //         return $budgetDivision->quarter_expenses->pluck('amount');
+    // });
+
+    // })->sum();
+
+
+    // $totalAmount = $total->flatMap(function ($projectDivision) {
+    //         return $projectDivision->quarter_expense_budget_divisions->flatMap(function ($budgetDivision) {
+    //         return $budgetDivision->quarter_expenses->pluck('amount');
+    // });
+
+    // })->sum();
+
+
+
+
+// $data['total_expenses'] = number_format($totalAmount,2);
 
 
 
@@ -178,7 +202,7 @@ $data['total_expenses'] = number_format($totalAmount,2);
 
 
                                 )
-                                ->label('Direct Cost Expenses')
+                                ->label('Direct Cost')
                                 ->columns([
                                     'sm' => 3,
                                     'xl' => 6,
@@ -280,7 +304,7 @@ $data['total_expenses'] = number_format($totalAmount,2);
                                             });
                                     })
                                 )
-                                ->label('Indrect Cost Expenses SKSU')
+                                ->label('Indrect Cost SKSU')
                                 ->columns([
                                     'sm' => 3,
                                     'xl' => 6,
@@ -362,14 +386,12 @@ $data['total_expenses'] = number_format($totalAmount,2);
                                 }),
 
                             TableRepeater::make('indirect_cost_expenses_pcaarrd')
+
+                            ->emptyLabel('No Data')
                             ->columnWidths([
                                 'fourth_layer_id' => '200px',
                                 'amount' => '200px',
                             ])
-                            ->emptyLabel('No Data')
-                                ->columnWidths([
-                                    'file' => '200px',
-                                ])
                                 ->withoutHeader()
                                 ->addActionLabel('IC PCAARRD')
                                 ->relationship(
@@ -386,11 +408,11 @@ $data['total_expenses'] = number_format($totalAmount,2);
                                             });
                                     })
                                 )
-                                ->label('Indrect Cost Expenses PCAARRD')
+                                ->label('Indrect Cost PCAARRD')
                                 ->columns([
                                     'sm' => 3,
                                     'xl' => 6,
-                                    '2xl' => 9,
+                                    '2xl' => 8,
                                 ])
                                 ->afterStateUpdated(function (Get $get, Set $set) {
                                                     self::updateTotal($get, $set);
@@ -427,8 +449,7 @@ $data['total_expenses'] = number_format($totalAmount,2);
                                         ->label('Expenses')
                                         ->preload()
                                         ->native(false)
-                                        ->columnSpan(3)
-
+                                        ->columnSpan(4)
                                         ->distinct()
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
@@ -447,7 +468,7 @@ $data['total_expenses'] = number_format($totalAmount,2);
                                         ->numeric()
                                         // ->maxValue(9999999999)
                                         ->default(0)
-                                        ->columnSpan(3)
+                                        ->columnSpan(4)
                                         ->required(),
                                     // FileUpload::make('file')
                                     // ->columnSpan(3)

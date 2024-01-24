@@ -11,16 +11,19 @@ use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Support\RawJs;
+use App\Models\MonitoringAgency;
 use Filament\Resources\Resource;
+use App\Models\ImplementingAgency;
 use Filament\Forms\Components\Group;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
+
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
-
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
@@ -33,6 +36,7 @@ use App\Filament\Resources\ProgramResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProgramResource\RelationManagers;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater as TBlRepeater;
 
 class ProgramResource extends Resource
 {
@@ -44,6 +48,10 @@ class ProgramResource extends Resource
     protected static ?string $navigationGroup = 'Program Management';
 
 
+// public function getMaxContentWidth(): MaxWidth
+// {
+//     return MaxWidth::Full;
+// }
     public static function form(Form $form): Form
     {
         return $form
@@ -60,13 +68,13 @@ class ProgramResource extends Resource
                     ->columns([
                         'sm' => 3,
                         'xl' => 6,
-                        '2xl' => 8,
+                        '2xl' => 9,
                     ])
 
 
                     ->schema([
                         TextInput::make('title')
-                            ->label('Title')
+                            ->label('Program Title')
                             ->maxLength(191)
                             ->required()
                             ->columnSpanFull(),
@@ -82,19 +90,7 @@ class ProgramResource extends Resource
                             ->required()
                             ->columnSpanFull(),
 
-                        TextInput::make('total_budget')
 
-                        ->mask(RawJs::make('$money($input)'))
-                        ->stripCharacters(',')
-
-                            // ->mask(RawJs::make('$money($input)'))
-                            // ->stripCharacters(',')
-                            ->prefix('₱')
-                            ->numeric()
-                            // ->maxValue(9999999999)
-                            ->default(0)
-                            ->columnSpanFull()
-                            ->required(),
                         // Select::make('status')
                         //     ->options([
                         //         'Pending' => 'Pending',
@@ -108,8 +104,9 @@ class ProgramResource extends Resource
                         //     ->native(false)
                         //     ->columnSpan(3),
 
-                        DatePicker::make('start_date')->date()->native(false)->columnSpan(4)
+                        DatePicker::make('start_date')->date()->native(false)->columnSpan(3)
                         ->live()
+                        ->suffixIcon('heroicon-m-calendar-days')
                         ->debounce(700)
                         ->afterStateUpdated(function (Get $get, Set $set) {
                             self::calculateTotalMonthDurationn($get, $set);
@@ -117,19 +114,60 @@ class ProgramResource extends Resource
                         })
                             ->required(),
 
-                        DatePicker::make('end_date')->date()->native(false)->columnSpan(4)
+                        DatePicker::make('end_date')->date()->native(false)->columnSpan(3)
                         ->live()
+                        ->suffixIcon('heroicon-m-calendar-days')
                         ->debounce(700)
                         ->afterStateUpdated(function (Get $get, Set $set) {
                             self::calculateTotalMonthDurationn($get, $set);
                             self::setCurrentDuration($get, $set);
                         })
                             ->required(),
+
+                            TextInput::make('duration_overview')
+                            ->disabled()
+                            ->label('Total Duration')
+                            // ->prefix('₱ ')
+                            // ->numeric()
+
+                            ->columnSpan(3)
+                            // ->maxLength(191)
+                            ->readOnly(),
+
+                            Select::make('implementing_agency')
+                            ->label('Implementing Agency')
+                            ->options(ImplementingAgency::all()->pluck('title', 'id'))
+                            ->searchable()
+                            ->columnSpan(3)
+                            ->required()
+                            ->native(false),
+                                            Select::make('monitoring_agency')
+                            ->label('Monitoring Agency')
+                            ->options(MonitoringAgency::all()->pluck('title', 'id'))
+                            ->required()
+
+                            ->columnSpan(3)
+                            ->searchable()
+                            ->native(false),
+
+                            TextInput::make('total_budget')
+
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+
+                                // ->mask(RawJs::make('$money($input)'))
+                                // ->stripCharacters(',')
+                                ->prefix('₱')
+                                ->numeric()
+                                // ->maxValue(9999999999)
+                                ->default(0)
+                                ->columnSpan(3)
+                                ->required(),
 
 
 
                     ])
-                    ->collapsed()
+
                     ->collapsible(),
 
                 Section::make('Programs Documents')
@@ -139,13 +177,18 @@ class ProgramResource extends Resource
                     ->icon('heroicon-m-folder')
                     ->description('Manage and organize your program documents. Upload files here')
                     ->schema([
-                        Repeater::make('files')
+                        TBlRepeater::make('files')
+                        ->withoutHeader()
+                        ->emptyLabel('No File')
+                        ->columnWidths([
 
+                            'file' => '250px',
+                        ])
                             ->relationship()
                             ->label('Documents')
                             ->schema([
                                 TextInput::make('file_name')
-                                    ->label('Name')
+                                    ->label('File Description')
                                     ->maxLength(191)
                                     ->required(),
                                 FileUpload::make('file')
@@ -228,58 +271,50 @@ class ProgramResource extends Resource
 
 
                     ])
-                    ->collapsed()
+
                     ->collapsible(),
-                ])->columnSpan(['lg' => 2]),
+                ])->columnSpan(['lg' => 3]),
 
                 Group::make()
                 ->schema([
 
-                    Section::make('Overview')
+                    // Section::make('Overview')
 
-                    ->columnSpanFull()
-                    ->schema([
+                    // ->columnSpanFull()
+                    // ->schema([
 
-                        TextInput::make('program_leader_overview')
-                        ->label('Program Leader')
-                        // ->prefix('₱ ')
-                        // ->numeric()
-                        ->columnSpan(3)
+                    //     TextInput::make('program_leader_overview')
+                    //     ->label('Program Leader')
+                    //     // ->prefix('₱ ')
+                    //     // ->numeric()
+                    //     ->columnSpan(3)
 
-                        ->columnSpanFull()
-                        // ->maxLength(191)
-                        ->readOnly(),
-                        TextInput::make('current_duration_overview')
-                        ->label('Current Duration')
-                        // ->prefix('₱ ')
-                        // ->numeric()
-                        ->columnSpan(3)
+                    //     ->columnSpanFull()
+                    //     // ->maxLength(191)
+                    //     ->readOnly(),
+                    //     TextInput::make('current_duration_overview')
+                    //     ->label('Current Duration')
+                    //     // ->prefix('₱ ')
+                    //     // ->numeric()
+                    //     ->columnSpan(3)
 
-                        ->columnSpanFull()
-                        // ->maxLength(191)
-                        ->readOnly(),
-                        // Placeholder::make('duration')
-                        TextInput::make('duration_overview')
-                        ->label('Total Duration')
-                        // ->prefix('₱ ')
-                        // ->numeric()
-                        ->columnSpan(3)
-
-                        ->columnSpanFull()
-                        // ->maxLength(191)
-                        ->readOnly(),
+                    //     ->columnSpanFull()
+                    //     // ->maxLength(191)
+                    //     ->readOnly(),
+                    //     // Placeholder::make('duration')
 
 
 
 
-                    ])
+
+                    // ])
 
                 ])->columnSpan(['lg' => 1]),
 
 
 
             ])
-            ->columns(3)
+            ->columns(4)
             ;
     }
 
@@ -415,6 +450,8 @@ class ProgramResource extends Resource
                     ,
 
 
+
+
             ])
             ->filters([
                 //
@@ -435,11 +472,11 @@ class ProgramResource extends Resource
             ])
             ->recordUrl(null)
             ->modifyQueryUsing(fn (Builder $query) => $query->latest())
-            ->groups([
-                'status',
+            // ->groups([
+            //     'status',
 
-            ])
-            ->defaultGroup('status')
+            // ])
+            // ->defaultGroup('status')
             ;
     }
 
