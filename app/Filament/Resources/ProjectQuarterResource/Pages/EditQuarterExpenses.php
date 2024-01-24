@@ -32,13 +32,21 @@ class EditQuarterExpenses extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
 
-        // dd($this->getRecord()->project_year);
+        // dd($this->getRecord()->quarter_expense_budget_divisions);
+        $ex = $this->getRecord()->quarter_expense_budget_divisions()->with(['quarter_expenses'=>function($query){
+            $query->whereHas('quarter_expense_budget_division.project_division.project_division_categories', function($query){
+                $query->where('from', 'Direct Cost');
+        });
+         }])
+            ->get();
+        //  dd($ex);
         $expenses = $this->getRecord()
             ->project_year
             ->project
-            ->project_divisions()->with(['quarter_expense_budget_divisions.quarter_expenses'])->get();
+            ->project_divisions()->with(['quarter_expense_budget_divisions'])
+            ->get();
 
-        // dd($total_dc);
+        
 
 
         $dc_expenses = $this->getRecord()
@@ -51,12 +59,11 @@ class EditQuarterExpenses extends EditRecord
             ->with(['quarter_expense_budget_divisions.quarter_expenses'=>function ($query) {
                 $query->whereHas('quarter_expense_budget_division.project_division.project_division_categories',function ($query) {
                     $query->where('from', 'Direct Cost');
-                    
                 });
             }])
             ->get();
 
-            // dd($dc_expenses);
+           
 
         $ic_sksu_expenses = $this->getRecord()
             ->project_year
