@@ -15,8 +15,10 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Support\RawJs;
 use Tables\Actions\ViewAction;
+use App\Models\MonitoringAgency;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use App\Models\ImplementingAgency;
 use Filament\Actions\CreateAction;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Group;
@@ -117,14 +119,12 @@ class ProjectResource extends Resource
                         TextEntry::make('program.total_budget')
                             ->money('PHP')
                             ->label('Program Budget')
-                             ->size(TextEntry\TextEntrySize::Large)
-                            ,
+                            ->size(TextEntry\TextEntrySize::Large),
 
                         TextEntry::make('program.total_usage')
                             ->money('PHP')
                             ->label('Program Budget')
-                             ->size(TextEntry\TextEntrySize::Large)
-                            ,
+                            ->size(TextEntry\TextEntrySize::Large),
                     ]),
 
                 Fieldset::make('Project Details')
@@ -163,14 +163,14 @@ class ProjectResource extends Resource
                             ->columnSpan(3),
 
 
-                            ViewEntry::make('Total Duration')
+                        ViewEntry::make('Total Duration')
                             ->view('infolists.components.project-duration')
 
-                             ->columnSpanFull(),
-                            ViewEntry::make('Current Duration')
+                            ->columnSpanFull(),
+                        ViewEntry::make('Current Duration')
                             ->view('infolists.components.current-duration')
 
-                             ->columnSpanFull(),
+                            ->columnSpanFull(),
 
 
 
@@ -190,48 +190,48 @@ class ProjectResource extends Resource
 
 
                 Tabs::make('Tabs')
-                ->tabs([
-                    Tabs\Tab::make('Project Yearly Expenses')
-                        ->schema([
-                            ViewEntry::make('')
-                            ->view('infolists.components.project-division-details')
-                            ->columnSpanFull(),
-                        ]),
-                    Tabs\Tab::make('Summary Budget')
-                        ->schema([
-                            ViewEntry::make('')
-                            ->view('infolists.components.summary-budget  ')
-                            ->columnSpanFull(),
-                        ]),
-                    Tabs\Tab::make('Other')
-                        ->schema([
-                            // ...
-                        ]),
+                    ->tabs([
+                        Tabs\Tab::make('Project Yearly Expenses')
+                            ->schema([
+                                ViewEntry::make('')
+                                    ->view('infolists.components.project-division-details')
+                                    ->columnSpanFull(),
+                            ]),
+                        Tabs\Tab::make('Summary Budget')
+                            ->schema([
+                                ViewEntry::make('')
+                                    ->view('infolists.components.summary-budget  ')
+                                    ->columnSpanFull(),
+                            ]),
+                        Tabs\Tab::make('Other')
+                            ->schema([
+                                // ...
+                            ]),
 
-                ])
-                ->activeTab(1)
-                ->columnSpanFull(),
+                    ])
+                    ->activeTab(1)
+                    ->columnSpanFull(),
 
 
 
-                        // RepeatableEntry::make('project_years')
-                        // ->schema([
-                        //     TextEntry::make('year.title'),
-                        //     RepeatableEntry::make('project_quarters')
-                        //     ->schema([
-                        //         TextEntry::make('quarter.title'),
-                        //         RepeatableEntry::make('project_divisions')
-                        //         ->schema([
-                        //             TextEntry::make('division.title'),
-                        //             RepeatableEntry::make('project_division_categories')
-                        //             ->schema([
-                        //                 TextEntry::make('division.title'),
+                // RepeatableEntry::make('project_years')
+                // ->schema([
+                //     TextEntry::make('year.title'),
+                //     RepeatableEntry::make('project_quarters')
+                //     ->schema([
+                //         TextEntry::make('quarter.title'),
+                //         RepeatableEntry::make('project_divisions')
+                //         ->schema([
+                //             TextEntry::make('division.title'),
+                //             RepeatableEntry::make('project_division_categories')
+                //             ->schema([
+                //                 TextEntry::make('division.title'),
 
-                        //             ]),
+                //             ]),
 
-                        //         ]),
-                        //     ]),
-                        // ])->columnSpanFull()
+                //         ]),
+                //     ]),
+                // ])->columnSpanFull()
 
                 // RepeatableEntry::make('project_divisions')
                 //     ->schema([
@@ -279,23 +279,23 @@ class ProjectResource extends Resource
                                 // ,
 
 
-Radio::make('project_type')
-->label('Project Type')
-->options([
-    'Dependent' => 'Dependent',
-    'Independent' => 'Independent',
-])
-// ->descriptions([
-//     'Dipendent' => 'Project is belong to program',
-//     'Independent' => 'Project is not belong to any program',
-// ])
-
-->live()
-->debounce(700)
-
-->inline()
-->columnSpanFull()
-,
+                                Radio::make('project_type')
+                                    ->label('Project Type')
+                                    ->options([
+                                        'Dependent' => 'Dependent ',
+                                        'Independent' => 'Independent',
+                                    ])
+                                    ->default('Dependent')
+                                    // ->descriptions([
+                                    //     'Dipendent' => 'Project is belong to program',
+                                    //     'Independent' => 'Project is not belong to any program',
+                                    // ])
+                                     ->helperText('Choose whether the project is dependent on a program or not')
+                                    ->live()
+                                    ->debounce(700)
+                                    
+                                    ->inline()
+                                    ->columnSpanFull(),
 
                                 Select::make('program_id')
                                     ->live()
@@ -307,7 +307,7 @@ Radio::make('project_type')
                                         titleAttribute: 'title'
                                     )
                                     ->hint('Program  & Budget')
-                                    // ->helperText(new HtmlString('Program  & Budget'))
+                                     //->helperText(new HtmlString('Program  & Budget'))
                                     // ->hintColor('primary')
                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title} - ₱ " . number_format($record->total_budget))
 
@@ -322,14 +322,23 @@ Radio::make('project_type')
                                     // })
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                         self::updateProgramOverviewDetails($get, $set);
+                                        self::calculateTotalMonthDurationn($get, $set);
+                                        self::setCurrentDuration($get, $set);
+                                
                                     })
-                                     ->hidden(function(Get $get, Set $set){
-                                        if($get('project_type')  !=  'Dependent'){
-                                            return true;
-                                        }else{
+
+                                    ->hidden(function (Get $get, Set $set) {
+                                        //if project has program 
+                                        if ($get('project_type')  !=  'Dependent') {
+
+                                            self::resetSelectedProgram($get, $set);
+
+                                                return true;
+                                            
+                                        } else {
                                             return false;
                                         }
-                                     })
+                                    })
                                     ->searchable()
                                     ->preload()
                                     ->native(false)
@@ -339,17 +348,41 @@ Radio::make('project_type')
                                     ->label('Project Title')
                                     ->required()
                                     ->maxLength(191)
-                                    ->columnSpan(3),
-                                TextInput::make('implementing_agency')
+                                    ->columnSpanFull(),
+                                    Select::make('implementing_agency')
                                     ->label('Implementing Agency')
+                                    ->options(ImplementingAgency::all()->pluck('title', 'title'))
+                                    ->hint(function(){
+                                        if(ImplementingAgency::count() > 0){
+                                            return '';
+                                        }else{
+                                            return 'No implementing agency agency found';
+                                        }
+                                    })
+                                    ->searchable()
+                                    ->columnSpan(3)
                                     ->required()
-                                    ->maxLength(191)
-                                    ->columnSpan(3),
-                                TextInput::make('monitoring_agency')
-                                    ->label('Monitorin Agency')
+                                    ->disabled(function(Get $get , Set $set){
+                                        return self::disabledDate($get, $set);
+                                     })
+                                    ->native(false),
+                                                    Select::make('monitoring_agency')
+                                    ->label('Monitoring Agency')
+                                    ->options(MonitoringAgency::all()->pluck('title', 'title'))
                                     ->required()
-                                    ->maxLength(191)
-                                    ->columnSpan(3),
+                                    ->hint(function(){
+                                        if(MonitoringAgency::count() > 0){
+                                            return '';
+                                        }else{
+                                            return 'No monitoring agency found';
+                                        }
+                                    })
+                                    ->columnSpan(3)
+                                    ->searchable()
+                                    ->disabled(function(Get $get , Set $set){
+                                        return self::disabledDate($get, $set);
+                                     })
+                                    ->native(false),
                                 // Select::make('user_id')
                                 //     ->relationship(
                                 //         name: 'manager',
@@ -409,7 +442,7 @@ Radio::make('project_type')
                                                     $remaining_budget = $selected_program->total_budget - $selected_program->total_usage;
 
                                                     if ($value > $remaining_budget) {
-                                                        $fail("The expenses amount should not exceed the remaining budget of the selected program");
+                                                        $fail("The allocated amount should not exceed the remaining budget of the selected program");
                                                     }
                                                 } else {
                                                     $fail("Program not found");
@@ -424,9 +457,14 @@ Radio::make('project_type')
                                     ->live()
                                     ->debounce(700)
                                     ->afterStateUpdated(function (Get $get, Set $set) {
+                                      
                                         self::calculateTotalMonthDurationn($get, $set);
                                         self::setCurrentDuration($get, $set);
                                     })
+                                    ->disabled(function(Get $get , Set $set){
+                                       return self::disabledDate($get, $set);
+                                    })
+                                    ->suffixIcon('heroicon-m-calendar-days')
                                     ->required(),
                                 DatePicker::make('end_date')->date()->native(false)->columnSpan(3)
                                     ->live()
@@ -435,7 +473,20 @@ Radio::make('project_type')
                                         self::calculateTotalMonthDurationn($get, $set);
                                         self::setCurrentDuration($get, $set);
                                     })
+                                    ->disabled(function(Get $get , Set $set){
+                                        return self::disabledDate($get, $set);
+                                     })
+                                     ->suffixIcon('heroicon-m-calendar-days')
                                     ->required(),
+                                    TextInput::make('duration_overview')
+                                    ->disabled()
+                                    ->label('Total Duration')
+                                    // ->prefix('₱ ')
+                                    // ->numeric()
+        
+                                    ->columnSpan(3)
+                                    // ->maxLength(191)
+                                    ->readOnly(),
 
 
                                 // Select::make('status')
@@ -757,7 +808,7 @@ Radio::make('project_type')
                         //     }),
 
 
-                        Section::make('File Attachments')
+                        Section::make('Project Documents')
                             ->icon('heroicon-m-folder')
                             ->description('Manage and organize your Project documents. Upload files here')
                             ->columnSpanFull()
@@ -858,7 +909,7 @@ Radio::make('project_type')
                             ->collapsible(),
 
 
-                    ])->columnSpan(['lg' => 3]),
+                    ])->columnSpan(['lg' => 2]),
                 Group::make()
                     ->schema([
 
@@ -879,12 +930,14 @@ Radio::make('project_type')
                                     ->columnSpan(3)
                                     ->columnSpanFull()
                                     // ->maxLength(191)
+                                    ->disabled()
                                     ->readOnly(),
                                 TextInput::make('program_budget_overview')
-                                    ->label('Budget')
+                                    ->label('Program Budget')
                                     // ->default(0)
                                     ->prefix('₱ ')
                                     // ->numeric()
+                                    ->disabled()
                                     ->columnSpanFull()
 
                                     // ->maxLength(191)
@@ -898,13 +951,26 @@ Radio::make('project_type')
                                 //     // ->maxLength(191)
                                 //     ->readOnly(),
                                 TextInput::make('program_remaining_budget_overview')
-                                    ->label('Remaining')
+                                    ->label('Program Remaining Budget')
                                     // ->prefix('₱ ')
                                     // ->numeric()
+                                    ->disabled()
                                     ->columnSpanFull()
 
                                     // ->maxLength(191)
                                     ->readOnly(),
+
+                                    
+                                TextInput::make('project_fund')
+                                ->label('Allocated Amount')
+                                ->mask(RawJs::make('$money($input)'))
+                                ->stripCharacters(',')
+                                ->numeric()
+                                ->columnSpanFull()
+                                ->default(0)
+                                ->disabled()
+                                // ->maxLength(191)
+                                ->readOnly(),
                             ]),
 
                         // Section::make('Overview')
@@ -928,73 +994,20 @@ Radio::make('project_type')
 
                         // ]),
 
-                        Section::make('Project Overview')
-                            //  ->icon('heroicon-m-square-3-stack-3d')
-                            // ->description('Manage and organize project expenses here. You can only add expense in edit')
-                            ->columnSpanFull()
-                            ->schema([
-                                TextInput::make('current_duration_overview')
-                                    ->label('Current Duration')
-                                    // ->prefix('₱ ')
-                                    // ->numeric()
-                                    ->columnSpan(3)
-
-                                    ->columnSpanFull()
-                                    // ->maxLength(191)
-                                    ->readOnly(),
-                                // Placeholder::make('duration')
-                                TextInput::make('duration_overview')
-                                    ->label('Total Duration')
-                                    // ->prefix('₱ ')
-                                    // ->numeric()
-                                    ->columnSpan(3)
-
-                                    ->columnSpanFull()
-                                    // ->maxLength(191)
-                                    ->readOnly(),
-
-                                TextInput::make('project_fund')
-                                    ->label('Allocated Amount')
-                                    ->mask(RawJs::make('$money($input)'))
-                                    ->stripCharacters(',')
-                                    ->numeric()
-                                    ->columnSpan(3)
-                                    ->default(0)
-                                    // ->maxLength(191)
-                                    ->readOnly(),
-                                // TextInput::make('total_expenses')
-                                //     ->label('Total Expenses')
-                                //     ->mask(RawJs::make('$money($input)'))
-                                //     ->stripCharacters(',')
-                                //     ->numeric()
-                                //     ->columnSpan(3)
-                                //     ->default(0)
-                                //     // ->maxLength(191)
-                                //     ->readOnly()
-                                //     ->rules([
-                                //         fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                //             $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
-                                //             $cvalue = (float) str_replace(',', '', $value);
-
-                                //             // Assuming you want to check if $cvalue is greater than the allocated fund or less than 0
-                                //             if ($cvalue > $allocatedFund || $cvalue < 0) {
-                                //                 $fail("The expenses amount should not exceed the allocated fund or be less than 0");
-                                //             }
-                                //         },
-                                //     ]),
-
-                            ]),
+                      
                     ])
-                    // ->hidden(fn (string $operation): bool => $operation === 'create')
+                     ->hidden(function(Get $get , Set $set){
+                       
+                        if(!empty($get('program_id')) && $get('project_type')  ==  'Dependent'){
+                            return false;
+                        }else{
+                            self::resetSelectedProgram($get, $set);
+                            return true;
+                        }
+                     })
                     ->columnSpan(['lg' => 1])
 
-                    ->hidden(function (string $operation) {
-                        if ($operation === 'create') {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }),
+
                 // Placeholder::make('documentation')
                 // // ->live()
                 // ->content(function(Get $get){
@@ -1150,10 +1163,10 @@ Radio::make('project_type')
                     Tables\Actions\ViewAction::make()->label('View Details'),
                     EditAction::make()->label('Update Basic Information'),
                     // Tables\Actions\Action::make('Manage Quarter')->label('Manage Quarters')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record])),
-                    Tables\Actions\Action::make('budget_division')->label('Divide Budget')->icon('heroicon-m-table-cells')->url(fn (Model $record): string => ProjectResource::getUrl('budget-division', ['record'=> $record])),
+                    Tables\Actions\Action::make('budget_division')->label('Divide Budget')->icon('heroicon-m-table-cells')->url(fn (Model $record): string => ProjectResource::getUrl('budget-division', ['record' => $record])),
                     // Tables\Actions\Action::make('quarter_budget')->label('Quarter Expenses')->icon('heroicon-m-chart-bar')->url(fn (Model $record): string => ProjectResource::getUrl('quarter-budget', ['record'=> $record])),
 
-                    Tables\Actions\Action::make('year_quarter_budget')->label('Expenses')->icon('heroicon-m-banknotes')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record])),
+                    Tables\Actions\Action::make('year_quarter_budget')->label('Expenses')->icon('heroicon-m-banknotes')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record' => $record])),
 
 
 
@@ -1163,19 +1176,16 @@ Radio::make('project_type')
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ])
-                ->label('Actions')
-                ,
+                    ->label('Actions'),
             ])
-            // ->groups([
-            //     TGroup::make('program.title')
-            //         ->titlePrefixedWithLabel(false)
-            //         ->getTitleFromRecordUsing(fn (Model $record): string => $record->title ?  ucfirst($record->title) : '')
-            //         ->label('Program')
-            //         ->collapsible()
-            //         ,
+            ->groups([
+                TGroup::make('program.title')
+                    ->titlePrefixedWithLabel(false)
+                    ->getTitleFromRecordUsing(fn (Model $record): string => $record->title ?  ucfirst($record->title) : '')
+                    ->label('Program')
+                    ->collapsible(),
 
-
-            // ])
+            ])
             ->modifyQueryUsing(fn (Builder $query) => $query->latest());
     }
 
@@ -1194,14 +1204,31 @@ Radio::make('project_type')
             'index' => Pages\ListProjects::route('/'),
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
-             'budget-division' => Pages\EditProjectQuarter::route('/{record}/edit/budget-division'),
-             'quarter-budget' => Pages\ProjectQuarterBudjet::route('/{record}/edit/quarter-budget'),
+            'budget-division' => Pages\EditProjectQuarter::route('/{record}/edit/budget-division'),
+            'quarter-budget' => Pages\ProjectQuarterBudjet::route('/{record}/edit/quarter-budget'),
             // 'budget-division' => Pages\BudgetDivision::route('/{record}/budget-division'),
             'manage-quarter-year' => Pages\ManageYearQuarter::route('/{record}/year-quarters'),
             'create-quarter' => Pages\ManageQuarter::route('/{record}/quarter/create'),
             'quarter-list' => Pages\ProjectYearQuarterList::route('/{record}/quarters'),
             'view' => Pages\ViewProject::route('/{record}'),
         ];
+    }
+
+
+    public static function resetSelectedProgram(Get $get , Set $set){
+            if(!empty($get('program_id'))){
+                $set('program_id',null);
+            }
+    }
+    public static function disabledDate(Get $get , Set $set){
+
+           if(!empty($get('program_id'))){
+            return true;
+           }else{
+            return false;
+           }
+
+
     }
 
     public static function updateProgramOverviewDetails(Get $get, Set $set)
@@ -1212,18 +1239,34 @@ Radio::make('project_type')
         if (!empty($get('program_id'))) {
             $program = Program::find($get('program_id'));
             if (!empty($program)) {
+             $set('start_date', $program->start_date);
+             $set('end_date', $program->end_date);
+
+             $set('implementing_agency', $program->implementing_agency);
+             $set('monitoring_agency', $program->monitoring_agency);
+          
+             
+            
                 $set('program_name_overview', $program->title);
                 $set('program_budget_overview', number_format($program->total_budget));
                 $set('program_use_budget_overview', $program->total_usage);
                 $set('program_remaining_budget_overview', number_format($program->total_budget - $program->total_usage));
             } else {
+                $set('start_date', null);
+                $set('end_date', null);
+                $set('implementing_agency', null);
+               $set('monitoring_agency', null);
                 $set('program_name_overview', null);
                 $set('program_budget_overview', null);
                 $set('program_use_budget_overview', null);
                 $set('program_remaining_budget_overview', null);
             }
         } else {
-            $set('program_name_overview', null);
+            $set('start_date', null);
+            $set('end_date', null);
+            $set('implementing_agency', null);
+            $set('monitoring_agency', null);
+            // $set('program_name_overview', null);
             $set('program_budget_overview', null);
             $set('program_use_budget_overview', null);
             $set('program_remaining_budget_overview', null);

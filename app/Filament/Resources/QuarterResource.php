@@ -18,7 +18,7 @@ class QuarterResource extends Resource
 {
     protected static ?string $model = Quarter::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
     protected static ?string $navigationGroup = 'Content Management';
     protected static ?int $navigationSort = 4;
     // protected static bool $shouldRegisterNavigation = false;

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable();
             $table->foreignId('program_id')->nullable();
             $table->string('title')->nullable();
+            $table->string('project_type')->nullable();
             $table->string('implementing_agency')->nullable();
             $table->string('monitoring_agency')->nullable();
             $table->string('project_leader')->nullable();

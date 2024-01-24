@@ -19,7 +19,7 @@ class MonitoringAgencyResource extends Resource
 {
     protected static ?string $model = MonitoringAgency::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
     protected static bool $canCreateAnother = false;
     protected static ?string $navigationGroup = 'Content Management';
     protected static ?int $navigationSort = 6;

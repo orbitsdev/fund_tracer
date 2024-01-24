@@ -12,6 +12,8 @@ use Database\Seeders\ProjectSeeder;
 use Database\Seeders\QuarterSeeder;
 use Database\Seeders\DivisionSeeder;
 use Database\Seeders\DivisionCategorySeeder;
+use Database\Seeders\MonitoringAgencySeeder;
+use Database\Seeders\ImplementingAgencySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -28,6 +30,8 @@ class DatabaseSeeder extends Seeder
             ProgramSeeder::class,
             ProjectSeeder::class,
             QuarterSeeder::class,
+            MonitoringAgencySeeder::class,
+            ImplementingAgencySeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

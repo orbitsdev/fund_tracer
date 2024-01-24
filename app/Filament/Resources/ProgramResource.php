@@ -137,16 +137,29 @@ class ProgramResource extends Resource
 
                             Select::make('implementing_agency')
                             ->label('Implementing Agency')
-                            ->options(ImplementingAgency::all()->pluck('title', 'id'))
+                            ->options(ImplementingAgency::all()->pluck('title', 'title'))
+                            ->hint(function(){
+                                if(ImplementingAgency::count() > 0){
+                                    return '';
+                                }else{
+                                    return 'No implementing agency agency found';
+                                }
+                            })
                             ->searchable()
                             ->columnSpan(3)
                             ->required()
                             ->native(false),
                                             Select::make('monitoring_agency')
                             ->label('Monitoring Agency')
-                            ->options(MonitoringAgency::all()->pluck('title', 'id'))
+                            ->options(MonitoringAgency::all()->pluck('title', 'title'))
                             ->required()
-
+                            ->hint(function(){
+                                if(MonitoringAgency::count() > 0){
+                                    return '';
+                                }else{
+                                    return 'No monitoring agency found';
+                                }
+                            })
                             ->columnSpan(3)
                             ->searchable()
                             ->native(false),
@@ -359,15 +372,15 @@ class ProgramResource extends Resource
                     ->listWithLineBreaks()
                     ->label('Project & Allocated Fund')
                     ->wrap()
-                    ->badge()
+                    ->color('primary')
                     ->separator(',')
                     // ->limitList(2)
-                    ->words(8)
+                  
                     ->listWithLineBreaks()
                     ->expandableLimitedList()
                     ->formatStateUsing(function($state) {
-                        // return $state->title.' - ₱'.number_format($state->allocated_fund);
-                        return $state->title;
+                        return $state->title.' - ₱'.number_format($state->allocated_fund);
+                        // return $state->title;
                     })
                     ->tooltip(function (Model $record): string {
                         return "\n" . $record->projects->map(function ($project, $index) {
@@ -514,7 +527,7 @@ class ProgramResource extends Resource
 
             // dd(Carbon::parse($startDate)->format('F d, Y'), Carbon::parse($startDate)->format('F d, Y'));
 
-            $currentDuration = Carbon::parse($startDate)->format('F d, Y') . ' - '. Carbon::parse($endDate)->format('F d, Y');
+        $currentDuration = Carbon::parse($startDate)->format('F d, Y') . ' - '. Carbon::parse($endDate)->format('F d, Y');
 
             $set('current_duration_overview', $currentDuration);
 
