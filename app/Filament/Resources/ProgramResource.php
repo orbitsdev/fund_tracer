@@ -14,13 +14,14 @@ use Filament\Support\RawJs;
 use App\Models\MonitoringAgency;
 use Filament\Resources\Resource;
 use App\Models\ImplementingAgency;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Group;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
 
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -166,114 +167,115 @@ class ProgramResource extends Resource
 
 
 
-                    ])
-
-                    ->collapsible(),
-
-                Section::make('Programs Documents')
-
-                    ->columnSpanFull()
-
-                    ->icon('heroicon-m-folder')
-                    ->description('Manage and organize your program documents. Upload files here')
-                    ->schema([
-                        TBlRepeater::make('files')
-                        ->withoutHeader()
-                        ->emptyLabel('No File')
-                        ->columnWidths([
-
-                            'file' => '250px',
-                        ])
-                            ->relationship()
-                            ->label('Documents')
-                            ->schema([
-                                TextInput::make('file_name')
-                                    ->label('File Description')
-                                    ->maxLength(191)
-                                    ->required(),
-                                FileUpload::make('file')
-                                    ->required()
-                                    // ->columnSpanFull()
-                                    // ->image()
-                                    ->preserveFilenames()
-
-                                    ->label('File')
-                                    ->disk('public')
-                                    ->directory('program-files')
-                            ])
-                            ->deleteAction(
-                                fn (Action $action) => $action->requiresConfirmation(),
-                            )
-                            ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
-                                // $data['user_id'] = auth()->id();
-
-                                return $data;
-                            })
-                            ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
-                                // $filePath = storage_path('app/public/' . $data['file']);
+                    ]),
 
 
-                                $filePath = storage_path('app/public/' . $data['file']);
+        Section::make('Programs Documents')
 
-                                $fileInfo = [
-                                    'file' => $data['file'],
-                                    'file_name' => $data['file_name'],
-                                    'file_type' => mime_content_type($filePath),
-                                    'file_size' => call_user_func(function ($bytes) {
-                                        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-                                        $i = 0;
+        ->columnSpanFull()
 
-                                        while ($bytes >= 1024 && $i < count($units) - 1) {
-                                            $bytes /= 1024;
-                                            $i++;
-                                        }
+        ->icon('heroicon-m-folder')
+        ->description('Manage and organize your program documents. Upload files here')
+        ->schema([
+            TBlRepeater::make('files')
+            ->withoutHeader()
+            ->emptyLabel('No File')
+            ->columnWidths([
 
-                                        return round($bytes, 2) . ' ' . $units[$i];
-                                    }, filesize($filePath)),
-                                ];
-                                return $fileInfo;
-                                // $data['user_id'] = auth()->id();
+                'file' => '250px',
+            ])
+                ->relationship()
+                ->label('Documents')
+                ->schema([
+                    TextInput::make('file_name')
+                        ->label('File Description')
+                        ->maxLength(191)
+                        ->required(),
+                    FileUpload::make('file')
+                        ->required()
+                        // ->columnSpanFull()
+                        // ->image()
+                        ->preserveFilenames()
 
-                                // return $data;
-                            })
-                            ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
+                        ->label('File')
+                        ->disk('public')
+                        ->directory('program-files')
+                ])
+                ->deleteAction(
+                    fn (Action $action) => $action->requiresConfirmation(),
+                )
+                ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
+                    // $data['user_id'] = auth()->id();
 
-
-                                $filePath = storage_path('app/public/' . $data['file']);
-
-                                $fileInfo = [
-                                    'file' => $data['file'],
-                                    'file_name' => $data['file_name'],
-                                    'file_type' => mime_content_type($filePath),
-                                    'file_size' => call_user_func(function ($bytes) {
-                                        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-                                        $i = 0;
-
-                                        while ($bytes >= 1024 && $i < count($units) - 1) {
-                                            $bytes /= 1024;
-                                            $i++;
-                                        }
-
-                                        return round($bytes, 2) . ' ' . $units[$i];
-                                    }, filesize($filePath)),
-                                ];
-
-                                // dd($fileInfo);
-                                // dd($data);
-
-                                return $fileInfo;
-                            })
-                            ->reorderable(true)
-                            ->columnSpanFull()
-                            ->columns(2)
-                            ->defaultItems(0)
-                            ->addActionLabel('Add Documents')
+                    return $data;
+                })
+                ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
+                    // $filePath = storage_path('app/public/' . $data['file']);
 
 
-                    ])
+                    $filePath = storage_path('app/public/' . $data['file']);
 
-                    ->collapsible(),
-                ])->columnSpan(['lg' => 3]),
+                    $fileInfo = [
+                        'file' => $data['file'],
+                        'file_name' => $data['file_name'],
+                        'file_type' => mime_content_type($filePath),
+                        'file_size' => call_user_func(function ($bytes) {
+                            $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+                            $i = 0;
+
+                            while ($bytes >= 1024 && $i < count($units) - 1) {
+                                $bytes /= 1024;
+                                $i++;
+                            }
+
+                            return round($bytes, 2) . ' ' . $units[$i];
+                        }, filesize($filePath)),
+                    ];
+                    return $fileInfo;
+                    // $data['user_id'] = auth()->id();
+
+                    // return $data;
+                })
+                ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
+
+
+                    $filePath = storage_path('app/public/' . $data['file']);
+
+                    $fileInfo = [
+                        'file' => $data['file'],
+                        'file_name' => $data['file_name'],
+                        'file_type' => mime_content_type($filePath),
+                        'file_size' => call_user_func(function ($bytes) {
+                            $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+                            $i = 0;
+
+                            while ($bytes >= 1024 && $i < count($units) - 1) {
+                                $bytes /= 1024;
+                                $i++;
+                            }
+
+                            return round($bytes, 2) . ' ' . $units[$i];
+                        }, filesize($filePath)),
+                    ];
+
+                    // dd($fileInfo);
+                    // dd($data);
+
+                    return $fileInfo;
+                })
+                ->reorderable(true)
+                ->columnSpanFull()
+                ->columns(2)
+                ->defaultItems(0)
+                ->addActionLabel('Add Documents')
+
+
+        ])
+
+        ->collapsible(),
+
+
+                ])->columnSpan(['lg' => 4]),
 
                 Group::make()
                 ->schema([

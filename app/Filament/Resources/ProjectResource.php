@@ -107,6 +107,8 @@ class ProjectResource extends Resource
                         TextEntry::make('program.start_date')
                             ->label('Program Start')
                             ->date(),
+                            
+
                         TextEntry::make('program.end_date')
                             ->label('Program End')
                             ->date(),
@@ -120,9 +122,6 @@ class ProjectResource extends Resource
                             ->money('PHP')
                             ->label('Program Budget')
                              ->size(TextEntry\TextEntrySize::Large)
-
-
-
                             ,
                     ]),
 
@@ -1203,7 +1202,7 @@ class ProjectResource extends Resource
             $set('program_remaining_budget_overview', null);
         }
     }
-    
+
     public static function updateLeftAllocated(Get $get, Set $set)
     {
 
