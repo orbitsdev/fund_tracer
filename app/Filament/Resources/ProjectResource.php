@@ -349,6 +349,8 @@ class ProjectResource extends Resource
                                     ->required()
                                     ->maxLength(191)
                                     ->columnSpanFull(),
+                                   
+                                    
                                     Select::make('implementing_agency')
                                     ->label('Implementing Agency')
                                     ->options(ImplementingAgency::all()->pluck('title', 'title'))
@@ -362,9 +364,10 @@ class ProjectResource extends Resource
                                     ->searchable()
                                     ->columnSpan(3)
                                     ->required()
-                                    ->disabled(function(Get $get , Set $set){
+                                     ->hidden(function(Get $get , Set $set){
                                         return self::disabledDate($get, $set);
                                      })
+                                 
                                     ->native(false),
                                                     Select::make('monitoring_agency')
                                     ->label('Monitoring Agency')
@@ -379,10 +382,39 @@ class ProjectResource extends Resource
                                     })
                                     ->columnSpan(3)
                                     ->searchable()
-                                    ->disabled(function(Get $get , Set $set){
+                                    ->hidden(function(Get $get , Set $set){
                                         return self::disabledDate($get, $set);
                                      })
+                                 
                                     ->native(false),
+
+                                    TextInput::make('implementing_agency')
+                                 
+                                    ->label('Implementing Agency')
+                                    // ->prefix('₱ ')
+                                    // ->numeric()
+        
+                                    ->columnSpan(3)
+                                    // ->maxLength(191)
+                                    ->readOnly()
+                                    ->hidden(function(Get $get , Set $set){
+                                        return !self::disabledDate($get, $set);
+                                     })
+                                    ,
+                                    
+                                    TextInput::make('monitoring_agency')
+                                   
+                                    ->label('Monitoring Agency')
+                                    // ->prefix('₱ ')
+                                    // ->numeric()
+        
+                                    ->columnSpan(3)
+                                    // ->maxLength(191)
+                                    ->readOnly()
+                                    ->hidden(function(Get $get , Set $set){
+                                        return !self::disabledDate($get, $set);
+                                     })
+                                    ,
                                 // Select::make('user_id')
                                 //     ->relationship(
                                 //         name: 'manager',
@@ -451,7 +483,7 @@ class ProjectResource extends Resource
                                         },
                                     ]),
 
-
+                                   
 
                                 DatePicker::make('start_date')->date()->native(false)->columnSpan(3)
                                     ->live()
@@ -461,11 +493,13 @@ class ProjectResource extends Resource
                                         self::calculateTotalMonthDurationn($get, $set);
                                         self::setCurrentDuration($get, $set);
                                     })
-                                    ->disabled(function(Get $get , Set $set){
-                                       return self::disabledDate($get, $set);
-                                    })
+                                    ->readOnly(function(Get $get , Set $set){
+                                        return self::disabledDate($get, $set);
+                                     })
                                     ->suffixIcon('heroicon-m-calendar-days')
                                     ->required(),
+                                    
+                                   
                                 DatePicker::make('end_date')->date()->native(false)->columnSpan(3)
                                     ->live()
                                     ->debounce(700)
@@ -473,11 +507,13 @@ class ProjectResource extends Resource
                                         self::calculateTotalMonthDurationn($get, $set);
                                         self::setCurrentDuration($get, $set);
                                     })
-                                    ->disabled(function(Get $get , Set $set){
+                                    ->readOnly(function(Get $get , Set $set){
                                         return self::disabledDate($get, $set);
                                      })
                                      ->suffixIcon('heroicon-m-calendar-days')
-                                    ->required(),
+                                    ->required()
+                                  
+                                    ,
                                     TextInput::make('duration_overview')
                                     ->disabled()
                                     ->label('Total Duration')
@@ -927,7 +963,7 @@ class ProjectResource extends Resource
                                     ->label('Selected Program')
                                     // ->prefix('₱ ')
                                     // ->numeric()
-                                    ->columnSpan(3)
+                                
                                     ->columnSpanFull()
                                     // ->maxLength(191)
                                     ->disabled()
@@ -938,7 +974,7 @@ class ProjectResource extends Resource
                                     ->prefix('₱ ')
                                     // ->numeric()
                                     ->disabled()
-                                    ->columnSpanFull()
+                                    ->columnSpan(4)
 
                                     // ->maxLength(191)
                                     ->readOnly(),
@@ -954,11 +990,13 @@ class ProjectResource extends Resource
                                     ->label('Program Remaining Budget')
                                     // ->prefix('₱ ')
                                     // ->numeric()
+                                    ->columnSpan(4)
                                     ->disabled()
-                                    ->columnSpanFull()
+                                
 
                                     // ->maxLength(191)
                                     ->readOnly(),
+                              
 
                                     
                                 TextInput::make('project_fund')
@@ -1255,7 +1293,7 @@ class ProjectResource extends Resource
                 $set('start_date', null);
                 $set('end_date', null);
                 $set('implementing_agency', null);
-               $set('monitoring_agency', null);
+                 $set('monitoring_agency', null);
                 $set('program_name_overview', null);
                 $set('program_budget_overview', null);
                 $set('program_use_budget_overview', null);

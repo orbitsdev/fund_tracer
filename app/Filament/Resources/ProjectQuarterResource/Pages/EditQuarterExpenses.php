@@ -32,53 +32,64 @@ class EditQuarterExpenses extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
 {
 
-    // $total_dc = $this->getRecord()
-    // ->project_year
-    // ->project
-    // ->project_divisions()->with(['quarter_expense_budget_divisions.quarter_expenses'])->get();
+    // dd($this->getRecord()->project_year);
+    $expenses = $this->getRecord()
+    ->project_year
+    ->project
+    ->project_divisions()->with(['quarter_expense_budget_divisions.quarter_expenses'])->get();
+
     // dd($total_dc);
 
 
-    // $dc = $this->getRecord()
-    // ->project_year
-    // ->project
-    // ->project_divisions()
-    // ->whereHas('quarter_expense_budget_divisions.project_division.project_division_categories', function($query){
-    //     $query->where('from', 'Direct Cost');
-    // })
-    // ->with(['quarter_expense_budget_divisions.quarter_expenses'])
-    // ->get();
+    $dc_expenses = $this->getRecord()
+    ->project_year
+    ->project
+    ->project_divisions()
+    ->whereHas('quarter_expense_budget_divisions.project_division.project_division_categories', function($query){
+        $query->where('from', 'Direct Cost');
+    })
+    ->with(['quarter_expense_budget_divisions.quarter_expenses'])
+    ->get();
+    
+    $ic_sksu_expenses = $this->getRecord()
+    ->project_year
+    ->project
+    ->project_divisions()
+    ->whereHas('quarter_expense_budget_divisions.project_division.project_division_categories', function($query){
+        $query->where('from', 'Direct Cost');
+    })
+    ->with(['quarter_expense_budget_divisions.quarter_expenses'])
+    ->get();
+
     // $total = $this->getRecord()
     // ->project_year
     // ->project
     // ->project_divisions()
 
-    // ->with(['quarter_expense_budget_divisions.quarter_expenses'])
+// ->with(['quarter_expense_budget_divisions.quarter_expenses'])
     // ->get();
 
 
 
-    // $total_dc = $dc->flatMap(function ($projectDivision) {
-    //         return $projectDivision->quarter_expense_budget_divisions()->whereHas('project_division_category', function($query){
-    //             $query->where('from', 'Direct Cost');
-    //         })->flatMap(function ($budgetDivision) {
-    //         return $budgetDivision->quarter_expenses->pluck('amount');
-    // });
+    $total_dc = $dc_expenses->flatMap(function ($projectDivision) {
+        return $projectDivision->quarter_expense_budget_divisions->flatMap(function ($budgetDivision) {
+        return $budgetDivision->quarter_expenses->pluck('amount');
+});
 
-    // })->sum();
+})->sum();
 
+    $totalAmount = $expenses->flatMap(function ($projectDivision) {
+            return $projectDivision->quarter_expense_budget_divisions->flatMap(function ($budgetDivision) {
+            return $budgetDivision->quarter_expenses->pluck('amount');
+    });
 
-    // $totalAmount = $total->flatMap(function ($projectDivision) {
-    //         return $projectDivision->quarter_expense_budget_divisions->flatMap(function ($budgetDivision) {
-    //         return $budgetDivision->quarter_expenses->pluck('amount');
-    // });
-
-    // })->sum();
+    })->sum();
 
 
 
 
-// $data['total_expenses'] = number_format($totalAmount,2);
+$data['total_dc'] = number_format($total_dc,2);
+$data['total_expenses'] = number_format($totalAmount,2);
 
 
 
@@ -232,7 +243,7 @@ class EditQuarterExpenses extends EditRecord
                                                 $query->where('from', 'Direct Cost')
                                                     ->where('project_devision_id', $get('../../project_devision_id'))
                                                     ->whereHas('project_devision', function ($query) {
-                                                        $query->where('project_id', $this->getRecord()->id);
+                                                        $query->where('project_id', $this->getRecord()->project_year->project_id);
                                                     });
                                             }),
                                         )
@@ -333,7 +344,7 @@ class EditQuarterExpenses extends EditRecord
                                                         $query->where('from', 'Indirect Cost')
                                                             ->where('project_devision_id', $get('../../project_devision_id'))
                                                             ->whereHas('project_devision', function ($query) {
-                                                                $query->where('project_id', $this->getRecord()->id);
+                                                                $query->where('project_id', $this->getRecord()->project_year->project_id);
                                                             });
                                                     });
                                             }),
@@ -437,7 +448,7 @@ class EditQuarterExpenses extends EditRecord
                                                         $query->where('from', 'Indirect Cost')
                                                             ->where('project_devision_id', $get('../../project_devision_id'))
                                                             ->whereHas('project_devision', function ($query) {
-                                                                $query->where('project_id', $this->getRecord()->id);
+                                                                $query->where('project_id', $this->getRecord()->project_year->project_id);
                                                             });
                                                     });
                                             }),

@@ -26,7 +26,8 @@ class CreateProject extends CreateRecord
 
       protected function mutateFormDataBeforeCreate(array $data): array
       {
-        //  dd($data);
+        
+
         unset($data['total_expenses']);
         unset($data['program_name_overview']);
         unset($data['program_budget_overview']);
