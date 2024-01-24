@@ -26,8 +26,8 @@ class ProjectDevision extends Model
         return $this->belongsTo(ProjectQuarter::class);
     }
     public function project_division_categories(){
-        return $this->hasMany(ProjectDivisionCategory::class);
-    }
+    return $this->hasMany(ProjectDivisionCategory::class);
+}
 
 
     public function quarter_expense_budget_divisions(){
