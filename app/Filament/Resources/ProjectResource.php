@@ -20,9 +20,11 @@ use Filament\Resources\Resource;
 use Filament\Actions\CreateAction;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Support\Enums\FontWeight;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Infolists\Components\Tabs;
 use Filament\Tables\Actions\EditAction;
@@ -107,7 +109,7 @@ class ProjectResource extends Resource
                         TextEntry::make('program.start_date')
                             ->label('Program Start')
                             ->date(),
-                            
+
 
                         TextEntry::make('program.end_date')
                             ->label('Program End')
@@ -277,6 +279,24 @@ class ProjectResource extends Resource
                                 // ,
 
 
+Radio::make('project_type')
+->label('Project Type')
+->options([
+    'Dependent' => 'Dependent',
+    'Independent' => 'Independent',
+])
+// ->descriptions([
+//     'Dipendent' => 'Project is belong to program',
+//     'Independent' => 'Project is not belong to any program',
+// ])
+
+->live()
+->debounce(700)
+
+->inline()
+->columnSpanFull()
+,
+
                                 Select::make('program_id')
                                     ->live()
                                     ->debounce(700)
@@ -303,6 +323,13 @@ class ProjectResource extends Resource
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                         self::updateProgramOverviewDetails($get, $set);
                                     })
+                                     ->hidden(function(Get $get, Set $set){
+                                        if($get('project_type')  !=  'Dependent'){
+                                            return true;
+                                        }else{
+                                            return false;
+                                        }
+                                     })
                                     ->searchable()
                                     ->preload()
                                     ->native(false)
@@ -426,7 +453,7 @@ class ProjectResource extends Resource
                                 //     ->columnSpanFull(),
 
                             ])
-                            ->collapsed()
+
                             ->collapsible(),
 
 
@@ -831,7 +858,7 @@ class ProjectResource extends Resource
                             ->collapsible(),
 
 
-                    ])->columnSpan(['lg' => 2]),
+                    ])->columnSpan(['lg' => 3]),
                 Group::make()
                     ->schema([
 
