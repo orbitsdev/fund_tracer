@@ -32,16 +32,35 @@ class EditProject extends EditRecord
         $data['program_name_overview'] = $project->program ? $project->program->title : '';
         $data['program_budget_overview'] = number_format($project->program ? $project->program->total_budget : 0);
         $data['program_use_budget_overview'] = number_format($project->program ? $project->program->total_usage : 0);
-        $data['program_remaining_budget_overview'] = number_format(($project->program ? $project->program->total_budget : 0) - ($project->program ? $project->program->total_usage : 0));
-        $data['left_budget'] =number_format( ($project->program ? $project->program->total_budget : 0) - ($project->program ? $project->program->total_usage : 0));
-
-
+        $data['current_allocated_budget'] = number_format($project->allocated_fund);
+       
+        //get sum of allocated projects = 
+        
+        
         //fill project overview
 
+        $allocatedFund = (float) str_replace(',', '',  $project->allocated_fund);
+        if (!empty($project->program)) {
+            $total_allocated_projects = $project->program->projects->sum('allocated_fund');
+            $remaining_budget =  floatval(str_replace(',', '', $project->program->total_budget)) - $total_allocated_projects;
+            $left_budget = $remaining_budget - $allocatedFund;
+            $data['program_remaining_budget_overview'] = number_format($remaining_budget);
+            $data['left_budget'] = number_format($left_budget);
+        
+           
+        } else {
+            
+            $data['program_remaining_budget_overview'] = null;
+            $data['left_budget'] = null;
+        }
+        
+ 
         $data['project_fund'] =number_format($project->allocated_fund);
         $data['total_expenses'] = number_format($total_expenses);
         $start_date = $project->start_date;
         $end_date = $project->end_date;
+
+
 
         if ($start_date && $end_date) {
             $startDate = Carbon::parse($start_date);

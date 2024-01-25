@@ -290,7 +290,7 @@ class ProjectResource extends Resource
                                     //     'Dipendent' => 'Project is belong to program',
                                     //     'Independent' => 'Project is not belong to any program',
                                     // ])
-                                     ->helperText('Choose whether the project is dependent on a program or not')
+                                    ->helperText('Choose whether the project is dependent on a program or not')
                                     ->live()
                                     ->debounce(700)
                                     ->inline()
@@ -306,7 +306,7 @@ class ProjectResource extends Resource
                                         titleAttribute: 'title'
                                     )
                                     ->hint('Program  & Budget')
-                                     //->helperText(new HtmlString('Program  & Budget'))
+                                    //->helperText(new HtmlString('Program  & Budget'))
                                     // ->hintColor('primary')
                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title} - ₱ " . number_format($record->total_budget))
 
@@ -323,7 +323,6 @@ class ProjectResource extends Resource
                                         self::updateProgramOverviewDetails($get, $set);
                                         self::calculateTotalMonthDurationn($get, $set);
                                         self::setCurrentDuration($get, $set);
-                                
                                     })
 
                                     ->hidden(function (Get $get, Set $set) {
@@ -332,8 +331,7 @@ class ProjectResource extends Resource
 
                                             self::resetSelectedProgram($get, $set);
 
-                                                return true;
-                                            
+                                            return true;
                                         } else {
                                             return false;
                                         }
@@ -348,95 +346,61 @@ class ProjectResource extends Resource
                                     ->required()
                                     ->maxLength(191)
                                     ->columnSpanFull(),
-                                   
-                                    
-                                    Select::make('implementing_agency')
+
+
+                                Select::make('implementing_agency')
                                     ->label('Implementing Agency')
                                     ->options(ImplementingAgency::all()->pluck('title', 'title'))
-                                    ->hint(function(){
-                                        if(ImplementingAgency::count() > 0){
+                                    ->hint(function () {
+                                        if (ImplementingAgency::count() > 0) {
                                             return '';
-                                        }else{
+                                        } else {
                                             return 'No implementing agency agency found';
                                         }
                                     })
                                     ->searchable()
                                     ->columnSpan(3)
                                     ->required()
-                                     ->hidden(function(Get $get , Set $set){
+                                   
+
+                                    ->native(function (Get $get, Set $set) {
                                         return self::disabledDate($get, $set);
-                                     })
-                                 
-                                    ->native(false),
-                                                    Select::make('monitoring_agency')
+                                    }),
+                                Select::make('monitoring_agency')
                                     ->label('Monitoring Agency')
                                     ->options(MonitoringAgency::all()->pluck('title', 'title'))
                                     ->required()
-                                    ->hint(function(){
-                                        if(MonitoringAgency::count() > 0){
+                                    ->hint(function () {
+                                        if (MonitoringAgency::count() > 0) {
                                             return '';
-                                        }else{
+                                        } else {
                                             return 'No monitoring agency found';
                                         }
                                     })
                                     ->columnSpan(3)
                                     ->searchable()
-                                    ->hidden(function(Get $get , Set $set){
-                                        return self::disabledDate($get, $set);
-                                     })
-                                 
-                                    ->native(false),
-
-                                    TextInput::make('implementing_agency')
-                                 
-                                    ->label('Implementing Agency')
-                                    // ->prefix('₱ ')
-                                    // ->numeric()
-        
-                                    ->columnSpan(3)
-                                    // ->maxLength(191)
-                                    ->readOnly()
-                                    ->hidden(function(Get $get , Set $set){
-                                        return !self::disabledDate($get, $set);
-                                     })
-                                    ,
-                                    
-                                    TextInput::make('monitoring_agency')
                                    
-                                    ->label('Monitoring Agency')
-                                    // ->prefix('₱ ')
-                                    // ->numeric()
-        
-                                    ->columnSpan(3)
-                                    // ->maxLength(191)
-                                    ->readOnly()
-                                    ->hidden(function(Get $get , Set $set){
-                                        return !self::disabledDate($get, $set);
-                                     })
-                                    ,
-                             
+                                    ->native(function (Get $get, Set $set) {
+                                        return self::disabledDate($get, $set);
+                                    }),
+
+                              
+
 
                                 TextInput::make('allocated_fund')
                                     ->mask(RawJs::make('$money($input)'))
                                     ->stripCharacters(',')
-
-                                    // ->mask(RawJs::make('$money($input)'))
-                                    // ->stripCharacters(',')
                                     ->prefix('₱')
                                     ->numeric()
-                                    // ->maxValue(9999999999)
                                     ->default(0)
                                     ->label('Allocated Amount')
                                     ->live()
                                     ->debounce(700)
                                     ->required()
-                        
+
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                         self::updateLeftAllocated($get, $set);
                                     })
-                                    ->prefix('₱ ')
-                                    ->numeric()
-                                    ->default(0)
                                     ->columnSpan(3)
                                     ->rules([
                                         fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
@@ -460,53 +424,51 @@ class ProjectResource extends Resource
                                         },
                                     ]),
 
-                                   
+
 
                                 DatePicker::make('start_date')->date()
-                                ->columnSpan(3)
+                                    ->columnSpan(3)
                                     ->live()
                                     ->debounce(700)
                                     ->afterStateUpdated(function (Get $get, Set $set) {
-                                      
+
                                         self::calculateTotalMonthDurationn($get, $set);
                                         self::setCurrentDuration($get, $set);
                                     })
-                                    ->readOnly(function(Get $get , Set $set){
+                                    ->readOnly(function (Get $get, Set $set) {
                                         return self::disabledDate($get, $set);
-                                     })
-                                     ->native(function(Get $get , Set $set){
+                                    })
+                                    ->native(function (Get $get, Set $set) {
                                         return self::disabledDate($get, $set);
-                                     })
+                                    })
                                     ->suffixIcon('heroicon-m-calendar-days')
-                             
+
                                     ->required(),
-                                    
-                                   
+
+
                                 DatePicker::make('end_date')->date()
-                                ->columnSpan(3)
+                                    ->columnSpan(3)
                                     ->live()
                                     ->debounce(700)
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                         self::calculateTotalMonthDurationn($get, $set);
                                         self::setCurrentDuration($get, $set);
                                     })
-                                    ->readOnly(function(Get $get , Set $set){
+                                    ->readOnly(function (Get $get, Set $set) {
                                         return self::disabledDate($get, $set);
-                                     })
-                                     ->native(function(Get $get , Set $set){
+                                    })
+                                    ->native(function (Get $get, Set $set) {
                                         return self::disabledDate($get, $set);
-                                     })
-                                     ->suffixIcon('heroicon-m-calendar-days')
-                                 
-                                    ->required()
-                                  
-                                    ,
-                                    TextInput::make('duration_overview')
+                                    })
+                                    ->suffixIcon('heroicon-m-calendar-days')
+
+                                    ->required(),
+                                TextInput::make('duration_overview')
                                     ->disabled()
                                     ->label('Total Duration')
                                     // ->prefix('₱ ')
                                     // ->numeric()
-        
+
                                     ->columnSpan(3)
                                     // ->maxLength(191)
                                     ->readOnly(),
@@ -531,7 +493,7 @@ class ProjectResource extends Resource
                             ->collapsible(),
 
 
-                     
+
 
                         Section::make('Project Documents')
                             ->icon('heroicon-m-folder')
@@ -638,7 +600,7 @@ class ProjectResource extends Resource
                 Group::make()
                     ->schema([
 
-                        Section::make('Program Overview')
+                        Section::make('Overview')
                             ->columns([
                                 'sm' => 3,
                                 'xl' => 6,
@@ -652,7 +614,7 @@ class ProjectResource extends Resource
                                     ->label('Selected Program')
                                     // ->prefix('₱ ')
                                     // ->numeric()
-                                
+
                                     ->columnSpanFull()
                                     // ->maxLength(191)
                                     ->disabled()
@@ -677,72 +639,79 @@ class ProjectResource extends Resource
                                 //     ->readOnly(),
                                 TextInput::make('program_remaining_budget_overview')
                                     ->label('Program Remaining Budget')
-                                    // ->prefix('₱ ')
+                                    ->prefix('₱ ')
                                     // ->numeric()
                                     ->columnSpan(4)
                                     ->disabled()
-                                
-
                                     // ->maxLength(191)
                                     ->readOnly(),
-                              
 
-                                    
-                                TextInput::make('project_fund')
-                                ->label('Allocated Amount')
-                                ->mask(RawJs::make('$money($input)'))
-                                ->stripCharacters(',')
-                                ->numeric()
-                                ->columnSpanFull()
-                                ->default(0)
-                                ->disabled()
-                                // ->maxLength(191)
-                                ->readOnly(),
 
-                                TextInput::make('left_budget')
-                                ->label('Remaining Budget of Program After Deduction')
-                                ->mask(RawJs::make('$money($input)'))
-                                ->stripCharacters(',')
-                                ->numeric()
-                                ->columnSpanFull()
-                                ->default(0)
-                                ->disabled()
-                                // ->maxLength(191)
-                                ->readOnly(),
+
+
+                                    TextInput::make('current_allocated_budget')
+                                    ->label('Current Project Budget')
+                                    ->prefix('₱ ')
+                                    // ->numeric()
+                                    ->columnSpanFull(4)
+                                    ->disabled()
+                                    // ->maxLength(191)
+                                    ->readOnly()
+                                    ->hidden(function(string $operation){
+                                        return $operation === 'edit' ? false :true;
+                                    }),
+
                             ]),
 
-                        // Section::make('Overview')
+                        Section::make('Financial Summary')
+                        ->description('Live calculations based on your inputs')
 
-                        // ->columnSpanFull()
-                        // ->schema([
+                        ->columns([
+                            'sm' => 3,
+                            'xl' => 6,
+                            '2xl' => 8,
+                        ])
+                        ->columnSpanFull()
+                        ->schema([
+                         
+                            
+                            TextInput::make('project_fund')
+                            ->label(function(string $operation){
+                                return $operation === 'edit' ? 'New Project Budget' :'Current Project Budget';
+                            })
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+                            ->prefix('-')
+                            ->numeric()
+                            ->columnSpanFull()
+                            ->default(0)
+                            ->disabled()
+                            // ->maxLength(191)
+                            ->readOnly(),
+                            TextInput::make('left_budget')
+                            ->prefix('=')
+                                ->label('Remaining Budget of Program After Project Deduction')
+                                ->mask(RawJs::make('$money($input)'))
+                                ->stripCharacters(',')
+                                ->numeric()
+                                ->columnSpanFull()
+                                ->default(0)
+                                ->disabled()
+                                // ->maxLength(191)
+                                ->readOnly(),
+                        ]),
 
-                        //     // TextInput::make('program_leader_overview')
-                        //     // ->label('Program Leader')
-                        //     // // ->prefix('₱ ')
-                        //     // // ->numeric()
-                        //     // ->columnSpan(3)
 
-                        //     // ->columnSpanFull()
-                        //     // // ->maxLength(191)
-                        //     // ->readOnly(),
-
-
-
-
-
-                        // ]),
-
-                      
                     ])
-                     ->hidden(function(Get $get , Set $set){
-                       
-                        if(!empty($get('program_id')) && $get('project_type')  ==  'Dependent'){
+                    ->hidden(function (Get $get, Set $set) {
+
+                        if (!empty($get('program_id')) && $get('project_type')  ==  'Dependent') {
                             return false;
-                        }else{
+                        } else {
                             self::resetSelectedProgram($get, $set);
                             return true;
                         }
-                     })
+                    })
                     ->columnSpan(['lg' => 1])
 
 
@@ -841,21 +810,21 @@ class ProjectResource extends Resource
     }
 
 
-    public static function resetSelectedProgram(Get $get , Set $set){
-            if(!empty($get('program_id'))){
-                $set('program_id',null);
-                $set('left_budget',null);
-            }
+    public static function resetSelectedProgram(Get $get, Set $set)
+    {
+        if (!empty($get('program_id'))) {
+            $set('program_id', null);
+            $set('left_budget', null);
+        }
     }
-    public static function disabledDate(Get $get , Set $set){
+    public static function disabledDate(Get $get, Set $set)
+    {
 
-           if(!empty($get('program_id'))){
+        if (!empty($get('program_id'))) {
             return true;
-           }else{
+        } else {
             return false;
-           }
-
-
+        }
     }
 
     public static function updateProgramOverviewDetails(Get $get, Set $set)
@@ -867,43 +836,42 @@ class ProjectResource extends Resource
         if (!empty($get('program_id'))) {
             $program = Program::find($get('program_id'));
             if (!empty($program)) {
-                $remaining_budget = $program->total_budget - $program->total_usage;
-                $left_budget = $remaining_budget - $allocatedFund;
-        
-                 $set('left_budget',number_format($left_budget));
-             $set('start_date', $program->start_date);
-             $set('end_date', $program->end_date);
 
-             $set('implementing_agency', $program->implementing_agency);
-             $set('monitoring_agency', $program->monitoring_agency);
-          
-             
-            
+                $total_allocated_projects = $program->projects->sum('allocated_fund');
+                $remaining_budget =  floatval(str_replace(',', '', $program->total_budget)) - $total_allocated_projects;
+                $left_budget = $remaining_budget - $allocatedFund;
+                
+                $set('start_date', $program->start_date);
+                $set('end_date', $program->end_date);
+                $set('implementing_agency', $program->implementing_agency);
+                $set('monitoring_agency', $program->monitoring_agency);
                 $set('program_name_overview', $program->title);
                 $set('program_budget_overview', number_format($program->total_budget));
                 $set('program_use_budget_overview', $program->total_usage);
-                $set('program_remaining_budget_overview', number_format($program->total_budget - $program->total_usage));
+                $set('program_remaining_budget_overview', number_format($remaining_budget));
+                $set('left_budget', number_format($left_budget));
             } else {
-                $set('left_budget', null);
+             
                 $set('start_date', null);
                 $set('end_date', null);
                 $set('implementing_agency', null);
-                 $set('monitoring_agency', null);
+                $set('monitoring_agency', null);
                 $set('program_name_overview', null);
                 $set('program_budget_overview', null);
                 $set('program_use_budget_overview', null);
                 $set('program_remaining_budget_overview', null);
+                $set('left_budget', null);
             }
         } else {
-            $set('left_budget', null);
             $set('start_date', null);
             $set('end_date', null);
             $set('implementing_agency', null);
             $set('monitoring_agency', null);
-            // $set('program_name_overview', null);
+             $set('program_name_overview', null);
             $set('program_budget_overview', null);
             $set('program_use_budget_overview', null);
             $set('program_remaining_budget_overview', null);
+            $set('left_budget', null);
         }
     }
 
@@ -912,30 +880,26 @@ class ProjectResource extends Resource
 
         $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
         $set('project_fund', number_format($allocatedFund));
-        
-        if (!empty($get('program_id'))) {
-            $selected_program = Program::find($get('program_id'));
-        
-            if (!empty($selected_program)) {
-                $remaining_budget = $selected_program->total_budget - $selected_program->total_usage;
-                $left_budget = $remaining_budget - $allocatedFund;
-        
-                $set('left_budget',number_format($left_budget));
 
-        
+        if (!empty($get('program_id'))) {
+            
+            $program = Program::find($get('program_id'));
+
+            if (!empty($program)) {
+
+                $total_allocated_projects = $program->projects->sum('allocated_fund');
+                $remaining_budget =  floatval(str_replace(',', '', $program->total_budget)) - $total_allocated_projects;
+                $left_budget = $remaining_budget - $allocatedFund;
+                $set('left_budget', number_format($left_budget));
             } else {
                 $set('left_budget', null);
             }
-        
         } else {
             $set('left_budget', null);
         }
-        
-        self::updateTotal($get, $set);
-        
 
 
-
+        // self::updateTotal($get, $set);
     }
 
     public static function updateTotal(Get $get, Set $set)
@@ -951,11 +915,6 @@ class ProjectResource extends Resource
 
 
         $set('total_expenses', number_format($totalAmount, 2));
-
-       
-
-
-
     }
     public static function setCurrentDuration(Get $get, Set $set)
     {
