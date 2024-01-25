@@ -423,22 +423,18 @@ class ProjectResource extends Resource
                                                 $remaining_budget = $selected_program->total_budget - $total_allocated_projects;
                                                 $allocatedFund = (float) str_replace(',', '',  $get('allocated_fund'));
                                                 $current_allocated_budget = (float) str_replace(',', '',  $get('current_allocated_budget'));
-                                                
+                                                $max = $current_allocated_budget + $remaining_budget;
                                                 if($operation ==='edit'){
 
                                                     //ignore if the same value
 
-                                                    if($allocatedFund === $current_allocated_budget){
-                                                       
-                                                    }else{
-                                                        
-                                                        if($allocatedFund > $remaining_budget){
-                                                            //check if allocated fun is greater than the current budget        
-                                                            if($allocatedFund > $current_allocated_budget){
-                                                                $fail("The allocated amount should not exceed the remaining budget of the selected program");
-                                                            }
-                                                        }
+                                                    if ($allocatedFund === $current_allocated_budget) {
+                                                        // New value is equal to the current budget, no error
+                                                    } elseif ($allocatedFund > $max) {
+                                                        // New value is greater than the current budget
+                                                        $fail("The allocated amount should not exceed the remaining budget of the selected program");
                                                     }
+                                                    
 
                                                     
                                                 }else{
