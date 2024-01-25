@@ -293,7 +293,6 @@ class ProjectResource extends Resource
                                      ->helperText('Choose whether the project is dependent on a program or not')
                                     ->live()
                                     ->debounce(700)
-                                    
                                     ->inline()
                                     ->columnSpanFull(),
 
@@ -415,20 +414,7 @@ class ProjectResource extends Resource
                                         return !self::disabledDate($get, $set);
                                      })
                                     ,
-                                // Select::make('user_id')
-                                //     ->relationship(
-                                //         name: 'manager',
-                                //         titleAttribute: 'first_name',
-                                //         modifyQueryUsing: fn (Builder $query) => $query->whereDoesntHave('managerProject'),
-                                //     )
-                                //     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
-                                //     ->searchable(['first_name', 'last_name'])
-                                //     // ->searchable()
-                                //     ->preload()
-                                //     ->columnSpan(4)
-                                //     ->required()
-
-                                //     ->native(false),
+                             
 
                                 TextInput::make('allocated_fund')
                                     ->mask(RawJs::make('$money($input)'))
@@ -442,18 +428,9 @@ class ProjectResource extends Resource
                                     ->default(0)
                                     ->label('Allocated Amount')
                                     ->live()
-                                    ->debounce(900)
+                                    ->debounce(700)
                                     ->required()
-                                    // ->disabled(function(Get $get, Set $set){
-                                    //     if(empty($get('program_id'))){
-                                    //         return true;
-                                    //     }
-
-                                    //     // return false;
-                                    // })
-
-
-
+                        
                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                         self::updateLeftAllocated($get, $set);
                                     })
@@ -485,7 +462,8 @@ class ProjectResource extends Resource
 
                                    
 
-                                DatePicker::make('start_date')->date()->native(false)->columnSpan(3)
+                                DatePicker::make('start_date')->date()
+                                ->columnSpan(3)
                                     ->live()
                                     ->debounce(700)
                                     ->afterStateUpdated(function (Get $get, Set $set) {
@@ -496,11 +474,16 @@ class ProjectResource extends Resource
                                     ->readOnly(function(Get $get , Set $set){
                                         return self::disabledDate($get, $set);
                                      })
+                                     ->native(function(Get $get , Set $set){
+                                        return self::disabledDate($get, $set);
+                                     })
                                     ->suffixIcon('heroicon-m-calendar-days')
+                             
                                     ->required(),
                                     
                                    
-                                DatePicker::make('end_date')->date()->native(false)->columnSpan(3)
+                                DatePicker::make('end_date')->date()
+                                ->columnSpan(3)
                                     ->live()
                                     ->debounce(700)
                                     ->afterStateUpdated(function (Get $get, Set $set) {
@@ -510,7 +493,11 @@ class ProjectResource extends Resource
                                     ->readOnly(function(Get $get , Set $set){
                                         return self::disabledDate($get, $set);
                                      })
+                                     ->native(function(Get $get , Set $set){
+                                        return self::disabledDate($get, $set);
+                                     })
                                      ->suffixIcon('heroicon-m-calendar-days')
+                                 
                                     ->required()
                                   
                                     ,
@@ -544,305 +531,7 @@ class ProjectResource extends Resource
                             ->collapsible(),
 
 
-                        // Section::make('Manage Quarters')
-                        //     ->icon('heroicon-m-banknotes')
-                        //     // ->description('Manage and organize particulars  ')
-                        //     ->columnSpanFull()
-                        //     ->schema([
-
-                        //         Repeater::make('project_years')
-
-                        //             ->relationship()
-
-                        //             ->label('Year & Quarters')
-
-                        //             ->extraAttributes([
-                        //                 'class' => 'border-white',
-
-                        //             ])
-                        //             ->schema([
-                        //                   Select::make('year_id')
-                        //                     ->live()
-                        //                     ->relationship(name: 'year', titleAttribute: 'title')
-                        //                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
-                        //                     ->searchable()
-                        //                     ->label('Year')
-                        //                     ->preload()
-                        //                     ->native(false)
-                        //                     ->columnSpanFull()
-                        //                     ->distinct()
-                        //                     ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
-
-
-                        //         Repeater::make('project_quarters')
-
-                        //         ->relationship()
-
-                        //         ->label('Quarters')
-
-                        //         ->extraAttributes([
-                        //             'class' => 'border-white',
-
-                        //         ])
-                        //         ->schema([
-                        //             Select::make('quarter_id')
-                        //             ->live()
-                        //             ->relationship(name: 'quarter', titleAttribute: 'title')
-                        //             ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
-                        //             ->searchable()
-                        //             ->label('Quarter')
-                        //             ->preload()
-                        //             ->native(false)
-                        //             ->columnSpanFull()
-                        //             ->distinct()
-                        //             ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
-
-
-                        //                      Repeater::make('project_divisions')
-
-                        //                     ->relationship()
-
-                        //                     ->label('Divisions')
-
-                        //                     ->schema([
-
-                        //                           Select::make('division_id')
-                        //                     ->live()
-                        //                     ->relationship(name: 'division', titleAttribute: 'title')
-                        //                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title} - {$record->abbreviation}")
-                        //                     ->searchable()
-                        //                     ->label('Choose Division')
-                        //                     ->preload()
-                        //                     ->native(false)
-                        //                     ->columnSpanFull()
-                        //                     ->distinct()
-                        //                     ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
-
-                        //                 Repeater::make('project_division_categories')
-
-                        //                     ->relationship()
-
-                        //                     ->label('Division Categories')
-                        //                     ->columns([
-                        //                         'sm' => 3,
-                        //                         'xl' => 6,
-                        //                         '2xl' => 9,
-                        //                     ])
-                        //                     ->schema([
-
-
-                        //                         Select::make('from')
-                        //                             ->options([
-
-                        //                                 'Direct Cost' => 'Direct Cost',
-                        //                                 'Indirect Cost' => 'Indirect Cost',
-                        //                             ])
-                        //                             ->distinct()
-                        //                             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                        //                             ->columnSpanFull()
-                        //                             ->native(false)
-                        //                             ->searchable(),
-                        //                         // Select::make('division_category_id')
-                        //                         //     ->relationship(name: 'division_category', titleAttribute: 'title')
-                        //                         //     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
-                        //                         //     ->searchable()
-                        //                         //     ->label('Choose Category')
-                        //                         //     ->preload()
-                        //                         //     ->native(false)
-                        //                         //     ->columnSpanFull()
-
-                        //                         //     ->distinct()
-                        //                         //     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                        //                         //     ->live()
-                        //                         //     ->createOptionForm([
-                        //                         //         TextInput::make('title')
-                        //                         //             ->required(),
-                        //                         //     ])
-                        //                         //     ,
-
-
-
-                        //                         Repeater::make('project_division_sub_category_expenses')
-                        //                             ->live()
-                        //                             ->relationship()
-
-                        //                             ->label('Division Sub Categories')
-                        //                             ->columns([
-                        //                                 'sm' => 3,
-                        //                                 'xl' => 6,
-                        //                                 '2xl' => 9,
-                        //                             ])
-                        //                             ->schema([
-
-                        //                                 TextInput::make('parent_title')
-                        //                                     ->label('Parent Title')
-
-                        //                                     ->live()
-                        //                                     ->maxLength(191)
-                        //                                     ->columnSpanFull()
-
-                        //                                     ->hidden(fn (Get $get) => $get('../../from') === 'Indirect Cost' ? false : true),
-
-                        //                                 TextInput::make('title')
-                        //                                     ->label('Title')
-                        //                                     ->required()
-                        //                                     ->live()
-                        //                                     ->maxLength(191)
-                        //                                     ->columnSpanFull(),
-
-
-                        //                                 Repeater::make('fourth_layers')
-                        //                                     ->live()
-                        //                                     ->relationship()
-
-                        //                                     ->label('Forth Layers')
-                        //                                     ->columns([
-                        //                                         'sm' => 3,
-                        //                                         'xl' => 6,
-                        //                                         '2xl' => 9,
-                        //                                     ])
-                        //                                     ->schema([
-                        //                                         TextInput::make('title')
-                        //                                             ->label('Fourth  Title')
-                        //                                             ->required()
-                        //                                             ->maxLength(191)
-                        //                                             ->columnSpanFull(),
-
-                        //                                             TextInput::make('amount')
-
-                        //                                             ->mask(RawJs::make('$money($input)'))
-                        //                                             ->stripCharacters(',')
-                        //                                             ->numeric()
-                        //                                                 // ->mask(RawJs::make('$money($input)'))
-                        //                                                 // ->stripCharacters(',')
-                        //                                                 ->prefix('₱')
-                        //                                                 ->numeric()
-                        //                                                 // ->maxValue(9999999999)
-                        //                                                 ->default(0)
-                        //                                                 ->columnSpanFull()
-                        //                                                 ->required(),
-                        //                                     ])->columnSpanFull(),
-                        //                             ])
-
-                        //                             ->columnSpanFull()
-                        //                             ->visible(fn (Get $get) => !empty($get('from')) ? true : false)
-
-
-                        //                     ])
-                        //                     ->columns(2)
-                        //                     ->columnSpanFull()
-                        //                     ->visible(fn (Get $get) => !empty($get('division_id')) ? true : false),
-
-
-
-                        //                     ]),
-
-
-
-                        //         ]),
-
-
-
-                        //             ]),
-
-                        //     ])
-
-                        //     ->collapsed()
-                        //     ->collapsible()
-                        //     ->hidden(function (string $operation) {
-                        //         if ($operation === 'create') {
-                        //             return true;
-                        //         } else {
-                        //             return false;
-                        //         }
-                        //     }),
-
-                        // Section::make('Other Expenses')
-                        //     ->icon('heroicon-m-banknotes')
-                        //     ->description('Manage other expeneses  ')
-                        //     ->columnSpanFull()
-                        //     ->schema([
-                        //         Repeater::make('expenses')
-
-                        //             ->relationship()
-                        //             ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
-                        //                 return $data;
-                        //             })
-
-                        //             ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
-
-
-                        //                 return $data;
-                        //             })
-                        //             ->label('Expenses')
-                        //             ->columns([
-                        //                 'sm' => 3,
-                        //                 'xl' => 6,
-                        //                 '2xl' => 9,
-                        //             ])
-                        //             ->schema([
-                        //                 TextInput::make('description')
-                        //                     ->label('Description')
-                        //                     ->columnSpan(3)
-                        //                     ->required()
-                        //                     ->maxLength(191),
-                        //                 TextInput::make('amount')
-                        //                     ->required()
-                        //                     ->mask(RawJs::make('$money($input)'))
-                        //                     ->stripCharacters(',')
-                        //                     ->numeric()
-                        //                     ->live()
-                        //                     ->debounce(1000)
-                        //                     ->afterStateUpdated(function (Get $get, Set $set) {
-                        //                         self::updateTotal($get, $set);
-                        //                     })
-                        //                     ->prefix('₱ ')
-
-                        //                     ->columnSpan(3)
-                        //                     ->default(0),
-
-
-                        //                 FileUpload::make('financial_statements')
-                        //                     ->columnSpan(3)
-
-                        //                     // ->columnSpanFull()
-                        //                     // ->image()
-                        //                     ->preserveFilenames()
-
-                        //                     ->label('Financial Statement')
-                        //                     ->disk('public')
-                        //                     ->directory('project-expenses-files'),
-
-
-
-
-
-                        //             ])
-                        //             ->deleteAction(
-                        //                 fn (Action $action) => $action->requiresConfirmation(),
-                        //                 fn (Get $get, Set $set) => self::updateTotals($get, $set)
-                        //             )
-                        //             ->columnSpanFull()
-                        //             ->columns(2)
-                        //             ->afterStateUpdated(function (Get $get, Set $set) {
-                        //                 self::updateTotal($get, $set);
-                        //             })
-                        //             // ->collapsed()
-                        //             // ->collapsible()
-                        //             ->reorderable(true),
-                        //     ])
-                        //     //  ->hidden(fn (string $operation): bool => $operation === 'create')
-                        //     ->columnSpanFull()
-                        //     ->collapsed()
-                        //     ->collapsible()
-                        //     ->hidden(function (string $operation) {
-                        //         if ($operation === 'create') {
-                        //             return true;
-                        //         } else {
-                        //             return false;
-                        //         }
-                        //     }),
-
+                     
 
                         Section::make('Project Documents')
                             ->icon('heroicon-m-folder')
@@ -1009,6 +698,17 @@ class ProjectResource extends Resource
                                 ->disabled()
                                 // ->maxLength(191)
                                 ->readOnly(),
+
+                                TextInput::make('left_budget')
+                                ->label('Remaining Budget of Program After Deduction')
+                                ->mask(RawJs::make('$money($input)'))
+                                ->stripCharacters(',')
+                                ->numeric()
+                                ->columnSpanFull()
+                                ->default(0)
+                                ->disabled()
+                                // ->maxLength(191)
+                                ->readOnly(),
                             ]),
 
                         // Section::make('Overview')
@@ -1046,118 +746,6 @@ class ProjectResource extends Resource
                     ->columnSpan(['lg' => 1])
 
 
-                // Placeholder::make('documentation')
-                // // ->live()
-                // ->content(function(Get $get){
-
-                //     return new HtmlString("<h1 style='font: size 100rem; color:red'>".$get('program_id')."</h1>");
-                // }),
-
-
-
-
-
-
-
-                // Section::make('Project Documents')
-                // ->icon('heroicon-m-folder')
-                // ->description('Manage and organize your Project documents. Upload files here')
-                // ->columnSpan(2)
-                // // ->aside()
-                // ->schema([
-                //     Repeater::make('files')
-
-                //         ->relationship()
-                //         ->label('Documents')
-                //         ->schema([
-                //             TextInput::make('file_name')
-                //                 ->label('Name')
-                //                 ->maxLength(191),
-                //             FileUpload::make('file')
-
-                //                 // ->columnSpanFull()
-                //                 // ->image()
-                //                 ->preserveFilenames()
-
-                //                 ->label('File')
-                //                 ->disk('public')
-                //                 ->directory('program-files')
-                //         ])
-                //         ->deleteAction(
-                //             fn (Action $action) => $action->requiresConfirmation(),
-                //         )
-                //         ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
-                //             // $data['user_id'] = auth()->id();
-
-                //             return $data;
-                //         })
-                //         ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
-                //             // $filePath = storage_path('app/public/' . $data['file']);
-
-
-                //             $filePath = storage_path('app/public/' . $data['file']);
-
-                //             $fileInfo = [
-                //                 'file' => $data['file'],
-                //                 'file_name' => $data['file_name'],
-                //                 'file_type' => mime_content_type($filePath),
-                //                 'file_size' => call_user_func(function ($bytes) {
-                //                     $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-                //                     $i = 0;
-
-                //                     while ($bytes >= 1024 && $i < count($units) - 1) {
-                //                         $bytes /= 1024;
-                //                         $i++;
-                //                     }
-
-                //                     return round($bytes, 2) . ' ' . $units[$i];
-                //                 }, filesize($filePath)),
-                //             ];
-                //             return $fileInfo;
-                //             // $data['user_id'] = auth()->id();
-
-                //             // return $data;
-                //         })
-                //         ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
-
-
-                //             $filePath = storage_path('app/public/' . $data['file']);
-
-                //             $fileInfo = [
-                //                 'file' => $data['file'],
-                //                 'file_name' => $data['file_name'],
-                //                 'file_type' => mime_content_type($filePath),
-                //                 'file_size' => call_user_func(function ($bytes) {
-                //                     $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-                //                     $i = 0;
-
-                //                     while ($bytes >= 1024 && $i < count($units) - 1) {
-                //                         $bytes /= 1024;
-                //                         $i++;
-                //                     }
-
-                //                     return round($bytes, 2) . ' ' . $units[$i];
-                //                 }, filesize($filePath)),
-                //             ];
-
-                //             // dd($fileInfo);
-                //             // dd($data);
-
-                //             return $fileInfo;
-                //         })
-                //         // ->collapsed()
-                //         // ->collapsible()
-                //         ->reorderable(true)
-                //         ->columnSpanFull()
-                //         ->columns(2)
-                //         ->defaultItems(0)
-                //         ->addActionLabel('Add Documents')
-
-
-                // ])
-                // ->collapsed()
-                // ->collapsible()
-                // ,
 
             ])
             ->columns(3);
@@ -1256,6 +844,7 @@ class ProjectResource extends Resource
     public static function resetSelectedProgram(Get $get , Set $set){
             if(!empty($get('program_id'))){
                 $set('program_id',null);
+                $set('left_budget',null);
             }
     }
     public static function disabledDate(Get $get , Set $set){
@@ -1273,10 +862,15 @@ class ProjectResource extends Resource
     {
 
         //  dd($get('program_id'));
-
+        $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
+        $set('project_fund', number_format($allocatedFund));
         if (!empty($get('program_id'))) {
             $program = Program::find($get('program_id'));
             if (!empty($program)) {
+                $remaining_budget = $program->total_budget - $program->total_usage;
+                $left_budget = $remaining_budget - $allocatedFund;
+        
+                 $set('left_budget',number_format($left_budget));
              $set('start_date', $program->start_date);
              $set('end_date', $program->end_date);
 
@@ -1290,6 +884,7 @@ class ProjectResource extends Resource
                 $set('program_use_budget_overview', $program->total_usage);
                 $set('program_remaining_budget_overview', number_format($program->total_budget - $program->total_usage));
             } else {
+                $set('left_budget', null);
                 $set('start_date', null);
                 $set('end_date', null);
                 $set('implementing_agency', null);
@@ -1300,6 +895,7 @@ class ProjectResource extends Resource
                 $set('program_remaining_budget_overview', null);
             }
         } else {
+            $set('left_budget', null);
             $set('start_date', null);
             $set('end_date', null);
             $set('implementing_agency', null);
@@ -1314,15 +910,30 @@ class ProjectResource extends Resource
     public static function updateLeftAllocated(Get $get, Set $set)
     {
 
-        $allocatedFund =  (float) str_replace(',', '', $get('allocated_fund'));
+        $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
         $set('project_fund', number_format($allocatedFund));
-        self::updateTotal($get, $set);
+        
+        if (!empty($get('program_id'))) {
+            $selected_program = Program::find($get('program_id'));
+        
+            if (!empty($selected_program)) {
+                $remaining_budget = $selected_program->total_budget - $selected_program->total_usage;
+                $left_budget = $remaining_budget - $allocatedFund;
+        
+                $set('left_budget',number_format($left_budget));
 
-        // $set('total_expenses', (int)$allocatedFund);
-        //     $allocatedFund = floatval($get('allocated_fund'));
-        // $set('project_fund', number_format($allocatedFund));
-        // $set('total_expenses', (int)$allocatedFund);
-        //self::updateTotal($get, $set);
+        
+            } else {
+                $set('left_budget', null);
+            }
+        
+        } else {
+            $set('left_budget', null);
+        }
+        
+        self::updateTotal($get, $set);
+        
+
 
 
     }
@@ -1338,22 +949,10 @@ class ProjectResource extends Resource
             return (float) str_replace(',', '', $item['amount']);
         });
 
-        // $left_fund = $current_fund - $totalAmount;
 
         $set('total_expenses', number_format($totalAmount, 2));
 
-        // $current_fund = (float)$get('allocated_fund'); // Convert to float
-        // $expenses = collect($get('expenses'))->filter(fn ($item) => !empty($item['amount']));
-
-
-        // $totalAmount = $expenses->sum(function ($item) {
-        //     return (float)$item['amount'];
-        // });
-
-        // // $left_fund = $current_fund - $totalAmount;
-
-        // $set('total_expenses', number_format($totalAmount));
-
+       
 
 
 

@@ -32,103 +32,53 @@ class EditQuarterExpenses extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
 
-        // dd($this->getRecord()->quarter_expense_budget_divisions);
-        $ex = $this->getRecord()->quarter_expense_budget_divisions()->with(['quarter_expenses'=>function($query){
-            $query->whereHas('quarter_expense_budget_division.project_division.project_division_categories', function($query){
-                $query->where('from', 'Direct Cost');
-        });
-         }])
-            ->get();
-        //  dd($ex);
-        $expenses = $this->getRecord()
-            ->project_year
-            ->project
-            ->project_divisions()->with(['quarter_expense_budget_divisions'])
-            ->get();
+    
 
-        
+        $total_expenses = $this->getRecord()->quarter_expense_budget_divisions
+        ->flatMap->quarter_expenses->sum('amount');
 
 
-        $dc_expenses = $this->getRecord()
-            ->project_year
-            ->project
-            ->project_divisions()
-            // ->whereHas('quarter_expense_budget_divisions.project_division.project_division_categories', function ($query) {
-            //     $query->where('from', 'Direct Cost');
-            // })
-            ->with(['quarter_expense_budget_divisions.quarter_expenses'=>function ($query) {
-                $query->whereHas('quarter_expense_budget_division.project_division.project_division_categories',function ($query) {
-                    $query->where('from', 'Direct Cost');
-                });
-            }])
-            ->get();
-
-           
-
-        $ic_sksu_expenses = $this->getRecord()
-            ->project_year
-            ->project
-            ->project_divisions()
-            ->whereHas('quarter_expense_budget_divisions.project_division.project_division_categories', function ($query) {
-                $query->where('from', 'Indirect Cost')->whereHas('project_division_sub_category_expenses', function ($query) {
-                    $query->where('parent_title', 'SKSU');
-                });
+        $total_dc = $this->getRecord()->quarter_expense_budget_divisions
+            ->flatMap->quarter_expenses
+            ->filter(function ($expense) {
+                return $expense->fourth_layer()->whereHas('project_division_sub_category_expense', function ($query) {
+                    $query                      
+                        ->whereHas('project_division_category', function ($query) {
+                            $query->where('from', 'Direct Cost');
+                        });
+                })->exists();
             })
-            ->with(['quarter_expense_budget_divisions.quarter_expenses'])
-            ->get();
-          
-        $ic_pcaarrd_expenses = $this->getRecord()
-            ->project_year
-            ->project
-            ->project_divisions()
-            ->whereHas('quarter_expense_budget_divisions.project_division.project_division_categories', function ($query) {
-                $query->where('from', 'Indirect Cost')->whereHas('project_division_sub_category_expenses', function ($query) {
-                    $query->where('parent_title', 'PCAARRD');
-                });
+            ->sum('amount');
+
+        $total_ic_sksu = $this->getRecord()->quarter_expense_budget_divisions
+            ->flatMap->quarter_expenses
+            ->filter(function ($expense) {
+                return $expense->fourth_layer()->whereHas('project_division_sub_category_expense', function ($query) {
+                    $query      
+                     ->where('parent_title', 'SKSU')                
+                        ->whereHas('project_division_category', function ($query) {
+                            $query->where('from', 'Indirect Cost');
+                        });
+                })->exists();
             })
-            ->with(['quarter_expense_budget_divisions.quarter_expenses'])
-            ->get();
-
-
-        // $total = $this->getRecord()
-        // ->project_year
-        // ->project
-        // ->project_divisions()
-
-        // ->with(['quarter_expense_budget_divisions.quarter_expenses'])
-        // ->get();
-
-
-
-        $total_dc = $dc_expenses->flatMap(function ($projectDivision) {
-            return $projectDivision->quarter_expense_budget_divisions->flatMap(function ($budgetDivision) {
-                return $budgetDivision->quarter_expenses->pluck('amount');
-            });
-        })->sum();
-        $total_ic_sksu = $ic_sksu_expenses->flatMap(function ($projectDivision) {
-            return $projectDivision->quarter_expense_budget_divisions->flatMap(function ($budgetDivision) {
-                return $budgetDivision->quarter_expenses->pluck('amount');
-            });
-        })->sum();
-        $total_ic_pcaarrd = $ic_pcaarrd_expenses->flatMap(function ($projectDivision) {
-            return $projectDivision->quarter_expense_budget_divisions->flatMap(function ($budgetDivision) {
-                return $budgetDivision->quarter_expenses->pluck('amount');
-            });
-        })->sum();
-
-        $totalAmount = $expenses->flatMap(function ($projectDivision) {
-            return $projectDivision->quarter_expense_budget_divisions->flatMap(function ($budgetDivision) {
-                return $budgetDivision->quarter_expenses->pluck('amount');
-            });
-        })->sum();
-
-
-
+            ->sum('amount');
+        $total_ic_pcaarrd = $this->getRecord()->quarter_expense_budget_divisions
+            ->flatMap->quarter_expenses
+            ->filter(function ($expense) {
+                return $expense->fourth_layer()->whereHas('project_division_sub_category_expense', function ($query) {
+                    $query      
+                     ->where('parent_title', 'PCAARRD')                
+                        ->whereHas('project_division_category', function ($query) {
+                            $query->where('from', 'Indirect Cost');
+                        });
+                })->exists();
+            })
+            ->sum('amount');
 
         $data['total_dc'] = number_format($total_dc, 2);
         $data['total_ic_sksu'] = number_format($total_ic_sksu, 2);
         $data['total_ic_pcaarrd'] = number_format($total_ic_pcaarrd, 2);
-        $data['total_expenses'] = number_format($totalAmount, 2);
+        $data['total_expenses'] = number_format($total_expenses, 2);
 
 
 

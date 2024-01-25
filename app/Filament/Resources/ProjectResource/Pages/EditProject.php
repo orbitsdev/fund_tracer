@@ -33,6 +33,8 @@ class EditProject extends EditRecord
         $data['program_budget_overview'] = number_format($project->program ? $project->program->total_budget : 0);
         $data['program_use_budget_overview'] = number_format($project->program ? $project->program->total_usage : 0);
         $data['program_remaining_budget_overview'] = number_format(($project->program ? $project->program->total_budget : 0) - ($project->program ? $project->program->total_usage : 0));
+        $data['left_budget'] =number_format( ($project->program ? $project->program->total_budget : 0) - ($project->program ? $project->program->total_usage : 0));
+
 
         //fill project overview
 
