@@ -19,20 +19,29 @@ use Filament\Forms\Components\Group;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Repeater;
+use Filament\Support\Enums\FontFamily;
 
+use Filament\Support\Enums\FontWeight;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Placeholder;
 use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Tables\Columns\Summarizers\Range;
+use Filament\Tables\Columns\Summarizers\Average;
 use App\Filament\Resources\ProgramResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProgramResource\RelationManagers;
@@ -355,6 +364,7 @@ class ProgramResource extends Resource
                     ->label('Total Budget')
                     ->prefix('₱ ')
                     ->numeric()
+                    // ->weight(FontWeight::Bold)
                     // ->badge()
                     ->sortable(),
 
@@ -368,28 +378,9 @@ class ProgramResource extends Resource
                     //     })->implode("\n");
                     // }),
 
+                    // ViewColumn::make('projects')->view('tables.columns.project-list'),
 
-
-                    TextColumn::make('projects')
-                    ->listWithLineBreaks()
-                    ->label('Project & Allocated Fund')
-                    ->wrap()
-                    ->color('primary')
-                    ->separator(',')
-                    // ->limitList(2)
-                  
-                    ->listWithLineBreaks()
-                    ->expandableLimitedList()
-                    ->formatStateUsing(function($state) {
-                        return $state->title.' - ₱'.number_format($state->allocated_fund);
-                        // return $state->title;
-                    })
-                    ->tooltip(function (Model $record): string {
-                        return "\n" . $record->projects->map(function ($project, $index) {
-                            return ($index + 1) . ". {$project->title}";
-                        })->implode("\n");
-                    })
-                    ,
+                   
 
 
 
@@ -450,21 +441,54 @@ class ProgramResource extends Resource
                 // })
 
                 // ->searchable(),
+                    
+                
+                  
 
+                    TextColumn::make('projects')
+                    ->listWithLineBreaks()
 
-                TextColumn::make('start_date')
-
-                    ->date()
-                    ->label('Start')
-
+                    ->label('Project & Allocated Fund')
+                    ->wrap()
+                    ->color('primary')
+                    ->separator(',')
+                    ->limitList(2)
+                    ->expandableLimitedList()
+                    ->formatStateUsing(function($state) {
+                        return $state->title.' - ₱'.number_format($state->allocated_fund);
+                        // return $state->title;
+                    })
+                    ->tooltip(function (Model $record): string {
+                        return "\n" . $record->projects->map(function ($project, $index) {
+                            return ($index + 1) . ". {$project->title}";
+                        })->implode("\n");
+                    })
                     ,
-                TextColumn::make('end_date')
+                  
+                        TextColumn::make('start_date')
 
+                        ->date()
+                        ->label('Start')
+                       
+                        ,
+                    TextColumn::make('end_date')
+    
+                   
+                        ->date()
+                        ->label('End')
+    
+                        ,
+              
 
-                    ->date()
-                    ->label('End')
-
-                    ,
+                     
+TextColumn::make('total_budget')
+->numeric()
+->summarize([
+    Sum::make()->label('Total')
+])
+                  
+                
+                
 
 
 
@@ -487,6 +511,9 @@ class ProgramResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
+            // ->heading('Table')
+            // ->description('List of programs and their scope projects with allocated budget')
+            ->filtersLayout(FiltersLayout::AboveContentCollapsible)
             ->recordUrl(null)
             ->modifyQueryUsing(fn (Builder $query) => $query->latest())
             // ->groups([

@@ -42,6 +42,7 @@ use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Tables\Grouping\Group as TGroup;
 use Filament\Tables\Actions\Action as TBAction;
@@ -297,10 +298,9 @@ class ProjectResource extends Resource
                                     ->debounce(700)
                                     ->inline()
                                     ->columnSpanFull()
-                                    ->hidden(function(string $operation){
-                                        return $operation === 'edit' ? true: false;
-                                    })
-                                    ,
+                                    ->hidden(function (string $operation) {
+                                        return $operation === 'edit' ? true : false;
+                                    }),
 
                                 Select::make('program_id')
                                     ->live()
@@ -367,7 +367,7 @@ class ProjectResource extends Resource
                                     ->searchable()
                                     ->columnSpan(3)
                                     ->required()
-                                   
+
 
                                     ->native(function (Get $get, Set $set) {
                                         return self::disabledDate($get, $set);
@@ -385,12 +385,12 @@ class ProjectResource extends Resource
                                     })
                                     ->columnSpan(3)
                                     ->searchable()
-                                   
+
                                     ->native(function (Get $get, Set $set) {
                                         return self::disabledDate($get, $set);
                                     }),
 
-                              
+
 
 
                                 TextInput::make('allocated_fund')
@@ -404,18 +404,18 @@ class ProjectResource extends Resource
                                     ->debounce(700)
                                     ->required()
 
-                                    ->afterStateUpdated(function (Get $get, Set $set ,string $operation) {
+                                    ->afterStateUpdated(function (Get $get, Set $set, string $operation) {
 
                                         self::updateLeftAllocated($get, $set, $operation);
                                     })
                                     ->columnSpan(3)
                                     ->rules([
-                                        fn (Get $get, string $operation): Closure => function (string $attribute, $value, Closure $fail, ) use ($get, $operation) {       
+                                        fn (Get $get, string $operation): Closure => function (string $attribute, $value, Closure $fail,) use ($get, $operation) {
 
 
 
-                                             if (empty($get('program_id'))) {
-                                            //     // $fail("Program should be selected first before setting allocated fund");
+                                            if (empty($get('program_id'))) {
+                                                //     // $fail("Program should be selected first before setting allocated fund");
                                             } else {
 
                                                 $selected_program = Program::find($get('program_id'));
@@ -424,7 +424,7 @@ class ProjectResource extends Resource
                                                 $allocatedFund = (float) str_replace(',', '',  $get('allocated_fund'));
                                                 $current_allocated_budget = (float) str_replace(',', '',  $get('current_allocated_budget'));
                                                 $max = $current_allocated_budget + $remaining_budget;
-                                                if($operation ==='edit'){
+                                                if ($operation === 'edit') {
 
                                                     //ignore if the same value
 
@@ -434,29 +434,21 @@ class ProjectResource extends Resource
                                                         // New value is greater than the current budget
                                                         $fail("The allocated amount should not exceed the remaining budget of the selected program");
                                                     }
-                                                    
+                                                } else {
 
-                                                    
-                                                }else{
 
-                                                 
                                                     if (!empty($selected_program)) {
-                                                    
-    
-    
+
+
+
                                                         if ($value > $remaining_budget) {
                                                             $fail("The allocated amount should not exceed the remaining budget of the selected program");
                                                         }
-    
                                                     } else {
                                                         $fail("Program not found");
                                                     }
                                                 }
-                                              
-
-
-                                             }
-                                            
+                                            }
                                         },
                                     ]),
 
@@ -685,7 +677,7 @@ class ProjectResource extends Resource
 
 
 
-                                    TextInput::make('current_allocated_budget')
+                                TextInput::make('current_allocated_budget')
                                     ->label('Current Project Budget')
                                     ->prefix('₱ ')
                                     // ->numeric()
@@ -693,49 +685,49 @@ class ProjectResource extends Resource
                                     ->disabled()
                                     // ->maxLength(191)
                                     ->readOnly()
-                                    ->hidden(function(string $operation){
-                                        return $operation === 'edit' ? false :true;
+                                    ->hidden(function (string $operation) {
+                                        return $operation === 'edit' ? false : true;
                                     }),
 
                             ]),
 
                         Section::make('Financial Summary')
-                        ->description('Live calculations based on your inputs')
+                            ->description('Live calculations based on your inputs')
 
-                        ->columns([
-                            'sm' => 3,
-                            'xl' => 6,
-                            '2xl' => 8,
-                        ])
-                        ->columnSpanFull()
-                        ->schema([
-                         
-                            
-                            TextInput::make('project_fund')
-                            ->label(function(string $operation){
-                                return $operation === 'edit' ? 'New Project Budget' :'Current Project Budget';
-                            })
-                            ->mask(RawJs::make('$money($input)'))
-                            ->stripCharacters(',')
-                            ->prefix('-')
-                            ->numeric()
+                            ->columns([
+                                'sm' => 3,
+                                'xl' => 6,
+                                '2xl' => 8,
+                            ])
                             ->columnSpanFull()
-                            ->default(0)
-                            ->disabled()
-                            // ->maxLength(191)
-                            ->readOnly(),
-                            TextInput::make('left_budget')
-                            ->prefix('=')
-                                ->label('Remaining Budget of Program After Project Deduction')
-                                ->mask(RawJs::make('$money($input)'))
-                                ->stripCharacters(',')
-                                ->numeric()
-                                ->columnSpanFull()
-                                ->default(0)
-                                ->disabled()
-                                // ->maxLength(191)
-                                ->readOnly(),
-                        ]),
+                            ->schema([
+
+
+                                TextInput::make('project_fund')
+                                    ->label(function (string $operation) {
+                                        return $operation === 'edit' ? 'New Project Budget' : 'Current Project Budget';
+                                    })
+                                    ->mask(RawJs::make('$money($input)'))
+                                    ->stripCharacters(',')
+                                    ->prefix('-')
+                                    ->numeric()
+                                    ->columnSpanFull()
+                                    ->default(0)
+                                    ->disabled()
+                                    // ->maxLength(191)
+                                    ->readOnly(),
+                                TextInput::make('left_budget')
+                                    ->prefix('=')
+                                    ->label('Remaining Budget of Program After Project Deduction')
+                                    ->mask(RawJs::make('$money($input)'))
+                                    ->stripCharacters(',')
+                                    ->numeric()
+                                    ->columnSpanFull()
+                                    ->default(0)
+                                    ->disabled()
+                                    // ->maxLength(191)
+                                    ->readOnly(),
+                            ]),
 
 
                     ])
@@ -759,9 +751,9 @@ class ProjectResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-        ->headerActions([
-        //    TBAction::make('dasd'),
-        ], position: HeaderActionsPosition::Bottom)
+            ->headerActions([
+                //    TBAction::make('dasd'),
+            ], position: HeaderActionsPosition::Bottom)
             ->columns([
                 TextColumn::make('program.title')
                     ->numeric()
@@ -773,19 +765,27 @@ class ProjectResource extends Resource
                 TextColumn::make('title')
                     ->searchable()->label('Project Title')->wrap(),
                 TextColumn::make('allocated_fund')
-                ->money('PHP')
-                ->numeric(
-                    decimalPlaces: 0,)
+                    ->money('PHP')
+                    ->numeric(
+                        decimalPlaces: 0,
+                    )
+               
                     ->prefix('₱ ')
                     ->sortable(),
+
                 TextColumn::make('start_date')
                     ->date()
-                    ->label('Expected To Start Date')
+              
+                    ->label('Start Date')
                     ->sortable(),
                 TextColumn::make('end_date')
-                    ->label('Expected To End Date')
+                    ->label('End Date')
                     ->date()
                     ->sortable(),
+
+
+                TextColumn::make('allocated_fund')
+                    ->summarize(Sum::make()->label('total')->money('PHP')),
 
                 // TextColumn::make('status')
                 //     ->searchable(),
@@ -816,17 +816,18 @@ class ProjectResource extends Resource
                 ])
                     ->label('Actions'),
             ])
-            ->defaultGroup('program.title')
+
             ->groups([
                 TGroup::make('program.title')
-                ->titlePrefixedWithLabel(false)
-                ->getTitleFromRecordUsing(fn (Project $record): string => $record->program ?  ucfirst($record->program->title) : '')
-                ->label('Program')
-                ->collapsible()
-                ,
-              
-            
+                    ->titlePrefixedWithLabel(false)
+                    ->getTitleFromRecordUsing(fn (Project $record): string => $record->program ?  ucfirst($record->program->title) : '')
+                    ->label('Program')
+                    ->collapsible(),
+
+
             ])
+            ->defaultGroup('program.title')
+            // ->groupsOnly()
             ->modifyQueryUsing(fn (Builder $query) => $query->latest());
     }
 
@@ -886,7 +887,7 @@ class ProjectResource extends Resource
                 $total_allocated_projects = $program->projects->sum('allocated_fund');
                 $remaining_budget =  floatval(str_replace(',', '', $program->total_budget)) - $total_allocated_projects;
                 $left_budget = $remaining_budget - $allocatedFund;
-                
+
                 $set('start_date', $program->start_date);
                 $set('end_date', $program->end_date);
                 $set('implementing_agency', $program->implementing_agency);
@@ -897,7 +898,7 @@ class ProjectResource extends Resource
                 $set('program_remaining_budget_overview', number_format($remaining_budget));
                 $set('left_budget', number_format($left_budget));
             } else {
-             
+
                 $set('start_date', null);
                 $set('end_date', null);
                 $set('implementing_agency', null);
@@ -913,7 +914,7 @@ class ProjectResource extends Resource
             $set('end_date', null);
             $set('implementing_agency', null);
             $set('monitoring_agency', null);
-             $set('program_name_overview', null);
+            $set('program_name_overview', null);
             $set('program_budget_overview', null);
             $set('program_use_budget_overview', null);
             $set('program_remaining_budget_overview', null);
@@ -921,30 +922,30 @@ class ProjectResource extends Resource
         }
     }
 
-    public static function updateLeftAllocated(Get $get, Set $set , string $operation)
+    public static function updateLeftAllocated(Get $get, Set $set, string $operation)
     {
 
         $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
-        
+
 
         if (!empty($get('program_id'))) {
             $program = Program::find($get('program_id'));
-        
+
             if (!empty($program)) {
                 $total_allocated_projects = $program->projects->sum('allocated_fund');
                 $remaining_budget = floatval(str_replace(',', '', $program->total_budget)) - $total_allocated_projects;
-        
+
                 // Check if allocatedFund is smaller than current_allocated_budget
                 $current_allocated_budget = floatval(str_replace(',', '', $get('current_allocated_budget')));
                 $allocatedFund = floatval(str_replace(',', '', $get('allocated_fund')));
-        
+
                 if ($allocatedFund < $current_allocated_budget) {
-              
+
                     $remaining_budget += ($current_allocated_budget - $allocatedFund);
                 }
-        
+
                 $left_budget = $remaining_budget - $allocatedFund;
-                      
+
                 $set('left_budget', number_format(max(0, $left_budget)));
             } else {
                 $set('left_budget', null);
@@ -952,7 +953,7 @@ class ProjectResource extends Resource
         } else {
             $set('left_budget', null);
         }
-        
+
 
         // self::updateTotal($get, $set);
     }
