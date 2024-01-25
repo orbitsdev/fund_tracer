@@ -294,7 +294,11 @@ class ProjectResource extends Resource
                                     ->live()
                                     ->debounce(700)
                                     ->inline()
-                                    ->columnSpanFull(),
+                                    ->columnSpanFull()
+                                    ->hidden(function(string $operation){
+                                        return $operation === 'edit' ? true: false;
+                                    })
+                                    ,
 
                                 Select::make('program_id')
                                     ->live()
@@ -398,29 +402,57 @@ class ProjectResource extends Resource
                                     ->debounce(700)
                                     ->required()
 
-                                    ->afterStateUpdated(function (Get $get, Set $set) {
-                                        self::updateLeftAllocated($get, $set);
+                                    ->afterStateUpdated(function (Get $get, Set $set ,string $operation) {
+
+                                        self::updateLeftAllocated($get, $set, $operation);
                                     })
                                     ->columnSpan(3)
                                     ->rules([
-                                        fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                        fn (Get $get, string $operation): Closure => function (string $attribute, $value, Closure $fail, ) use ($get, $operation) {       
 
 
-                                            if (empty($get('program_id'))) {
-                                                $fail("Program should be selected first before setting allocated fund");
+
+                                             if (empty($get('program_id'))) {
+                                            //     // $fail("Program should be selected first before setting allocated fund");
                                             } else {
                                                 $selected_program = Program::find($get('program_id'));
+                                                $total_allocated_projects = $selected_program->projects->sum('allocated_fund');
+                                                $remaining_budget = $selected_program->total_budget - $total_allocated_projects;
 
-                                                if (!empty($selected_program)) {
-                                                    $remaining_budget = $selected_program->total_budget - $selected_program->total_usage;
+                                                if($operation =='edit'){
 
-                                                    if ($value > $remaining_budget) {
-                                                        $fail("The allocated amount should not exceed the remaining budget of the selected program");
+                                                    $allocatedFund = (float) str_replace(',', '',  $get('allocated_fund'));
+                                                    $current_allocated_budget = (float) str_replace(',', '',  $get('current_allocated_budget'));
+
+                                                    if($allocatedFund === $current_allocated_budget){
+
+                                                    }else{
+                                                        if ($value > $remaining_budget) {
+                                                            $fail("The allocated amount should not exceed the remaining budget of the selected program");
+                                                        }
                                                     }
-                                                } else {
-                                                    $fail("Program not found");
+
+                                                    
+                                                }else{
+
+                                                 
+                                                    if (!empty($selected_program)) {
+                                                    
+    
+    
+                                                        if ($value > $remaining_budget) {
+                                                            $fail("The allocated amount should not exceed the remaining budget of the selected program");
+                                                        }
+    
+                                                    } else {
+                                                        $fail("Program not found");
+                                                    }
                                                 }
-                                            }
+                                              
+
+
+                                             }
+                                            
                                         },
                                     ]),
 
@@ -831,7 +863,7 @@ class ProjectResource extends Resource
     {
 
         //  dd($get('program_id'));
-        $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
+        $allocatedFund = floatval(str_replace(',', '', $get('allocated_fund')));
         $set('project_fund', number_format($allocatedFund));
         if (!empty($get('program_id'))) {
             $program = Program::find($get('program_id'));
@@ -875,11 +907,12 @@ class ProjectResource extends Resource
         }
     }
 
-    public static function updateLeftAllocated(Get $get, Set $set)
+    public static function updateLeftAllocated(Get $get, Set $set , string $operation)
     {
 
         $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
-        $set('project_fund', number_format($allocatedFund));
+        
+
 
         if (!empty($get('program_id'))) {
             

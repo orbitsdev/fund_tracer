@@ -43,7 +43,8 @@ class EditProject extends EditRecord
         if (!empty($project->program)) {
             $total_allocated_projects = $project->program->projects->sum('allocated_fund');
             $remaining_budget =  floatval(str_replace(',', '', $project->program->total_budget)) - $total_allocated_projects;
-            $left_budget = $remaining_budget - $allocatedFund;
+            // $left_budget = $remaining_budget - $allocatedFund;
+            $left_budget = $remaining_budget;
             $data['program_remaining_budget_overview'] = number_format($remaining_budget);
             $data['left_budget'] = number_format($left_budget);
         
@@ -55,7 +56,8 @@ class EditProject extends EditRecord
         }
         
  
-        $data['project_fund'] =number_format($project->allocated_fund);
+        $data['project_fund'] =0;
+        // $data['project_fund'] =number_format($project->allocated_fund);
         $data['total_expenses'] = number_format($total_expenses);
         $start_date = $project->start_date;
         $end_date = $project->end_date;
