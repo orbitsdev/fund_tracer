@@ -345,10 +345,12 @@ class ProgramResource extends Resource
 
                     ,
                 TextColumn::make('program_leader')
+                ->wrap()
                     ->label('Program Leader')
                     ->searchable(
                         // isIndividual:true,
                     ),
+                    
                     TextColumn::make('total_budget')
                     ->label('Total Budget')
                     ->prefix('₱ ')

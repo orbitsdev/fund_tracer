@@ -927,7 +927,6 @@ class ProjectResource extends Resource
         $allocatedFund = (float) str_replace(',', '', $get('allocated_fund'));
         
 
-
         if (!empty($get('program_id'))) {
             $program = Program::find($get('program_id'));
         
@@ -940,13 +939,12 @@ class ProjectResource extends Resource
                 $allocatedFund = floatval(str_replace(',', '', $get('allocated_fund')));
         
                 if ($allocatedFund < $current_allocated_budget) {
-                    // If allocatedFund is smaller, it means there's less allocated, so the remaining budget should increase
+              
                     $remaining_budget += ($current_allocated_budget - $allocatedFund);
                 }
         
                 $left_budget = $remaining_budget - $allocatedFund;
-        
-                // Ensure left_budget is non-negative
+                      
                 $set('left_budget', number_format(max(0, $left_budget)));
             } else {
                 $set('left_budget', null);
@@ -955,7 +953,6 @@ class ProjectResource extends Resource
             $set('left_budget', null);
         }
         
-
 
         // self::updateTotal($get, $set);
     }
