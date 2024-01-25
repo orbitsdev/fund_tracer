@@ -44,8 +44,10 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Tables\Grouping\Group as TGroup;
+use Filament\Tables\Actions\Action as TBAction;
 use App\Filament\Resources\ProjectResource\Pages;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Tables\Actions\HeaderActionsPosition;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Infolists\Components\Section as InSection;
 use App\Filament\Resources\ProjectResource\RelationManagers;
@@ -419,13 +421,15 @@ class ProjectResource extends Resource
                                                 $total_allocated_projects = $selected_program->projects->sum('allocated_fund');
                                                 $remaining_budget = $selected_program->total_budget - $total_allocated_projects;
 
-                                                if($operation =='edit'){
+                                                if($operation ==='edit'){
 
                                                     $allocatedFund = (float) str_replace(',', '',  $get('allocated_fund'));
                                                     $current_allocated_budget = (float) str_replace(',', '',  $get('current_allocated_budget'));
 
                                                     if($allocatedFund === $current_allocated_budget){
-
+                                                        // if ($allocatedFund > $remaining_budget) {
+                                                        //     $fail("The allocated amount should not exceed the remaining budget of the selected program");
+                                                        // }  
                                                     }else{
                                                         if ($value > $remaining_budget) {
                                                             $fail("The allocated amount should not exceed the remaining budget of the selected program");
@@ -755,6 +759,9 @@ class ProjectResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->headerActions([
+        //    TBAction::make('dasd'),
+        ], position: HeaderActionsPosition::Bottom)
             ->columns([
                 TextColumn::make('program.title')
                     ->numeric()
@@ -766,7 +773,9 @@ class ProjectResource extends Resource
                 TextColumn::make('title')
                     ->searchable()->label('Project Title')->wrap(),
                 TextColumn::make('allocated_fund')
-                    // ->numeric()
+                ->money('PHP')
+                ->numeric(
+                    decimalPlaces: 0,)
                     ->prefix('₱ ')
                     ->sortable(),
                 TextColumn::make('start_date')
@@ -786,6 +795,7 @@ class ProjectResource extends Resource
                 //
             ])
             ->actions([
+
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make()->label('View Details'),
                     EditAction::make()->label('Update Basic Information'),
@@ -799,19 +809,23 @@ class ProjectResource extends Resource
 
                 ]),
             ])
+            ->recordUrl(null)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ])
                     ->label('Actions'),
             ])
+            ->defaultGroup('program.title')
             ->groups([
                 TGroup::make('program.title')
-                    ->titlePrefixedWithLabel(false)
-                    ->getTitleFromRecordUsing(fn (Model $record): string => $record->title ?  ucfirst($record->title) : '')
-                    ->label('Program')
-                    ->collapsible(),
-
+                ->titlePrefixedWithLabel(false)
+                ->getTitleFromRecordUsing(fn (Project $record): string => $record->program ?  ucfirst($record->program->title) : '')
+                ->label('Program')
+                ->collapsible()
+                ,
+              
+            
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->latest());
     }
