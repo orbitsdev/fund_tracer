@@ -81,16 +81,18 @@ class EditQuarterExpenses extends EditRecord
             $data['project_name_overview'] = $project->title ? $project->title : '';
             $data['project_budget_overview'] = number_format($project->allocated_fund ? $project->allocated_fund : 0);
             $remaining_budget =  floatval(str_replace(',', '', $project->allocated_fund)) - $total_expenses;
+            
             $allocatedFund = floatval(str_replace(',', '', $project->allocated_fund));
             $left_budget = $remaining_budget - $total_expenses;
             $this->over_all_expenses = $total_expenses;
 
-            $data['left_budget'] =number_format($left_budget);
+            // $data['left_budget'] =number_format($left_budget);
             $data['project_remaining_budget_overview'] = number_format($remaining_budget);
             $data['total_dc'] = number_format($total_dc, 2);
             $data['total_ic_sksu'] = number_format($total_ic_sksu, 2);
             $data['total_ic_pcaarrd'] = number_format($total_ic_pcaarrd, 2);
-            $data['total_expenses'] = number_format($total_expenses, 2);
+            $data['current_expenses'] = number_format($total_expenses, 2);
+            // $data['total_expenses'] = number_format($total_expenses, 2);
 
 
 
@@ -270,7 +272,7 @@ class EditQuarterExpenses extends EditRecord
                                                 ->mask(RawJs::make('$money($input)'))
                                                 ->stripCharacters(',')
                                                 ->live()
-                                                ->debounce(700)
+                                                ->debounce(900)
                                                 ->afterStateUpdated(function (Get $get, Set $set) {
 
                                                     self::updateTotal($get, $set, $this->getRecord());
@@ -371,7 +373,7 @@ class EditQuarterExpenses extends EditRecord
                                                 ->mask(RawJs::make('$money($input)'))
                                                 ->stripCharacters(',')
                                                 ->live()
-                                                ->debounce(700)
+                                                ->debounce(900)
                                                 ->afterStateUpdated(function (Get $get, Set $set) {
 
                                                     self::updateTotal($get, $set , $this->getRecord());
@@ -475,7 +477,7 @@ class EditQuarterExpenses extends EditRecord
                                                 ->stripCharacters(',')
 
                                                 ->live()
-                                                ->debounce(700)
+                                                ->debounce(900)
                                                 ->afterStateUpdated(function (Get $get, Set $set) {
 
                                                     self::updateTotal($get, $set , $this->getRecord());
@@ -567,20 +569,10 @@ class EditQuarterExpenses extends EditRecord
                                     // ->maxLength(191)
                                     ->readOnly(),
 
-                                    
-                                TextInput::make('current_allocated_budget')
-                                ->label('Current Project Budget')
-                                ->prefix('₱ ')
-                                // ->numeric()
-                                ->columnSpanFull(4)
-                                ->disabled()
-                                // ->maxLength(191)
-                                ->readOnly()
-                                ->hidden(function (string $operation) {
-                                    return $operation === 'edit' ? false : true;
-                                }),
+                             
 
-                                ]),
+                                ])
+                                ,
 
                             Section::make('Financial Summary')
                             ->description('Live calculations based on your inputs')
@@ -656,6 +648,19 @@ class EditQuarterExpenses extends EditRecord
                                         ->default(0)
                                         // ->maxLength(191)
                                         ->readOnly(),
+                                        TextInput::make('current_expenses')
+                                        ->label('Original Expenses')
+                                     ->disabled()
+                                          
+                                     ->prefix('₱ ')
+                                        ->mask(RawJs::make('$money($input)'))
+                                        ->stripCharacters(',')
+                                        ->numeric()
+                                        ->columnSpanFull()
+                                        ->default(0)
+                                        // ->maxLength(191)
+                                        ->readOnly(),
+                                 
 
                                  
 
@@ -674,8 +679,24 @@ class EditQuarterExpenses extends EditRecord
                                         '2xl' => 8,
                                     ])
                                     ->schema([
+                                               
+                                        TextInput::make('expense_adjustment')
+                                        ->label('New Amount Added')
+                                    
+                                    
+                                ->prefix('₱ ')
+                                // ->numeric()
+                                ->columnSpanFull(4)
+                                // ->disabled()
+                                // ->maxLength(191)
+                                ->readOnly()
+                                ->hidden(function (string $operation) {
+                                    return $operation === 'edit' ? false : true;
+                                }),
+                          
+
                                         TextInput::make('total_expenses')
-                                        ->label('Total Expenses')
+                                        ->label('Total ')
                                         ->mask(RawJs::make('$money($input)'))
                                         ->stripCharacters(',')
                                         ->numeric()
@@ -689,7 +710,7 @@ class EditQuarterExpenses extends EditRecord
                                         // ->maxLength(191)
                                         ->required()
                                         ->live()
-                                        ->debounce(700)
+                                        ->debounce(900)
                                         ->rules([
                                             fn (Get $get, string $operation): Closure => function (string $attribute, $value, Closure $fail,) use ($get, $operation) {
     
@@ -732,23 +753,24 @@ class EditQuarterExpenses extends EditRecord
                                                
                                             },
                                         ])
-                                        // ->readOnly()
+                                         ->readOnly()
                                         ,
+                                        TextInput::make('left_budget')
+                                        ->prefix('=')
+                                        ->label('Remaining Project Budget After Updating Expenses')
+                                        ->mask(RawJs::make('$money($input)'))
+                                        ->stripCharacters(',')
+                                        ->numeric()
+                                        ->columnSpanFull()
+                                        ->default(0)
+                                     
+                                        // ->maxLength(191)
+                                        ->readOnly(),
+                               
 
 
-                                   TextInput::make('left_budget')
-                                    ->prefix('=')
-                                    ->label('Remaining Budget  After Expenses Deduction')
-                                    ->mask(RawJs::make('$money($input)'))
-                                    ->stripCharacters(',')
-                                    ->numeric()
-                                    ->columnSpanFull()
-                                    ->default(0)
-                                 
-                                    // ->maxLength(191)
-                                    ->readOnly(),
-
-                                    ])
+                                        ]),
+                                   
 
                         ])->columnSpan(['lg' => 1]),
 
@@ -766,9 +788,6 @@ class EditQuarterExpenses extends EditRecord
 
         $project = $record->project_year->project;
         
-        
-        //  dd($get('../../direct_cost_expenses'));
-        // Convert to float
 
         //DC
         $dc_expenses = collect($get('../../direct_cost_expenses'))->filter(fn ($item) => !empty($item['amount']));
@@ -797,38 +816,29 @@ class EditQuarterExpenses extends EditRecord
             'ic_pcaarrd_total' => $ic_pcaarrd_total,
         ]);
         
-        $new_expenses = $expenses->sum();
-        $remaining_budget =  floatval(str_replace(',', '', $project->allocated_fund)) - $new_expenses;
-        $left_budget = $remaining_budget - $new_expenses;
+        $total_expenses = $expenses->sum() ;
 
+        $old_expenses = $record->quarter_expense_budget_divisions
+        ->flatMap->quarter_expenses->sum('amount');
         
+        $total_added_expenses = $total_expenses - $old_expenses;
+        
+        
+        $remaining_budget =  floatval(str_replace(',', '', $project->allocated_fund)) - $old_expenses;
+        $left_budget = $remaining_budget - $total_added_expenses;
+
 
 
         // Now $total_expenses holds the sum of all expenses.
-
         $set('../../../../total_dc', number_format($dc_total, 2));
         $set('../../../../total_ic_sksu', number_format($ic_sksu_total, 2));
         $set('../../../../total_ic_pcaarrd', number_format($ic_pcaarrd_total, 2));
-        $set('../../../../total_expenses', number_format($new_expenses, 2));
-        $set('../../../../left_budget', number_format($left_budget));
-
-        // $left_fund = $current_fund - $totalAmount;
-
+        $set('../../../../expense_adjustment', number_format($total_added_expenses, 2));
+        $set('../../../../total_expenses', number_format($total_expenses, 2));
+         $set('../../../../left_budget', number_format($left_budget));
 
 
-        // $current_fund = (float)$get('allocated_fund'); // Convert to float
-        // $expenses = collect($get('expenses'))->filter(fn ($item) => !empty($item['amount']));
-
-
-        // $totalAmount = $expenses->sum(function ($item) {
-        //     return (float)$item['amount'];
-        // });
-
-        // // $left_fund = $current_fund - $totalAmount;
-
-        // $set('total_expenses', number_format($totalAmount));
-            // dd($new_expenses);
-        return $new_expenses;
+        return $total_expenses;
 
 
     }
