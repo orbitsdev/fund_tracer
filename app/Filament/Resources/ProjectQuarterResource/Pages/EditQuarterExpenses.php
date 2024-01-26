@@ -122,6 +122,7 @@ class EditQuarterExpenses extends EditRecord
         unset($data['total_ic_pcaarrd']);
         unset($data['total_expenses']);
         unset($data['left_budget']);
+        unset($data['expense_adjustment']);
        
        
         return $data;
