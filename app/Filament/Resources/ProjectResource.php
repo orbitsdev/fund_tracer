@@ -406,7 +406,7 @@ class ProjectResource extends Resource
 
                                     ->afterStateUpdated(function (Get $get, Set $set, string $operation) {
 
-                                        self::updateLeftAllocated($get, $set, $operation);
+                                    self::updateLeftAllocated($get, $set, $operation);
                                     })
                                     ->columnSpan(3)
                                     ->rules([
