@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->morphs('fileable');
+            // $table->morphs('fileable')->;
+            $table->unsignedBigInteger('fileable_id')->nullable();
+            $table->string('fileable_type')->nullable();
             $table->text('file')->nullable();
             $table->string('file_name')->nullable();
             $table->string('file_type')->nullable();
