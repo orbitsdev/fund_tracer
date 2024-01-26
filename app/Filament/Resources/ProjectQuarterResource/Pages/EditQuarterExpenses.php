@@ -507,11 +507,64 @@ class EditQuarterExpenses extends EditRecord
 
                     Group::make()
                         ->schema([
-
                             Section::make('Project Overview')
                                 //  ->icon('heroicon-m-square-3-stack-3d')
                                 // ->description('Manage and organize project expenses here. You can only add expense in edit')
                                 ->columnSpanFull()
+                                ->columns([
+                                    'sm' => 3,
+                                    'xl' => 6,
+                                    '2xl' => 8,
+                                ])
+                                ->schema([
+                                    TextInput::make('program_name_overview')
+                                    ->label('Selected Program')
+                                    // ->prefix('₱ ')
+                                    // ->numeric()
+
+                                    ->columnSpanFull()
+                                    // ->maxLength(191)
+                                    ->disabled()
+                                    ->readOnly(),
+                                TextInput::make('program_budget_overview')
+                                    ->label('Program Budget')
+                                    // ->default(0)
+                                    ->prefix('₱ ')
+                                    // ->numeric()
+                                    ->disabled()
+                                    ->columnSpan(4)
+
+                                    // ->maxLength(191)
+                                    ->readOnly(),
+                                // TextInput::make('program_use_budget_overview')
+                                //     ->label('Total Used')
+                                //     // ->prefix('₱ ')
+                                //     // ->numeric()
+                                //     ->columnSpan(4)
+
+                                //     // ->maxLength(191)
+                                //     ->readOnly(),
+                                TextInput::make('program_remaining_budget_overview')
+                                    ->label('Program Remaining Budget')
+                                    ->prefix('₱ ')
+                                    // ->numeric()
+                                    ->columnSpan(4)
+                                    ->disabled()
+                                    // ->maxLength(191)
+                                    ->readOnly(),
+
+                                ]),
+
+                            Section::make('Financial Summary')
+                            ->description('Live calculations based on your inputs')
+                                //  ->icon('heroicon-m-square-3-stack-3d')
+                                // ->description('Manage and organize project expenses here. You can only add expense in edit')
+                                ->columnSpanFull()
+                                ->columns([
+                                    'sm' => 3,
+                                    'xl' => 6,
+                                    '2xl' => 8,
+                                ])
                                 ->schema([
                                     // TextInput::make('current_duration_overview')
                                     //     ->label('Current Duration')
@@ -548,8 +601,10 @@ class EditQuarterExpenses extends EditRecord
                                         ->mask(RawJs::make('$money($input)'))
                                         ->stripCharacters(',')
                                         ->numeric()
-                                        ->columnSpan(3)
+                                     
+                                        ->columnSpanFull()
                                         ->default(0)
+                                        
                                         // ->maxLength(191)
                                         ->readOnly(),
                                     TextInput::make('total_ic_sksu')
@@ -557,32 +612,53 @@ class EditQuarterExpenses extends EditRecord
                                         ->mask(RawJs::make('$money($input)'))
                                         ->stripCharacters(',')
                                         ->numeric()
-                                        ->columnSpan(3)
+                                        
+                                        ->columnSpan(4)
                                         ->default(0)
+                                     
                                         // ->maxLength(191)
                                         ->readOnly(),
                                     TextInput::make('total_ic_pcaarrd')
                                         ->label('IC PCAARRD')
+                                     
                                         ->mask(RawJs::make('$money($input)'))
                                         ->stripCharacters(',')
                                         ->numeric()
-                                        ->columnSpan(3)
+                                        ->columnSpan(4)
                                         ->default(0)
+                                        
                                         // ->maxLength(191)
                                         ->readOnly(),
 
-                                    TextInput::make('total_expenses')
+                                 
+
+
+                                ]),
+
+                                Section::make('')
+                             
+
+                                    //  ->icon('heroicon-m-square-3-stack-3d')
+                                    // ->description('Manage and organize project expenses here. You can only add expense in edit')
+                                    ->columnSpanFull()
+                                    ->columns([
+                                        'sm' => 3,
+                                        'xl' => 6,
+                                        '2xl' => 8,
+                                    ])
+                                    ->schema([
+                                        TextInput::make('total_expenses')
                                         ->label('Total Expenses')
                                         ->mask(RawJs::make('$money($input)'))
                                         ->stripCharacters(',')
                                         ->numeric()
-                                        ->columnSpan(3)
+                                        ->prefix('₱ ')
+                                        ->columnSpanFull()
                                         ->default(0)
                                         // ->maxLength(191)
                                         ->readOnly(),
 
-
-                                ]),
+                                    ])
 
                         ])->columnSpan(['lg' => 1]),
 
