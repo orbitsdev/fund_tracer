@@ -44,7 +44,7 @@ use Filament\Tables\Columns\Summarizers\Range;
 use Filament\Tables\Columns\Summarizers\Average;
 use App\Filament\Resources\ProgramResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use App\Filament\Resources\ProgramResource\RelationManagers;
 
 
