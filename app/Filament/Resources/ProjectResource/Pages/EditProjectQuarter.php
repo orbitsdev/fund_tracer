@@ -78,7 +78,7 @@ class EditProjectQuarter extends EditRecord
                             ->distinct()
                             ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
-                        Repeater::make('project_division_categories')
+                    TableRepeater::make('project_division_categories')
 
                             ->relationship()
 
