@@ -29,6 +29,11 @@ class EditProjectQuarter extends EditRecord
 
     protected static ?string $title = 'Buget Divisions';
 
+    // protected function mutateFormDataBeforeFill(array $data): array
+    // {
+    //     // dd($this->getRecord()->project_divisions);
+    // }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -170,9 +175,7 @@ class EditProjectQuarter extends EditRecord
 
 
                     ])
-                    ->visible(function (Get $get, Model $record) {
-                        return $this->getRecord()->project_divisions->isNotEmpty();
-                    })
+                  
                     
                     ->columnSpanFull(),
 
