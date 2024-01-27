@@ -141,7 +141,7 @@ class EditProjectQuarter extends EditRecord
                                             ->columnSpanFull(),
 
 
-                                        TableRepeater::make('fourth_layers')
+                                        Repeater::make('fourth_layers')
                                             ->live()
                                             ->relationship()
                                             ->addActionLabel('Expenses')
@@ -157,7 +157,7 @@ class EditProjectQuarter extends EditRecord
 
                                             ])
                                             ->addActionLabel('Expenses')
-                                            ->withoutheader()
+                                            // ->withoutheader()
                                             // ->columnSpanFull(),
                                     ])
 
