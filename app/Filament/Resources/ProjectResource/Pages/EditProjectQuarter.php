@@ -176,7 +176,6 @@ class EditProjectQuarter extends EditRecord
 
                     ])
                   
-                    
                     ->columnSpanFull(),
 
 
