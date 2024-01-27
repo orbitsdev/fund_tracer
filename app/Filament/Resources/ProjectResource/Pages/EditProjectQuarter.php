@@ -99,24 +99,7 @@ class EditProjectQuarter extends EditRecord
                                     ->columnSpanFull()
                                     ->native(false)
                                     ->searchable(),
-                                // Select::make('division_category_id')
-                                //     ->relationship(name: 'division_category', titleAttribute: 'title')
-                                //     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->title}")
-                                //     ->searchable()
-                                //     ->label('Choose Category')
-                                //     ->preload()
-                                //     ->native(false)
-                                //     ->columnSpanFull()
-
-                                //     ->distinct()
-                                //     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                //     ->live()
-                                //     ->createOptionForm([
-                                //         TextInput::make('title')
-                                //             ->required(),
-                                //     ])
-                                //     ,
-
+                             
 
 
                                 Repeater::make('project_division_sub_category_expenses')
@@ -186,8 +169,12 @@ class EditProjectQuarter extends EditRecord
                             ->visible(fn (Get $get) => !empty($get('division_id')) ? true : false),
 
 
-
-                    ]) ->columnSpanFull(),
+                    ])
+                    ->visible(function (Get $get, Model $record) {
+                        return $this->getRecord()->project_divisions->isNotEmpty();
+                    })
+                    
+                    ->columnSpanFull(),
 
 
 
