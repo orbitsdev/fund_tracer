@@ -703,19 +703,19 @@ class ProjectResource extends Resource
                             ->schema([
 
 
-                                TextInput::make('project_fund')
-                                    ->label(function (string $operation) {
-                                        return $operation === 'edit' ? 'New Project Budget' : 'Current Project Budget';
-                                    })
-                                    ->mask(RawJs::make('$money($input)'))
-                                    ->stripCharacters(',')
-                                    ->prefix('-')
-                                    ->numeric()
-                                    ->columnSpanFull()
-                                    ->default(0)
-                                    ->disabled()
-                                    // ->maxLength(191)
-                                    ->readOnly(),
+                                // TextInput::make('project_fund')
+                                //     ->label(function (string $operation) {
+                                //         return $operation === 'edit' ? 'New Project Budget' : 'Current Project Budget';
+                                //     })
+                                //     ->mask(RawJs::make('$money($input)'))
+                                //     ->stripCharacters(',')
+                                //     ->prefix('-')
+                                //     ->numeric()
+                                //     ->columnSpanFull()
+                                //     ->default(0)
+                                //     ->disabled()
+                                //     // ->maxLength(191)
+                                //     ->readOnly(),
                                 TextInput::make('left_budget')
                                     ->prefix('=')
                                     ->label('Remaining Budget of Program After Project Deduction')
@@ -826,7 +826,7 @@ class ProjectResource extends Resource
 
 
             ])
-            ->defaultGroup('program.title')
+            // ->defaultGroup('program.title')
             // ->groupsOnly()
             ->modifyQueryUsing(fn (Builder $query) => $query->latest());
     }
