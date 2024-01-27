@@ -113,11 +113,11 @@ class EditProjectQuarter extends EditRecord
                                     ->relationship()
                                     ->addActionLabel('Expenses Category')
                                     ->label('Budget Division Expenses')
-                                    ->columns([
-                                        'sm' => 3,
-                                        'xl' => 6,
-                                        '2xl' => 9,
-                                    ])
+                                    // ->columns([
+                                    //     'sm' => 3,
+                                    //     'xl' => 6,
+                                    //     '2xl' => 9,
+                                    // ])
                                     ->schema([
 
                                         Select::make('parent_title')
