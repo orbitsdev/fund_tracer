@@ -146,11 +146,7 @@ class EditProjectQuarter extends EditRecord
                                             ->relationship()
                                             ->addActionLabel('Expenses')
                                             ->label('Expenses')
-                                            ->columns([
-                                                'sm' => 3,
-                                                'xl' => 6,
-                                                '2xl' => 9,
-                                            ])
+                                        
                                             ->schema([
                                                 TextInput::make('title')
                                                     ->label('Expenses Desciption')
@@ -162,7 +158,7 @@ class EditProjectQuarter extends EditRecord
                                             ])
                                             ->addActionLabel('Expenses')
                                             ->withoutheader()
-                                            ->columnSpanFull(),
+                                            // ->columnSpanFull(),
                                     ])
 
                                     ->columnSpanFull()
