@@ -44,9 +44,9 @@ use Filament\Tables\Columns\Summarizers\Range;
 use Filament\Tables\Columns\Summarizers\Average;
 use App\Filament\Resources\ProgramResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use App\Filament\Resources\ProgramResource\RelationManagers;
-use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater as TBlRepeater;
+
 
 class ProgramResource extends Resource
 {
@@ -199,7 +199,7 @@ class ProgramResource extends Resource
         ->icon('heroicon-m-folder')
         ->description('Manage and organize your program documents. Upload files here')
         ->schema([
-            TBlRepeater::make('files')
+            TableRepeater::make('files')
             ->withoutHeader()
             ->emptyLabel('No File')
             ->columnWidths([
