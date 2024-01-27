@@ -199,97 +199,96 @@ class ProgramResource extends Resource
         ->icon('heroicon-m-folder')
         ->description('Manage and organize your program documents. Upload files here')
         ->schema([
-            TableRepeater::make('files')
-            ->withoutHeader()
-            ->emptyLabel('No File')
-            ->columnWidths([
+            
+            Repeater::make('files')
 
-                'file' => '250px',
+            ->relationship()
+            ->label('Documents')
+            ->schema([
+                TextInput::make('file_name')
+                    ->label('Name')
+                    ->maxLength(191)
+                    ->required(),
+                FileUpload::make('file')
+                    ->required()
+
+                    // ->columnSpanFull()
+                    // ->image()
+                    ->preserveFilenames()
+
+                    ->label('File')
+                    ->disk('public')
+                    ->directory('program-files')
             ])
-                ->relationship()
-                ->label('Documents')
-                ->schema([
-                    TextInput::make('file_name')
-                        ->label('File Description')
-                        ->maxLength(191)
-                        ->required(),
-                    FileUpload::make('file')
-                        ->required()
-                        // ->columnSpanFull()
-                        // ->image()
-                        ->preserveFilenames()
+            ->deleteAction(
+                fn (Action $action) => $action->requiresConfirmation(),
+            )
+            ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
+                // $data['user_id'] = auth()->id();
 
-                        ->label('File')
-                        ->disk('public')
-                        ->directory('program-files')
-                ])
-                ->deleteAction(
-                    fn (Action $action) => $action->requiresConfirmation(),
-                )
-                ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
-                    // $data['user_id'] = auth()->id();
-
-                    return $data;
-                })
-                ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
-                    // $filePath = storage_path('app/public/' . $data['file']);
+                return $data;
+            })
+            ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
+                // $filePath = storage_path('app/public/' . $data['file']);
 
 
-                    $filePath = storage_path('app/public/' . $data['file']);
+                $filePath = storage_path('app/public/' . $data['file']);
 
-                    $fileInfo = [
-                        'file' => $data['file'],
-                        'file_name' => $data['file_name'],
-                        'file_type' => mime_content_type($filePath),
-                        'file_size' => call_user_func(function ($bytes) {
-                            $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-                            $i = 0;
+                $fileInfo = [
+                    'file' => $data['file'],
+                    'file_name' => $data['file_name'],
+                    'file_type' => mime_content_type($filePath),
+                    'file_size' => call_user_func(function ($bytes) {
+                        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+                        $i = 0;
 
-                            while ($bytes >= 1024 && $i < count($units) - 1) {
-                                $bytes /= 1024;
-                                $i++;
-                            }
+                        while ($bytes >= 1024 && $i < count($units) - 1) {
+                            $bytes /= 1024;
+                            $i++;
+                        }
 
-                            return round($bytes, 2) . ' ' . $units[$i];
-                        }, filesize($filePath)),
-                    ];
-                    return $fileInfo;
-                    // $data['user_id'] = auth()->id();
+                        return round($bytes, 2) . ' ' . $units[$i];
+                    }, filesize($filePath)),
+                ];
+                return $fileInfo;
+                // $data['user_id'] = auth()->id();
 
-                    // return $data;
-                })
-                ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
+                // return $data;
+            })
+            ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
 
 
-                    $filePath = storage_path('app/public/' . $data['file']);
+                $filePath = storage_path('app/public/' . $data['file']);
 
-                    $fileInfo = [
-                        'file' => $data['file'],
-                        'file_name' => $data['file_name'],
-                        'file_type' => mime_content_type($filePath),
-                        'file_size' => call_user_func(function ($bytes) {
-                            $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-                            $i = 0;
+                $fileInfo = [
+                    'file' => $data['file'],
+                    'file_name' => $data['file_name'],
+                    'file_type' => mime_content_type($filePath),
+                    'file_size' => call_user_func(function ($bytes) {
+                        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+                        $i = 0;
 
-                            while ($bytes >= 1024 && $i < count($units) - 1) {
-                                $bytes /= 1024;
-                                $i++;
-                            }
+                        while ($bytes >= 1024 && $i < count($units) - 1) {
+                            $bytes /= 1024;
+                            $i++;
+                        }
 
-                            return round($bytes, 2) . ' ' . $units[$i];
-                        }, filesize($filePath)),
-                    ];
+                        return round($bytes, 2) . ' ' . $units[$i];
+                    }, filesize($filePath)),
+                ];
 
-                    // dd($fileInfo);
-                    // dd($data);
+                // dd($fileInfo);
+                // dd($data);
 
-                    return $fileInfo;
-                })
-                ->reorderable(true)
-                ->columnSpanFull()
-                ->columns(2)
-                ->defaultItems(0)
-                ->addActionLabel('Add Documents')
+                return $fileInfo;
+            })
+            // ->collapsed()
+            // ->collapsible()
+            ->reorderable(true)
+            ->columnSpanFull()
+            ->columns(2)
+            ->defaultItems(0)
+            ->addActionLabel('Add Documents')
 
 
         ])
