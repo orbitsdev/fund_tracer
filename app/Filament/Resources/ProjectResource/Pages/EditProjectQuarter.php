@@ -57,8 +57,8 @@ class EditProjectQuarter extends EditRecord
             ->schema(
                 [
 
-                    Repeater::make('project_divisions')
-                    ->relationship()
+                    Repeater::make('division')
+                    ->relationship('project_divisions')
                     ->addActionLabel('Budget Division')
 
                     ->label('Budget Divisions')
@@ -78,9 +78,9 @@ class EditProjectQuarter extends EditRecord
                             ->distinct()
                             ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
 
-                    TableRepeater::make('project_division_categories')
+                    Repeater::make('division_category')
 
-                            ->relationship()
+                            ->relationship('project_division_categories')
 
                             ->label('Category')
                             ->addActionLabel('Budget Category')
@@ -107,10 +107,10 @@ class EditProjectQuarter extends EditRecord
                              
 
 
-                                Repeater::make('project_division_sub_category_expenses')
+                                TableRepeater::make('sub_category_expenses')
                                
                                     ->live()
-                                    ->relationship()
+                                    ->relationship('project_division_sub_category_expenses')
                                     ->addActionLabel('Expenses Category')
                                     ->label('Budget Division Expenses')
                                     // ->columns([
