@@ -784,8 +784,8 @@ class ProjectResource extends Resource
                     ->sortable(),
 
 
-                TextColumn::make('allocated_fund')
-                    ->summarize(Sum::make()->label('total')->money('PHP')),
+                // TextColumn::make('allocated_fund')
+                //     ->summarize(Sum::make()->label('total')->money('PHP')),
 
                 // TextColumn::make('status')
                 //     ->searchable(),
