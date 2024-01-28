@@ -800,7 +800,8 @@ class ProjectResource extends Resource
                     Tables\Actions\ViewAction::make()->label('View Details'),
                     EditAction::make()->label('Update Basic Information'),
                     // Tables\Actions\Action::make('Manage Quarter')->label('Manage Quarters')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record])),
-                    Tables\Actions\Action::make('budget_division')->label('Divide Budget')->icon('heroicon-m-table-cells')->url(fn (Model $record): string => ProjectResource::getUrl('budget-division', ['record' => $record])),
+                    Tables\Actions\Action::make('budget_division_old')->label('Divide Budget')->icon('heroicon-m-table-cells')->url(fn (Model $record): string => ProjectResource::getUrl('budget-division', ['record' => $record])),
+                    Tables\Actions\Action::make('budget_division')->label('Divide Budget')->icon('heroicon-m-table-cells')->url(fn (Model $record): string => ProjectResource::getUrl('project-table-division', ['record' => $record])),
                     // Tables\Actions\Action::make('quarter_budget')->label('Quarter Expenses')->icon('heroicon-m-chart-bar')->url(fn (Model $record): string => ProjectResource::getUrl('quarter-budget', ['record'=> $record])),
 
                     Tables\Actions\Action::make('year_quarter_budget')->label('Expenses')->icon('heroicon-m-banknotes')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record' => $record])),
@@ -847,6 +848,8 @@ class ProjectResource extends Resource
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
             'budget-division' => Pages\EditProjectQuarter::route('/{record}/edit/budget-division'),
+            'project-table-division' => Pages\ProjectTableDivision::route('/{record}/edit/project-table-division'),
+            'project-table-division-category' => Pages\ProjectTableDivisionCategory::route('/{record}/edit/project-table-division'),
             'quarter-budget' => Pages\ProjectQuarterBudjet::route('/{record}/edit/quarter-budget'),
             // 'budget-division' => Pages\BudgetDivision::route('/{record}/budget-division'),
             'manage-quarter-year' => Pages\ManageYearQuarter::route('/{record}/year-quarters'),

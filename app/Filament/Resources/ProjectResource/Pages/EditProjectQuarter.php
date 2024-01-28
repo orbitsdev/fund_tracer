@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ProjectResource\Pages;
 use App\Models\Year;
 use Filament\Actions;
 use App\Models\Quarter;
+
 use Filament\Forms\Get;
 use App\Models\Division;
 use Filament\Forms\Form;
@@ -130,8 +131,13 @@ class EditProjectQuarter extends EditRecord
                                         ->distinct()
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->columnSpanFull()
-
-                                            ->hidden(fn (Get $get) => $get('../../from') === 'Indirect Cost' ? false : true),
+                                        ->hidden(function(Get $get){
+                                            if($get('../../from')  === 'Indirect Cost'){
+                                                return false;
+                                            }else{
+                                                return true;
+                                            }
+                                        }),
 
                                         TextInput::make('title')
                                             ->label('Title')

@@ -94,7 +94,8 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
                         ,
 
 
-                        ],)
+                        ],
+                        )
                 ->modalHeading('Create Year For Quarter')
                     ->using(function (array $data, string $model): Model {
                         $data['project_id'] = $this->record->id;
@@ -115,8 +116,11 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
                     }),
                     Action::make('Create Quarter')->button()->outlined()->label('Create Quarters')->icon('heroicon-m-sparkles')
                     ->url(fn (Model $record): string => ProjectResource::getUrl('create-quarter', ['record' => $record])),
-                   ActionGroup::make([
-                    DeleteAction::make(),
+                  
+                    ActionGroup::make([
+
+                     DeleteAction::make(),
+
                 ]),
 
 
