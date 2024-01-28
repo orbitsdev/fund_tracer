@@ -122,31 +122,38 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
             ],)
 
             ->actions([
-                Action::make('sendEmail')
-                    ->form([
-                        Select::make('from')
-                            ->label('Costing Type')
-                            ->options([
+                Action::make('Create Category')->button()->outlined()->label('Create Category')->icon('heroicon-m-sparkles')
+                ->url(fn (Model $record): string => ProjectResource::getUrl('create-project-table-division-category', ['record' => $record])),
+                // Action::make('sendEmail')
+                //     ->form([
+                //         Select::make('from')
+                //             ->label('Costing Type')
+                //             ->options([
 
-                                'Direct Cost' => 'Direct Cost',
-                                'Indirect Cost' => 'Indirect Cost',
-                            ])
-                            ->rules([
-                                function () {
-                                    return function (string $attribute, $value, Closure $fail, Model $record) {
-                                        // if ($value === 'foo') {
-                                        //     $fail('The :attribute is invalid.');
-                                        // }
-                                    };
-                                },
-                            ])
-                            ->afterStateUpdated(function (Get $get, Set $set, Model $record) {
-                            })
-                    ])
-                    ->action(function (array $data, Model $record) {
-                        $data['project_devision_id'] = $record->id;
-                        dd($data);
-                    }),
+                //                 'Direct Cost' => 'Direct Cost',
+                //                 'Indirect Cost' => 'Indirect Cost',
+                //             ])
+                //             ->rules([
+                //                 function (Model $record) {
+                //                     return function (string $attribute, $value, Closure $fail,  $record, Get $get) {
+                //                         $exist = $record->whereHas('project_division_categories', function($query) use($get, $record){
+                //                             $query->where('from', $get('from'))->where('project_devision_id', $record->id);
+                //                         });
+
+                                    
+                //                         if ($value === 'foo') {
+                //                             $fail('The :attribute is invalid.');
+                //                         }
+                //                     };
+                //                 },
+                //             ])
+                //             ->afterStateUpdated(function (Get $get, Set $set, Model $record) {
+                //             })
+                //     ])
+                //     ->action(function (array $data, Model $record) {
+                //         $data['project_devision_id'] = $record->id;
+                //         dd($data);
+                //     }),
 
                 // Action::make('Manage Quarters')->button()->label('Manage Quarter')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('quarter-list', ['record' => $record]))->hidden(function(Model $record){
                 //     if($record->project_quarters->count()>0){
