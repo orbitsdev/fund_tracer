@@ -53,7 +53,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Infolists\Components\Section as InSection;
 use App\Filament\Resources\ProjectResource\RelationManagers;
 use Filament\Infolists\Components\Actions\Action as IFAction;
-use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
+
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+
 use Thiktak\FilamentSimpleListEntry\Infolists\Components\SimpleListEntry;
 
 class ProjectResource extends Resource
@@ -208,11 +210,13 @@ class ProjectResource extends Resource
                             ]),
                         Tabs\Tab::make('Files')
                             ->schema([
-                                // ...
+                                ViewEntry::make('')
+                                ->view('infolists.components.files')
+                                ->columnSpanFull(),
                             ]),
 
                     ])
-                    ->activeTab(1)
+                    ->activeTab(3)
                     ->columnSpanFull(),
 
 
@@ -538,13 +542,20 @@ class ProjectResource extends Resource
                             ->description('Manage and organize your Project documents. Upload files here')
                             ->columnSpanFull()
                             ->schema([
-                                Repeater::make('files')
+                                TableRepeater::make('project_files')
+                                ->withoutHeader()
 
-                                    ->relationship()
+                                ->emptyLabel('None')
+                                    ->relationship('files')
                                     ->label('Documents')
+
+                                    ->columnWidths([
+                                        // 'fourth_layer_id' => '200px',
+                                        'file' => '200px',
+                                    ])
                                     ->schema([
                                         TextInput::make('file_name')
-                                            ->label('Name')
+                                            ->label('File Name')
                                             ->maxLength(191)
                                             ->required(),
                                         FileUpload::make('file')
@@ -626,7 +637,7 @@ class ProjectResource extends Resource
                                     ->columnSpanFull()
                                     ->columns(2)
                                     ->defaultItems(0)
-                                    ->addActionLabel('Add Documents')
+                                    ->addActionLabel('Add File')
 
 
                             ])
