@@ -36,12 +36,12 @@ class ProjectQuarterResource extends Resource
     //     return view('filament.settings.custom-header',['title'=> 'Edit Project Quarter', 'first'=> 'Project Quarters' ,'second'=> 'Edit']);
     // }
 
-    public static function form(Form $form): Form
-    {
+public static function form(Form $form): Form
+{
 
 
-        return $form
-            ->schema([
+    return $form
+        ->schema([
 
                 Hidden::make('project_year_id'),
 

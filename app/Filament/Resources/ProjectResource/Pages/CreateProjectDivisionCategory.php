@@ -30,14 +30,14 @@ class CreateProjectDivisionCategory extends Page implements HasForms,  HasAction
 
     protected static string $view = 'filament.resources.project-resource.pages.create-project-division-category';
 
-    
+
     public ?array $data = [];
 
     public ?ProjectDivisionCategory $project_division_category = null;
 
     public $record = null;
 
-    
+
     public function mount($record): void
     {
 
@@ -68,12 +68,12 @@ class CreateProjectDivisionCategory extends Page implements HasForms,  HasAction
             ->button()
             ->outlined()
             ->color('gray')
-            
+
             ->url(fn (): string => ProjectResource::getUrl('project-table-division', ['record' => $this->record->project_id]))
             ;
     }
 
-    
+
     public function create()
     {
 
@@ -125,15 +125,15 @@ class CreateProjectDivisionCategory extends Page implements HasForms,  HasAction
                 // }
                 //     },
                 // ])
-                // ->afterStateUpdated(function (HasForms $livewire, $component) { 
+                // ->afterStateUpdated(function (HasForms $livewire, $component) {
                 //     $livewire->validateOnly($component->getStatePath());
-                // }), 
+                // }),
                  ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get) {
                     return $rule->where('from', $get('from'))->where('project_devision_id', $this->record->id);
-                }) 
-              
+                })
 
-             
+
+
 
 
                 // ...

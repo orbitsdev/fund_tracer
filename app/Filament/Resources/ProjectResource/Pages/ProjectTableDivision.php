@@ -59,6 +59,10 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
 
                 TextColumn::make('division.title')->sortable()->color('Division'),
 
+                TextColumn::make('project_division_categories.from')
+    ->listWithLineBreaks()
+    ->bulleted()
+
                 // TextColumn::make('project_division_categories_count')->counts('project_division_categories')->label('Current'),
 
 
@@ -122,49 +126,18 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
             ],)
 
             ->actions([
+
+                Action::make('Manage Category')->button()->label('Manage Category')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('project-table-division-category', ['record' => $record]))->hidden(function(Model $record){
+                    if($record->project_division_categories->count()>0){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                }),
+
                 Action::make('Create Category')->button()->outlined()->label('Create Category')->icon('heroicon-m-sparkles')
                 ->url(fn (Model $record): string => ProjectResource::getUrl('create-project-table-division-category', ['record' => $record])),
-                // Action::make('sendEmail')
-                //     ->form([
-                //         Select::make('from')
-                //             ->label('Costing Type')
-                //             ->options([
 
-                //                 'Direct Cost' => 'Direct Cost',
-                //                 'Indirect Cost' => 'Indirect Cost',
-                //             ])
-                //             ->rules([
-                //                 function (Model $record) {
-                //                     return function (string $attribute, $value, Closure $fail,  $record, Get $get) {
-                //                         $exist = $record->whereHas('project_division_categories', function($query) use($get, $record){
-                //                             $query->where('from', $get('from'))->where('project_devision_id', $record->id);
-                //                         });
-
-                                    
-                //                         if ($value === 'foo') {
-                //                             $fail('The :attribute is invalid.');
-                //                         }
-                //                     };
-                //                 },
-                //             ])
-                //             ->afterStateUpdated(function (Get $get, Set $set, Model $record) {
-                //             })
-                //     ])
-                //     ->action(function (array $data, Model $record) {
-                //         $data['project_devision_id'] = $record->id;
-                //         dd($data);
-                //     }),
-
-                // Action::make('Manage Quarters')->button()->label('Manage Quarter')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('quarter-list', ['record' => $record]))->hidden(function(Model $record){
-                //     if($record->project_quarters->count()>0){
-                //         return false;
-                //     }else{
-                //         return true;
-                //     }
-                // }),
-
-                // Action::make('create_division_category')->button()->outlined()->label('Create Division Category')->icon('heroicon-m-sparkles')
-                // ->url(fn (Model $record): string => ProjectResource::getUrl('create-division-category', ['record' => $record])),
                 ActionGroup::make([
                     DeleteAction::make(),
                 ]),
