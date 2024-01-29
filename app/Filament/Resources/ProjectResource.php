@@ -216,7 +216,7 @@ class ProjectResource extends Resource
                             ]),
 
                     ])
-                    ->activeTab(3)
+                    ->activeTab(1)
                     ->columnSpanFull(),
 
 
