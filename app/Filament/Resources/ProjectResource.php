@@ -427,9 +427,13 @@ class ProjectResource extends Resource
                                                 $selected_program = Program::find($get('program_id'));
                                                 $total_allocated_projects = $selected_program->projects->sum('allocated_fund');
                                                 $remaining_budget = $selected_program->total_budget - $total_allocated_projects;
+
                                                 $allocatedFund = (float) str_replace(',', '',  $get('allocated_fund'));
                                                 $current_allocated_budget = (float) str_replace(',', '',  $get('current_allocated_budget'));
+                                                
                                                 $max = $current_allocated_budget + $remaining_budget;
+
+
                                                 if ($operation === 'edit') {
 
                                                     //ignore if the same value

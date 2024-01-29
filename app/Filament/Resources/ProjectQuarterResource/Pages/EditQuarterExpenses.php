@@ -88,7 +88,7 @@ class EditQuarterExpenses extends EditRecord
         $total_expenses;
 
         // $data['left_budget'] =number_format($left_budget);
-        $data['project_remaining_budget_overview'] = number_format($remaining_budget, 2);
+        $data['project_remaining_budget_overview'] = number_format($remaining_budget);
         $data['total_dc'] = number_format($total_dc, 2);
         $data['total_ic_sksu'] = number_format($total_ic_sksu, 2);
         $data['total_ic_pcaarrd'] = number_format($total_ic_pcaarrd, 2);
@@ -732,23 +732,32 @@ class EditQuarterExpenses extends EditRecord
                                         ->rules([
                                             fn (Get $get, string $operation): Closure => function (string $attribute, $value, Closure $fail,) use ($get, $operation) {
                                                 $project = $this->getRecord()->project_year->project;
-                                                //  $project_fund =floatval(str_replace(',', '', $project->allocated_fund));
+                                                $project_fund =floatval(str_replace(',', '', $project->allocated_fund));
+
                                                 $total_expenses = floatval(str_replace(',', '', $get('total_expenses')));
                                                 $original_expenses = floatval(str_replace(',', '', $get('current_expenses')));
                                                 $remaining_budget = floatval(str_replace(',', '', $get('project_remaining_budget_overview')));
 
+                                                $max =  $remaining_budget - $total_expenses ;
 
-                                                // if ($remaining_budget < $total_expenses) {
-                                                //     if ($original_expenses == $total_expenses) {
-                                                //     }
-                                                // } else
-                                                   if ($total_expenses > $remaining_budget) {
-                                                     if ($original_expenses == $total_expenses) {
-                                                      }else{
 
-                                                          $fail("The allocated amount should not exceed the remaining budget of the selected program");
-                                                      }
-                                                 }
+
+
+                                                if ($total_expenses > $project_fund) {
+
+                                                        $fail("The allocated amount should not exceed the remaining budget of the selected program");
+                                                }
+
+                                                //    if ($total_expenses > $remaining_budget) {
+
+                                                //      if ($original_expenses == $total_expenses) {
+
+                                                //     }else{
+
+                                                //         //   $fail("The allocated amount should not exceed the remaining budget of the selected program");
+                                                //           $fail("YOW");
+                                                //       }
+                                                //  }
 
 
 
