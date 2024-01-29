@@ -1,10 +1,10 @@
-<x-filament-panels::page>
+<x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
 
-
-{{-- {{dd($record)}} --}}
-
+    {{-- <div>
+        {{$getRecord()}}
+    </div> --}}
     <div>
-        @foreach ($record->projects as $project)
+        @foreach ($getRecord()->projects as $project)
         <div class="mt-6">
 
             <table class="w-full text-xs border">
@@ -78,8 +78,4 @@
 
     </div>
 
-
-
-
-
-</x-filament-panels::page>
+</x-dynamic-component>

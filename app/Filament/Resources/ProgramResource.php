@@ -12,18 +12,20 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Support\RawJs;
 use App\Models\MonitoringAgency;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use App\Models\ImplementingAgency;
-use Filament\Forms\Components\Tabs;
+
 use Filament\Forms\Components\Group;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
-use Filament\Support\Enums\FontFamily;
 
+use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
+use Filament\Infolists\Components\Tabs;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Illuminate\Database\Eloquent\Model;
@@ -38,8 +40,12 @@ use Filament\Tables\Columns\Layout\Stack;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Placeholder;
 use Filament\Tables\Enums\ActionsPosition;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Forms\Components\Actions\Action;
+
 use Filament\Tables\Columns\Summarizers\Range;
 use Filament\Tables\Columns\Summarizers\Average;
 use App\Filament\Resources\ProgramResource\Pages;
@@ -62,6 +68,106 @@ class ProgramResource extends Resource
 // {
 //     return MaxWidth::Full;
 // }
+
+public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                 // Actions::make([
+                //     IFAction::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')->url(fn (): string => ProjectResource::getUrl('index')),
+
+                //         // IFAction::make('resetStars')
+                //         // ->icon('heroicon-m-arrow-down-tray')
+                //         // // ->color('danger')
+                //         // // ->requiresConfirmation()
+                //         // ->action(function () {
+                //         //     dd('test');
+                //         //     // $resetStars();
+                //         // })
+                //         // ->outlined()
+                //         // ->label('Export To Excel'),
+                // ]),
+
+                Fieldset::make('Program Details')
+
+
+                    ->schema([
+
+                        TextEntry::make('title')
+                            ->label('Program Title')
+
+
+
+                            ->columnSpanFull(),
+                        TextEntry::make('program_leader')
+
+
+                            ->label('Program Leader')
+
+
+                            ->columnSpanFull(),
+                        TextEntry::make('start_date')
+                            ->label('Program Start')
+                            ->date(),
+
+
+                        TextEntry::make('end_date')
+                            ->label('Program End')
+                            ->date(),
+                        TextEntry::make('total_budget')
+                            ->money('PHP')
+                            ->label('Program Budget')
+                            ->size(TextEntry\TextEntrySize::Large),
+
+                        TextEntry::make('total_usage')
+                            ->money('PHP')
+                            ->label('Program Budget')
+                            ->size(TextEntry\TextEntrySize::Large),
+                    ]),
+
+
+                Fieldset::make('Duration')
+                    ->columns([
+                        'sm' => 3,
+                        'xl' => 6,
+                        '2xl' => 9,
+                    ])
+                    ->schema([
+                        ViewEntry::make('Total Duration')
+                        ->view('infolists.components.project-duration')
+                        ->columnSpanFull(),
+                    ]),
+
+                    
+                    Tabs::make('Tabs')
+->tabs([
+    Tabs\Tab::make('Summary Budget')
+        ->schema([
+            ViewEntry::make('')
+                ->view('infolists.components.program-summary-budget')
+                ->columnSpanFull(),
+        ]),
+    Tabs\Tab::make('Files')
+        ->schema([
+            ViewEntry::make('')
+            ->view('infolists.components.files')
+            ->columnSpanFull(),
+        ]),
+   
+
+])
+->activeTab(1)
+->columnSpanFull(),
+
+
+
+
+
+              
+
+            ]);
+        
+  }
     public static function form(Form $form): Form
     {
         return $form
@@ -484,8 +590,7 @@ TextColumn::make('total_budget')
 ->numeric()
 ->summarize([
     Sum::make()->label('Total')
-])
-
+]),
 
 
 
@@ -498,8 +603,9 @@ TextColumn::make('total_budget')
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\Action::make('Summary Budget')->label('Summary Budget')->icon('heroicon-o-banknotes')->url(fn (Model $record): string => ProgramResource::getUrl('summary-budget', ['record'=> $record])),
-                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\ViewAction::make()->label('View Details'),
+                    // Tables\Actions\Action::make('Summary Budget')->label('Summary Budget')->icon('heroicon-o-banknotes')->url(fn (Model $record): string => ProgramResource::getUrl('summary-budget', ['record'=> $record])),
+                    Tables\Actions\EditAction::make()->label('Update Program Details'),
                     Tables\Actions\DeleteAction::make(),
                 ])
                 ],
@@ -537,6 +643,7 @@ TextColumn::make('total_budget')
             'create' => Pages\CreateProgram::route('/create'),
             'summary-budget' => Pages\ProgramSummaryBudget::route('/summary-budget/{record}'),
             'edit' => Pages\EditProgram::route('/{record}/edit'),
+            'view' => Pages\ViewProgram::route('/{record}'),
         ];
     }
     public static function setProgramLeader(Get $get, Set $set)
