@@ -123,7 +123,7 @@ class CreateProjectDivisionCategory extends Page implements HasForms,  HasAction
 
                     ->options([
                         'Direct Cost' => 'Direct Cost',
-                        'Indrect Cost' => 'Indirect Cost',
+                        'Indirect Cost' => 'Indirect Cost',
                        ])
 
 
