@@ -564,7 +564,7 @@ class ProjectResource extends Resource
                                             // ->columnSpanFull()
                                             // ->image()
                                             ->preserveFilenames()
-
+                                            ->maxSize(200000)
                                             ->label('File')
                                             ->disk('public')
                                             ->directory('program-files')
