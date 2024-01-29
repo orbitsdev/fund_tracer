@@ -25,7 +25,7 @@ class EditDivisionCategoryExpenses extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
 
-        //    dd($this->getRecord());
+        //  dd($this->getRecord());
         $data['category'] = $this->getRecord()->from;
 
         return $data;
@@ -35,7 +35,7 @@ class EditDivisionCategoryExpenses extends EditRecord
     protected function getRedirectUrl(): string
     {
         // dd(ProjectResource::getUrl('project-table-division', ['record' => $this->getRecord()->project_devision_id]));
-        return ProjectResource::getUrl('project-table-division', ['record' => $this->getRecord()->id]);
+        return ProjectResource::getUrl('project-table-division-category', ['record' => $this->getRecord()->project_devision_id]);
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
