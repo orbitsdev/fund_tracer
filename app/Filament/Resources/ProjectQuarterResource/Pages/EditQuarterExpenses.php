@@ -871,15 +871,6 @@ class EditQuarterExpenses extends EditRecord
 
         $project = $record->project_year->project;
 
-        $over_all_expenses = $project->project_years()->with('project_quarters.quarter_expense_budget_divisions.quarter_expenses')->get()
-        ->sum(function ($project_year) {
-            return $project_year->project_quarters->sum(function ($project_quarter) {
-                return $project_quarter->quarter_expense_budget_divisions->sum(function ($quarter_expense_budget_division) {
-                    return $quarter_expense_budget_division->quarter_expenses->sum('amount');
-                });
-            });
-        });
-
 
         $dc_expenses = collect($get('../../direct_cost_expenses'))->filter(fn ($item) => !empty($item['amount']));
 
@@ -909,24 +900,30 @@ class EditQuarterExpenses extends EditRecord
 
         $total_expenses = $expenses->sum();
 
-        $old_expenses = $record->quarter_expense_budget_divisions
-            ->flatMap->quarter_expenses->sum('amount');
+        $over_all_expenses = $project->project_years()->with('project_quarters.quarter_expense_budget_divisions.quarter_expenses')->get()
+        ->sum(function ($project_year) {
+            return $project_year->project_quarters->sum(function ($project_quarter) {
+                return $project_quarter->quarter_expense_budget_divisions->sum(function ($quarter_expense_budget_division) {
+                    return $quarter_expense_budget_division->quarter_expenses->sum('amount');
+                });
+            });
+        });
 
+
+        $old_expenses = $record->quarter_expense_budget_divisions ->flatMap->quarter_expenses->sum('amount');
         $total_added_expenses = $total_expenses - $old_expenses;
-
-
         $remaining_budget =  floatval(str_replace(',', '', $project->allocated_fund)) - $over_all_expenses;
         $left_budget = $remaining_budget - $total_added_expenses;
 
 
-        $set('../../../../total_dc', number_format($dc_total, 2));
-        $set('../../../../total_ic_sksu', number_format($ic_sksu_total, 2));
-        $set('../../../../total_ic_pcaarrd', number_format($ic_pcaarrd_total, 2));
-        $set('../../../../expense_adjustment', number_format($total_added_expenses, 2));
-        $set('../../../../total_expenses', number_format($total_expenses, 2));
-        $set('../../../../left_budget', number_format($left_budget, 2));
-
-
+        $set('../../../../total_dc', number_format($dc_total));
+        $set('../../../../total_ic_sksu', number_format($ic_sksu_total));
+        $set('../../../../total_ic_pcaarrd', number_format($ic_pcaarrd_total));
+        $set('../../../../expense_adjustment', number_format($total_added_expenses));
+        $set('../../../../total_expenses', number_format($total_expenses));
+        $set('../../../../left_budget', number_format($left_budget));
+        
         return $total_expenses;
+
     }
 }
