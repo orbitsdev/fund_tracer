@@ -199,7 +199,7 @@ class ProgramResource extends Resource
         ->icon('heroicon-m-folder')
         ->description('Manage and organize your program documents. Upload files here')
         ->schema([
-            
+
             Repeater::make('files')
 
             ->relationship()
@@ -358,7 +358,7 @@ class ProgramResource extends Resource
                     ->searchable(
                         // isIndividual:true,
                     ),
-                    
+
                     TextColumn::make('total_budget')
                     ->label('Total Budget')
                     ->prefix('₱ ')
@@ -379,7 +379,7 @@ class ProgramResource extends Resource
 
                     // ViewColumn::make('projects')->view('tables.columns.project-list'),
 
-                   
+
 
 
 
@@ -440,9 +440,9 @@ class ProgramResource extends Resource
                 // })
 
                 // ->searchable(),
-                    
-                
-                  
+
+
+
 
                     TextColumn::make('projects')
                     ->listWithLineBreaks()
@@ -463,31 +463,31 @@ class ProgramResource extends Resource
                         })->implode("\n");
                     })
                     ,
-                  
+
                         TextColumn::make('start_date')
 
                         ->date()
                         ->label('Start')
-                       
+
                         ,
                     TextColumn::make('end_date')
-    
-                   
+
+
                         ->date()
                         ->label('End')
-    
-                        ,
-              
 
-                     
+                        ,
+
+
+
 TextColumn::make('total_budget')
 ->numeric()
 ->summarize([
     Sum::make()->label('Total')
 ])
-                  
-                
-                
+
+
+
 
 
 
@@ -544,7 +544,7 @@ TextColumn::make('total_budget')
 
          $set('program_leader_overview',$get('program_leader'));
         //   $set('program_leader_overview', $get('project_leader'));
-    //  $set('project_leader_overview'. $get('project_leader'));
+         //  $set('project_leader_overview'. $get('project_leader'));
     }
     public static function setCurrentDuration(Get $get, Set $set)
     {

@@ -353,6 +353,12 @@ class ProjectResource extends Resource
                                     ->maxLength(191)
                                     ->columnSpanFull(),
 
+                                TextInput::make('project_leader')
+                                    ->label('Project Leader')
+                                    ->required()
+                                    ->maxLength(191)
+                                    ->columnSpanFull(),
+
 
                                 Select::make('implementing_agency')
                                     ->label('Implementing Agency')
