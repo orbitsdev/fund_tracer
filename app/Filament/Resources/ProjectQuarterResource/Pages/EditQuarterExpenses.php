@@ -880,13 +880,13 @@ class EditQuarterExpenses extends EditRecord
             });
         });
 
-        //DC
+
         $dc_expenses = collect($get('../../direct_cost_expenses'))->filter(fn ($item) => !empty($item['amount']));
 
-        // IC SKSU
+
         $ic_expenses_sksu = collect($get('../../indirect_cost_expenses_sksu'))->filter(fn ($item) => !empty($item['amount']));
 
-        // IC PCAARRD
+
         $ic_expenses_pcaarrd = collect($get('../../indirect_cost_expenses_pcaarrd'))->filter(fn ($item) => !empty($item['amount']));
 
         $dc_total = $dc_expenses->sum(function ($item) {
@@ -919,8 +919,6 @@ class EditQuarterExpenses extends EditRecord
         $left_budget = $remaining_budget - $total_added_expenses;
 
 
-
-        // Now $total_expenses holds the sum of all expenses.
         $set('../../../../total_dc', number_format($dc_total, 2));
         $set('../../../../total_ic_sksu', number_format($ic_sksu_total, 2));
         $set('../../../../total_ic_pcaarrd', number_format($ic_pcaarrd_total, 2));
