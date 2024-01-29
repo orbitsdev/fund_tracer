@@ -15,27 +15,35 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Actions\Action as RAction;
 use App\Filament\Resources\ProjectDivisionCategoryResource;
+use App\Filament\Resources\ProjectResource;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 
 class EditDivisionCategoryExpenses extends EditRecord
 {
     protected static string $resource = ProjectDivisionCategoryResource::class;
 
-     protected function mutateFormDataBeforeFill(array $data): array
+    protected function mutateFormDataBeforeFill(array $data): array
     {
 
-        // dd($this->getRecord());
+        //   dd($this->getRecord());
         $data['category'] = $this->getRecord()->from;
 
         return $data;
     }
 
-    protected function mutateFormDataBeforeSave(array $data): array
-{
-    unset($data['category']);
 
-    return $data;
-}
+    protected function getRedirectUrl(): string
+    {
+        // dd(ProjectResource::getUrl('project-table-division', ['record' => $this->getRecord()->project_devision_id]));
+        return ProjectResource::getUrl('project-table-division', ['record' => $this->getRecord()->id]);
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        unset($data['category']);
+
+        return $data;
+    }
 
     public function form(Form $form): Form
     {
@@ -44,72 +52,74 @@ class EditDivisionCategoryExpenses extends EditRecord
                 [
 
                     TextInput::make('category')
-                    ->disabled()
-                    ->columnSpanFull(),
+                        ->label('Selected Category')
+                        ->disabled()
+                        ->columnSpanFull(),
                     TableRepeater::make('sub_category_expenses')
-                    ->emptyLabel('No Expenses Was Declare')
+                        ->emptyLabel('No Category ')
+                        ->live()
+                        ->relationship('project_division_sub_category_expenses')
+                        ->addActionLabel('Add Group')
+                        ->label('Division Expenses')
+                        // ->columns([
+                        //     'sm' => 3,
+                        //     'xl' => 6,
+                        //     '2xl' => 9,
+                        // ])
+                        ->schema([
 
-                                    ->live()
-                                    ->relationship('project_division_sub_category_expenses')
-                                    ->addActionLabel('Expenses Category')
-                                    ->label('Budget Division Expenses')
-                                    // ->columns([
-                                    //     'sm' => 3,
-                                    //     'xl' => 6,
-                                    //     '2xl' => 9,
-                                    // ])
-                                    ->schema([
+                            Select::make('parent_title')
+                                ->options([
 
-                                        Select::make('parent_title')
-                                        ->options([
+                                    'SKSU' => 'SKSU',
+                                    'PCAARRD' => 'PCAARRD',
+                                ])
+                                ->label('Source')
+                                ->distinct()
+                                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                ->columnSpanFull()
+                                ->hidden(function (Get $get) {
+                                    if ($this->getRecord()->from  === 'Indirect Cost') {
+                                        return false;
+                                    } else {
+                                        return true;
+                                    }
+                                }),
 
-                                            'SKSU' => 'SKSU',
-                                        'PCAARRD' => 'PCAARRD',
-                                        ])
-                                        ->label('Source')
-                                        ->distinct()
-                                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                        ->columnSpanFull()
-                                        ->hidden(function(Get $get){
-                                            if($this->getRecord()->from  === 'Indirect Cost'){
-                                                return false;
-                                            }else{
-                                                return true;
-                                            }
-                                        }),
-
-                                        TextInput::make('title')
-                                            ->label('Title')
-                                            ->required()
-                                            ->live()
-                                            ->maxLength(191)
-                                            ->columnSpanFull(),
-
-
-                                        Repeater::make('fourth_layers')
-                                            ->live()
-                                            ->relationship()
-                                            ->addActionLabel('Expenses')
-                                            ->label('Expenses')
-
-                                            ->schema([
-                                                TextInput::make('title')
-                                                    ->label('Expenses Desciption')
-                                                    ->required()
-                                                    ->maxLength(191)
-                                                    ->columnSpanFull(),
+                            TextInput::make('title')
+                                ->label('Title')
+                                ->required()
+                                ->live()
+                                ->maxLength(191)
+                                ->columnSpanFull(),
 
 
-                                            ])
-                                            ->addActionLabel('Expenses')
-                                            // ->withoutheader()
-                                            // ->columnSpanFull(),
-                                    ])
+                            TableRepeater::make('fourth_layers')
+                                ->withoutHeader()
+                                ->emptyLabel('No Expenses Declared ')
+                                ->live()
+                                ->relationship()
+                                ->addActionLabel('Add expenses')
+                                ->label('Expenses')
 
-                                    ->columnSpanFull()
-                                     ->visible(fn (Get $get) => !empty($this->getRecord()->from) ? true : false)
+                                ->schema([
+                                    TextInput::make('title')
+                                        ->label('Expenses Desciption')
+                                        ->required()
+                                        ->maxLength(191)
+                                        ->columnSpanFull(),
 
-                ]);
+
+                                ])
+                                ->addActionLabel('Expenses')
+                            // ->withoutheader()
+                            // ->columnSpanFull(),
+                        ])
+
+                        ->columnSpanFull()
+                        ->visible(fn (Get $get) => !empty($this->getRecord()->from) ? true : false)
+
+                ]
+            );
     }
-
 }

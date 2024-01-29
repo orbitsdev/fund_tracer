@@ -41,7 +41,18 @@ class CreateProjectDivisionCategory extends Page implements HasForms,  HasAction
     public function mount($record): void
     {
 
-        $this->record = ProjectDevision::find($record);
+         $this->record = ProjectDevision::find($record);
+
+        // $hasDirectCost = $this->record->project_division_categories()
+        //     ->where('from', 'Direct Cost')
+        //     ->exists();
+        // $hasDirectCost = $this->record->project_division_categories()
+        //     ->where('from', 'Indirect Cost')
+        //     ->exists();
+
+        // dd($hasDirectCost);
+
+        // dd($this->record);
 
         // dd($this->record);
         // $this->project_quarter = $this->record->project_quarters->first();
@@ -62,24 +73,25 @@ class CreateProjectDivisionCategory extends Page implements HasForms,  HasAction
 
     }
 
-     public function back(): FAction
+    public function back(): FAction
     {
         return FAction::make('back')
             ->button()
             ->outlined()
             ->color('gray')
 
-            ->url(fn (): string => ProjectResource::getUrl('project-table-division', ['record' => $this->record->project_id]))
-            ;
+            ->url(fn (): string => ProjectResource::getUrl('project-table-division', ['record' => $this->record->project_id]));
     }
 
 
     public function create()
     {
 
+        $this->form->getState();
+        // dd();
 
-        // dd($this->data);
          $new_record = ProjectDivisionCategory::create($this->data);
+        //  dd($new_record);
 
 
 
@@ -91,11 +103,10 @@ class CreateProjectDivisionCategory extends Page implements HasForms,  HasAction
             ->icon('heroicon-o-document-text')
             ->iconColor('success')
             ->send();
-            $this->form->fill();
+        $this->form->fill();
         // dd(ProjectResource::getUrl('manage-quarter-year', ['record'=>$this->record->project->id]));
         return redirect(ProjectResource::getUrl('project-table-division', ['record' => $this->record->project->id]));
         // dd($this->form->fill($this->data));
-        // dd($this->form->getState());
     }
     public function form(Form $form): Form
     {
@@ -106,31 +117,19 @@ class CreateProjectDivisionCategory extends Page implements HasForms,  HasAction
                 Hidden::make('project_devision_id'),
 
 
-                 Select::make('from')
-                            ->label('Costing Type')
-                            ->required()
-                            ->options([
+                Select::make('from')
+                    ->label('Costing Type')
+                    ->required()
 
-                                'Direct Cost' => 'Direct Cost',
-                                'Indirect Cost' => 'Indirect Cost',
-                 ])
-                //  ->rules([
-                //     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                //          $exist = $this->record->whereHas('project_division_categories', function($query) use($get){
-                //     $query->where('project_devision_id', $this->record->id)->where('from', $get('from'));
-                // })->exist();
+                    ->options([
+                        'Direct Cost' => 'Direct Cost',
+                        'Indrect Cost' => 'Indrect Cost',
+                       ])
 
-                // if($exist){
-                //     $fail("The {$attribute} is invalid.");
-                // }
-                //     },
-                // ])
-                // ->afterStateUpdated(function (HasForms $livewire, $component) {
-                //     $livewire->validateOnly($component->getStatePath());
-                // }),
-                 ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get) {
-                    return $rule->where('from', $get('from'))->where('project_devision_id', $this->record->id);
-                })
+
+                    ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get) {
+                        return $rule->where('from', $get('from'))->where('project_devision_id', $this->record->id);
+                    })
 
 
 
@@ -141,6 +140,4 @@ class CreateProjectDivisionCategory extends Page implements HasForms,  HasAction
             ->statePath('data')
             ->model(ProjectDivisionCategory::class);
     }
-
-
 }

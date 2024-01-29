@@ -332,7 +332,7 @@ class ProjectResource extends Resource
                                     })
 
                                     ->hidden(function (Get $get, Set $set) {
-                                        //if project has program 
+                                        //if project has program
                                         if ($get('project_type')  !=  'Dependent') {
 
                                             self::resetSelectedProgram($get, $set);
@@ -769,13 +769,13 @@ class ProjectResource extends Resource
                     ->numeric(
                         decimalPlaces: 0,
                     )
-               
+
                     ->prefix('₱ ')
                     ->sortable(),
 
                 TextColumn::make('start_date')
                     ->date()
-              
+
                     ->label('Start Date')
                     ->sortable(),
                 TextColumn::make('end_date')
@@ -800,7 +800,7 @@ class ProjectResource extends Resource
                     Tables\Actions\ViewAction::make()->label('View Details'),
                     EditAction::make()->label('Update Basic Information'),
                     // Tables\Actions\Action::make('Manage Quarter')->label('Manage Quarters')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('manage-quarter-year', ['record'=> $record])),
-                    Tables\Actions\Action::make('budget_division_old')->label('Divide Budget')->icon('heroicon-m-table-cells')->url(fn (Model $record): string => ProjectResource::getUrl('budget-division', ['record' => $record])),
+                    // Tables\Actions\Action::make('budget_division_old')->label('Divide Budget')->icon('heroicon-m-table-cells')->url(fn (Model $record): string => ProjectResource::getUrl('budget-division', ['record' => $record])),
                     Tables\Actions\Action::make('budget_division')->label('Divide Budget')->icon('heroicon-m-table-cells')->url(fn (Model $record): string => ProjectResource::getUrl('project-table-division', ['record' => $record])),
                     // Tables\Actions\Action::make('quarter_budget')->label('Quarter Expenses')->icon('heroicon-m-chart-bar')->url(fn (Model $record): string => ProjectResource::getUrl('quarter-budget', ['record'=> $record])),
 
@@ -848,7 +848,7 @@ class ProjectResource extends Resource
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
             'budget-division' => Pages\EditProjectQuarter::route('/{record}/edit/budget-division'),
-            'project-table-division' => Pages\ProjectTableDivision::route('/{record}/edit/       project-table-division'),
+            'project-table-division' => Pages\ProjectTableDivision::route('/{record}/edit/project-table-division'),
             'project-table-division-category' => Pages\ProjectTableDivisionCategory::route('/{record}/project-table-division'),
             'create-project-table-division-category' => Pages\CreateProjectDivisionCategory::route('/{record}/create/project-table-division'),
             'quarter-budget' => Pages\ProjectQuarterBudjet::route('/{record}/edit/quarter-budget'),

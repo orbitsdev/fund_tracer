@@ -136,7 +136,14 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
                 }),
 
                 Action::make('Create Category')->button()->outlined()->label('Create Category')->icon('heroicon-m-sparkles')
-                ->url(fn (Model $record): string => ProjectResource::getUrl('create-project-table-division-category', ['record' => $record])),
+                ->url(fn (Model $record): string => ProjectResource::getUrl('create-project-table-division-category', ['record' => $record]))
+                // ->hidden(function(Model $record){
+
+                //     $direct_cost_exist = $record->project_division_categories->first()->from === 'Direct Cost';
+                //     $indirec_cost_exist = $record->project_division_categories->first()->from === 'Direct Cost';
+                //     // if($record){}
+                // })
+                ,
 
                 ActionGroup::make([
                     DeleteAction::make(),

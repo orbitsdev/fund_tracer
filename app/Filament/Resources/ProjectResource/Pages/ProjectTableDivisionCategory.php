@@ -41,7 +41,7 @@ class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
     {
         static::authorizeResourceAccess();
         $this->record = ProjectDevision::find($record);
-        //  dd($this->record);
+        //  dd($this);
     }
     public function table(Table $table): Table
     {
@@ -60,7 +60,7 @@ class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
             ])->headerActions([
 
                 Action::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')
-                ->url(fn (): string => ProjectResource::getUrl('project-table-division', ['record' => $this->record->division_id]))
+                ->url(fn (): string => ProjectResource::getUrl('project-table-division', ['record' => $this->record->project_id]))
 
             ], position: HeaderActionsPosition::Bottom)
 
@@ -79,9 +79,9 @@ class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
                     DeleteBulkAction::make()
                 ]),
             ])
-        //     ->modifyQueryUsing(fn (Builder $query) => $query->where('project_devision_id', $this->record->id
-        //     )
-        // )
+           ->modifyQueryUsing(fn (Builder $query) => $query->where('project_devision_id', $this->record->id
+            )
+        )
         ;
     }
 
