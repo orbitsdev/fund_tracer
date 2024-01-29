@@ -37,6 +37,30 @@ class EditQuarterExpenses extends EditRecord
 
 
         $project = $this->getRecord()->project_year->project;
+        // $sum = $project->project_years()->with('project_quarters.quarter_expense_budget_divisions.quarter_expenses')->get()
+        // ->sum(function ($project_year) {
+        //     return $project_year->project_quarters->sum(function ($project_quarter) {
+        //         return $project_quarter->quarter_expense_budget_divisions->sum(function ($quarter_expense_budget_division) {
+        //             return $quarter_expense_budget_division->quarter_expenses->sum('amount');
+        //         });
+        //     });
+        // });
+
+        // $old_expenses = $project->quarter_expense_budget_divisions
+        // ->flatMap->quarter_expenses->sum('amount');
+
+        $project_fund =floatval(str_replace(',', '', $project->allocated_fund));
+        $over_all_expenses = $project->project_years()->with('project_quarters.quarter_expense_budget_divisions.quarter_expenses')->get()
+            ->sum(function ($project_year) {
+                return $project_year->project_quarters->sum(function ($project_quarter) {
+                    return $project_quarter->quarter_expense_budget_divisions->sum(function ($quarter_expense_budget_division) {
+                        return $quarter_expense_budget_division->quarter_expenses->sum('amount');
+                    });
+                });
+            });
+
+
+        //  dd($sum);
 
         $total_expenses = $this->getRecord()->quarter_expense_budget_divisions
             ->flatMap->quarter_expenses->sum('amount');
@@ -81,7 +105,8 @@ class EditQuarterExpenses extends EditRecord
 
         $data['project_name_overview'] = $project->title ? $project->title : '';
         $data['project_budget_overview'] = number_format($project->allocated_fund ? $project->allocated_fund : 0);
-        $remaining_budget =  floatval(str_replace(',', '', $project->allocated_fund)) - $total_expenses;
+
+        $remaining_budget =  floatval(str_replace(',', '', $project->allocated_fund)) - $over_all_expenses;
 
         $allocatedFund = floatval(str_replace(',', '', $project->allocated_fund));
         $left_budget = $remaining_budget - $total_expenses;
@@ -731,21 +756,58 @@ class EditQuarterExpenses extends EditRecord
 
                                         ->rules([
                                             fn (Get $get, string $operation): Closure => function (string $attribute, $value, Closure $fail,) use ($get, $operation) {
+
+
+
                                                 $project = $this->getRecord()->project_year->project;
+                                                $old_expenses = $this->getRecord()->quarter_expense_budget_divisions
+                                                ->flatMap->quarter_expenses->sum('amount');
+
                                                 $project_fund =floatval(str_replace(',', '', $project->allocated_fund));
+                                                $over_all_expenses = $project->project_years()->with('project_quarters.quarter_expense_budget_divisions.quarter_expenses')->get()
+                                                    ->sum(function ($project_year) {
+                                                        return $project_year->project_quarters->sum(function ($project_quarter) {
+                                                            return $project_quarter->quarter_expense_budget_divisions->sum(function ($quarter_expense_budget_division) {
+                                                                return $quarter_expense_budget_division->quarter_expenses->sum('amount');
+                                                            });
+                                                        });
+                                                    });
+                                               
+                                                    
+                                                    $original_expenses = floatval(str_replace(',', '', $get('current_expenses')));
+                                                    $input_expenses = floatval(str_replace(',', '', $get('total_expenses')));
 
-                                                $total_expenses = floatval(str_replace(',', '', $get('total_expenses')));
-                                                $original_expenses = floatval(str_replace(',', '', $get('current_expenses')));
-                                                $remaining_budget = floatval(str_replace(',', '', $get('project_remaining_budget_overview')));
+                                                    $total_added_expenses = $input_expenses - $old_expenses;
 
-                                                $max =  $remaining_budget - $total_expenses ;
+                                                    
+                                                    $grand_total = $over_all_expenses + $total_added_expenses;
+                                                    
+                                                    
+
+                                                // $total_expenses = $input_expenses - $original_expenses;
+
+
+
+                                               
+                                                // $max = $project_fund + $over_all_expenses;
+
+
+
+                                                    
+                                                 // $remaining_budget = floatval(str_replace(',', '', $get('project_remaining_budget_overview')));
+                                                 
+
+                                                
 
 
 
 
-                                                if ($total_expenses > $project_fund) {
 
-                                                        $fail("The allocated amount should not exceed the remaining budget of the selected program");
+
+
+                                                if ($grand_total > $project_fund) {
+
+                                                    $fail("The allocated amount should not exceed the remaining budget of the selected program");
                                                 }
 
                                                 //    if ($total_expenses > $remaining_budget) {
@@ -771,8 +833,7 @@ class EditQuarterExpenses extends EditRecord
 
                                             },
                                         ])
-                                    ->readOnly()
-                                    ,
+                                        ->readOnly(),
                                     TextInput::make('left_budget')
                                         ->prefix('=')
                                         ->label('Remaining Project Budget After Updating Expenses')
@@ -810,6 +871,14 @@ class EditQuarterExpenses extends EditRecord
 
         $project = $record->project_year->project;
 
+        $over_all_expenses = $project->project_years()->with('project_quarters.quarter_expense_budget_divisions.quarter_expenses')->get()
+        ->sum(function ($project_year) {
+            return $project_year->project_quarters->sum(function ($project_quarter) {
+                return $project_quarter->quarter_expense_budget_divisions->sum(function ($quarter_expense_budget_division) {
+                    return $quarter_expense_budget_division->quarter_expenses->sum('amount');
+                });
+            });
+        });
 
         //DC
         $dc_expenses = collect($get('../../direct_cost_expenses'))->filter(fn ($item) => !empty($item['amount']));
@@ -846,7 +915,7 @@ class EditQuarterExpenses extends EditRecord
         $total_added_expenses = $total_expenses - $old_expenses;
 
 
-        $remaining_budget =  floatval(str_replace(',', '', $project->allocated_fund)) - $old_expenses;
+        $remaining_budget =  floatval(str_replace(',', '', $project->allocated_fund)) - $over_all_expenses;
         $left_budget = $remaining_budget - $total_added_expenses;
 
 
