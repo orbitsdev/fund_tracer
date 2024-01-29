@@ -109,14 +109,16 @@ class EditQuarterExpenses extends EditRecord
 
     protected function getRedirectUrl(): string
     {
-        return ProjectResource::getUrl('quarter-list', ['record' => $this->getRecord()]);
+        // dd($this->getRecord());
+        // return ProjectResource::getUrl('quarter-list', ['record' => $this->getRecord()]);
+        return ProjectResource::getUrl('view', ['record' => $this->getRecord()->project_year->project_id]);
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
 
         // dd($data);
-        // unset($data['current_duration_overview']);   
+        // unset($data['current_duration_overview']);
         // unset($data['duration_overview']);
         // unset($data['project_fund']);
         unset($data['total_dc']);
@@ -725,7 +727,7 @@ class EditQuarterExpenses extends EditRecord
                                             // self::updateTotal($get, $set, $this->getRecord());
                                         })
                                         // ->maxLength(191)
-                                        ->required()
+                                        // ->required()
 
                                         ->rules([
                                             fn (Get $get, string $operation): Closure => function (string $attribute, $value, Closure $fail,) use ($get, $operation) {
@@ -760,7 +762,7 @@ class EditQuarterExpenses extends EditRecord
 
                                             },
                                         ])
-                                    //->readOnly()
+                                    ->readOnly()
                                     ,
                                     TextInput::make('left_budget')
                                         ->prefix('=')
