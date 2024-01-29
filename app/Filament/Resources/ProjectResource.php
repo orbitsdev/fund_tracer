@@ -206,7 +206,7 @@ class ProjectResource extends Resource
                                     ->view('infolists.components.summary-budget  ')
                                     ->columnSpanFull(),
                             ]),
-                        Tabs\Tab::make('Other')
+                        Tabs\Tab::make('Files')
                             ->schema([
                                 // ...
                             ]),
@@ -430,7 +430,7 @@ class ProjectResource extends Resource
 
                                                 $allocatedFund = (float) str_replace(',', '',  $get('allocated_fund'));
                                                 $current_allocated_budget = (float) str_replace(',', '',  $get('current_allocated_budget'));
-                                                
+
                                                 $max = $current_allocated_budget + $remaining_budget;
 
 
