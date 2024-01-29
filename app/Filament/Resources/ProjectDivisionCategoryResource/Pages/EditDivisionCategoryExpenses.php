@@ -25,7 +25,7 @@ class EditDivisionCategoryExpenses extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
 
-        //   dd($this->getRecord());
+           dd($this->getRecord());
         $data['category'] = $this->getRecord()->from;
 
         return $data;
