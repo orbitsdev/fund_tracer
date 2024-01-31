@@ -289,15 +289,15 @@ class ProjectResource extends Resource
                                 Radio::make('project_type')
                                     ->label('Project Type')
                                     ->options([
-                                        'Dependent' => 'Dependent ',
-                                        'Independent' => 'Independent',
+                                        'Dependent' => 'Program',
+                                        'Independent' => 'Project',
                                     ])
                                     ->default('Dependent')
                                     // ->descriptions([
                                     //     'Dipendent' => 'Project is belong to program',
                                     //     'Independent' => 'Project is not belong to any program',
                                     // ])
-                                    ->helperText('Choose whether the project is dependent on a program or not')
+                                    ->helperText('Choose whether this is a program or not')
                                     ->live()
                                     ->debounce(700)
                                     ->inline()
