@@ -297,7 +297,7 @@ class ProjectResource extends Resource
                                     //     'Dipendent' => 'Project is belong to program',
                                     //     'Independent' => 'Project is not belong to any program',
                                     // ])
-                                    ->helperText('Choose whether this is a program or not')
+                                    ->helperText('Choose whether this is a program or project')
                                     ->live()
                                     ->debounce(700)
                                     ->inline()
