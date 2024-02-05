@@ -207,6 +207,13 @@ class ProjectResource extends Resource
                                 ViewEntry::make('')
                                     ->view('infolists.components.summary-budget  ')
                                     ->columnSpanFull(),
+                                ]),
+                                Tabs\Tab::make('PCAARRD IC')
+                                ->schema([
+
+                                    // ViewEntry::make('')
+                                    //     ->view('infolists.components.summary-pcaardic')
+                                    //     ->columnSpanFull(),
                             ]),
                         Tabs\Tab::make('Files')
                             ->schema([

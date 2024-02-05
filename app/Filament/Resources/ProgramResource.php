@@ -138,7 +138,7 @@ public static function infolist(Infolist $infolist): Infolist
                         ->columnSpanFull(),
                     ]),
 
-                    
+
                     Tabs::make('Tabs')
 ->tabs([
     Tabs\Tab::make('Summary Budget')
@@ -147,26 +147,33 @@ public static function infolist(Infolist $infolist): Infolist
                 ->view('infolists.components.program-summary-budget')
                 ->columnSpanFull(),
         ]),
+        Tabs\Tab::make('PCAARRD IC')
+        ->schema([
+
+            ViewEntry::make('')
+                ->view('infolists.components.summary-pcaardic')
+                ->columnSpanFull(),
+    ]),
     Tabs\Tab::make('Files')
         ->schema([
             ViewEntry::make('')
             ->view('infolists.components.files')
             ->columnSpanFull(),
         ]),
-   
+
 
 ])
-->activeTab(1)
+->activeTab(2)
 ->columnSpanFull(),
 
 
 
 
 
-              
+
 
             ]);
-        
+
   }
     public static function form(Form $form): Form
     {

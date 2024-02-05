@@ -772,32 +772,32 @@ class EditQuarterExpenses extends EditRecord
                                                             });
                                                         });
                                                     });
-                                               
-                                                    
+
+
                                                     $original_expenses = floatval(str_replace(',', '', $get('current_expenses')));
                                                     $input_expenses = floatval(str_replace(',', '', $get('total_expenses')));
 
                                                     $total_added_expenses = $input_expenses - $old_expenses;
 
-                                                    
+
                                                     $grand_total = $over_all_expenses + $total_added_expenses;
-                                                    
-                                                    
+
+
 
                                                 // $total_expenses = $input_expenses - $original_expenses;
 
 
 
-                                               
+
                                                 // $max = $project_fund + $over_all_expenses;
 
 
 
-                                                    
-                                                 // $remaining_budget = floatval(str_replace(',', '', $get('project_remaining_budget_overview')));
-                                                 
 
-                                                
+                                                 // $remaining_budget = floatval(str_replace(',', '', $get('project_remaining_budget_overview')));
+
+
+
 
 
 
@@ -922,7 +922,7 @@ class EditQuarterExpenses extends EditRecord
         $set('../../../../expense_adjustment', number_format($total_added_expenses));
         $set('../../../../total_expenses', number_format($total_expenses));
         $set('../../../../left_budget', number_format($left_budget));
-        
+
         return $total_expenses;
 
     }
