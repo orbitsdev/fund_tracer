@@ -44,28 +44,32 @@
                                                 <tr>
                                                     <td class="text-xs" style="padding-left:10px">{{ $expense_title }}
                                                     </td>
-                                                </tr>
+
                                                 @php
                                                     $categoryTotal = 0; // Initialize categoryTotal variable for the current sub-category
                                                 @endphp
                                                 @foreach ($expenses as $expense)
-                                                    <tr>
+                                                    {{-- <tr>
                                                         <td class="text-xs" style="padding-left:20px">
                                                             {{ $expense->fourth_layer->title }}</td>
                                                         <td class="text-xs border border-black text-right px-1"
                                                             style="padding-left:60px">{{ $expense->amount }}</td>
-                                                    </tr>
+                                                    </tr> --}}
                                                     @php
                                                         $categoryTotal += $expense->amount; // Accumulate expenses for the current sub-category
                                                         $subTotal += $expense->amount; // Accumulate expenses for the current category
                                                     @endphp
                                                 @endforeach
-                                                <!-- Display the total for the current sub-category -->
+                                                <td class="text-xs border border-black text-right px-1"
+                                                style="padding-left:60px">{{ $categoryTotal }}</td>
+
+                                                {{-- <!-- Display the total for the current sub-category -->
                                                 <tr>
                                                     <td class="text-xs" style="padding-left:10px">Sub-Total</td>
                                                     <td class="text-xs border border-black text-right px-1"
                                                         style="padding-left:60px">{{ $categoryTotal }}</td>
-                                                </tr>
+                                                </tr> --}}
+                                            </tr>
                                             @endforeach
                                             <!-- Display the total for the current category -->
                                             <tr>

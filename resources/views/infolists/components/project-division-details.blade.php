@@ -2,6 +2,17 @@
 
 
     <div class="table w-full">
+        <div class=" p-2 text-right">
+            <p class="font-medium">
+                Allocated Budget
+            </p>
+            <p class="font-bold text-2xl">
+                {{ number_format($getRecord()->allocated_fund, 2) }}
+            </p>
+        </div>
+        @php
+            $overallGrandTotal = 0; // Initialize overallGrandTotal variable for the entire table
+        @endphp
         @foreach ($getRecord()->project_years as $project_year)
             <div class="mt-2 rounded-lg p-2">
                 @php
@@ -54,19 +65,19 @@
                                                         $divisionTotal += $expensesByDivision->sum('amount');
                                                     @endphp
                                                     @if($division_category === 'Indirect Cost')
-                                                    <tr class="" style="background: #F2F2F2 !important; color:#2f2f31;">
-                                                        <td class="border border-black   text-gray-600" style="padding-left:10px">{{$project_budget_division->project_division->division->abbreviation }} IC Total</td>
-                                                        <td class="border border-black font-bold text-right px-2  text-gray-600 text-xs "> {{ number_format($project_budget_division->quarter_expenses()->whereHas('fourth_layer.project_division_sub_category_expense.project_division_category', function($query) {
-                                                            $query->where('from', 'Indirect Cost');
-                                                        })->sum('amount'), 2) }}</td>
-                                                    </tr>
+                                                        <tr class="" style="background: #F2F2F2 !important; color:#2f2f31;">
+                                                            <td class="border border-black   text-gray-600" style="padding-left:10px">{{$project_budget_division->project_division->division->abbreviation }} IC Total</td>
+                                                            <td class="border border-black font-bold text-right px-2  text-gray-600 text-xs "> {{ number_format($project_budget_division->quarter_expenses()->whereHas('fourth_layer.project_division_sub_category_expense.project_division_category', function($query) {
+                                                                $query->where('from', 'Indirect Cost');
+                                                            })->sum('amount'), 2) }}</td>
+                                                        </tr>
                                                     @else
-                                                    <tr class="" style="background: #F2F2F2 !important; color:#2f2f31;">
-                                                        <td class="border border-black   " style="padding-left:10px">{{$project_budget_division->project_division->division->abbreviation }} DC Total</td>
-                                                        <td  class="border border-black font-bold text-right px-2   text-xs "> {{ number_format($project_budget_division->quarter_expenses()->whereHas('fourth_layer.project_division_sub_category_expense.project_division_category', function($query) {
-                                                            $query->where('from', 'Direct Cost');
-                                                        })->sum('amount'), 2) }}</td>
-                                                    </tr>
+                                                        <tr class="" style="background: #F2F2F2 !important; color:#2f2f31;">
+                                                            <td class="border border-black   " style="padding-left:10px">{{$project_budget_division->project_division->division->abbreviation }} DC Total</td>
+                                                            <td  class="border border-black font-bold text-right px-2   text-xs "> {{ number_format($project_budget_division->quarter_expenses()->whereHas('fourth_layer.project_division_sub_category_expense.project_division_category', function($query) {
+                                                                $query->where('from', 'Direct Cost');
+                                                            })->sum('amount'), 2) }}</td>
+                                                        </tr>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -113,10 +124,20 @@
                         <span class="text-xs text-gray-600">{{ number_format($EO, 2) }}</span>
                     </div>
                 </div>
-
             </div>
+            @php
+                $overallGrandTotal += $yearGrandTotal;
+            @endphp
         @endforeach
+        <!-- Display the overall grand total for the entire table -->
+        <div class="mt-4 border-t border-gray-300 p-4">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-600">Overall Grand Total:</span>
+                <span class="text-xs text-gray-600">{{ number_format($overallGrandTotal, 2) }}</span>
+            </div>
+        </div>
     </div>
+
 
 
 

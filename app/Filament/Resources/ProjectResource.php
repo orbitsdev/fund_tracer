@@ -208,13 +208,13 @@ class ProjectResource extends Resource
                                     ->view('infolists.components.summary-budget  ')
                                     ->columnSpanFull(),
                                 ]),
-                                Tabs\Tab::make('PCAARRD IC')
-                                ->schema([
+                            //     Tabs\Tab::make('PCAARRD IC')
+                            //     ->schema([
 
-                                    // ViewEntry::make('')
-                                    //     ->view('infolists.components.summary-pcaardic')
-                                    //     ->columnSpanFull(),
-                            ]),
+                            //         ViewEntry::make('')
+                            //             ->view('infolists.components.summary-pcaardic')
+                            //             ->columnSpanFull(),
+                            // ]),
                         Tabs\Tab::make('Files')
                             ->schema([
                                 ViewEntry::make('')
@@ -883,7 +883,9 @@ class ProjectResource extends Resource
             // 'budget-division' => Pages\BudgetDivision::route('/{record}/budget-division'),
             'manage-quarter-year' => Pages\ManageYearQuarter::route('/{record}/year-quarters'),
             'create-quarter' => Pages\ManageQuarter::route('/{record}/quarter/create'),
+
             'quarter-list' => Pages\ProjectYearQuarterList::route('/{record}/quarters'),
+            // 'quarter-expenses-division-list' => Pages\ProjectYearQuarterList::route('/{record}/'),
             'view' => Pages\ViewProject::route('/{record}'),
         ];
     }

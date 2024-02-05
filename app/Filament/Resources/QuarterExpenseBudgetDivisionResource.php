@@ -76,6 +76,7 @@ class QuarterExpenseBudgetDivisionResource extends Resource
             'index' => Pages\ListQuarterExpenseBudgetDivisions::route('/'),
             'create' => Pages\CreateQuarterExpenseBudgetDivision::route('/create'),
             'edit' => Pages\EditQuarterExpenseBudgetDivision::route('/{record}/edit'),
+            'edit-division-expenses' => Pages\EditDivisionExpenses::route('/{record}/edit'),
         ];
     }
 }
