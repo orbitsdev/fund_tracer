@@ -75,7 +75,7 @@ use Illuminate\Contracts\View\View;
 
               Action::make('Manage Quarters')->button()->label('Manage Expenses')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectQuarterResource::getUrl('quarter-expenses-division-list', ['record' => $record])),
 
-              Action::make('Manage Quarters')->button()->label('Manage Old Ways')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectQuarterResource::getUrl('edit-expenses', ['record' => $record])),
+            //   Action::make('Manage Quarters')->button()->label('Manage Old Ways')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectQuarterResource::getUrl('edit-expenses', ['record' => $record])),
 
                 DeleteAction::make()->button(),
 

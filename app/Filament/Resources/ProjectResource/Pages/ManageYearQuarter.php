@@ -116,7 +116,7 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
                     }),
                     Action::make('Create Quarter')->button()->outlined()->label('Create Quarters')->icon('heroicon-m-sparkles')
                     ->url(fn (Model $record): string => ProjectResource::getUrl('create-quarter', ['record' => $record])),
-                  
+
                     ActionGroup::make([
 
                      DeleteAction::make(),
