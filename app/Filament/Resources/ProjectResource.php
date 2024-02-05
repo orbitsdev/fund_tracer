@@ -883,6 +883,7 @@ class ProjectResource extends Resource
             // 'budget-division' => Pages\BudgetDivision::route('/{record}/budget-division'),
             'manage-quarter-year' => Pages\ManageYearQuarter::route('/{record}/year-quarters'),
             'create-quarter' => Pages\ManageQuarter::route('/{record}/quarter/create'),
+            'create-quater-expenses-divison' => Pages\SetExpensesDivision::route('/{record}/expenses-division/create'),
 
             'quarter-list' => Pages\ProjectYearQuarterList::route('/{record}/quarters'),
             // 'quarter-expenses-division-list' => Pages\ProjectYearQuarterList::route('/{record}/'),

@@ -386,7 +386,8 @@ public static function form(Form $form): Form
             // 'create' => Pages\CreateProjectQuarter::route('/create'),
             'edit' => Pages\EditProjectQuarter::route('/{record}/edit'),
             'edit-expenses' => Pages\EditQuarterExpenses::route('/{record}/edit/expenses'),
-            'quarter-expenses-division-list' => Pages\QuarterDivisionExpenses::route('/{record}/'),
+            'quarter-expenses-division-list' => Pages\QuarterDivisionExpenses::route('/{record}/list'),
+            'set-project-expenses-division' => Pages\SetProjectExpensesDivision::route('/{record}/set'),
         ];
     }
 }
