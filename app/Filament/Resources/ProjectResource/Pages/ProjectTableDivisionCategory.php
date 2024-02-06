@@ -76,7 +76,7 @@ class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
             ->actions([
 
 
-                Action::make('Manage Expenses')->button()->label('Declare Expenses')->icon('heroicon-m-pencil-square')
+                Action::make('Manage Expenses')->button()->label('Add New')->icon('heroicon-m-plus')
                     ->url(fn (Model $record): string => ProjectDivisionCategoryResource::getUrl('edit-category-expenses', ['record' => $record])),
 
                 DeleteAction::make()->button(),

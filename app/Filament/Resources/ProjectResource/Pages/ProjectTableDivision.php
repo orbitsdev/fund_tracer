@@ -182,7 +182,7 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
 
             ->actions([
 
-                Action::make('Manage Category')->button()->label('Manage ')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('project-table-division-category', ['record' => $record]))->hidden(function (Model $record) {
+                Action::make('Manage Category')->button()->label('Manage Category')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('project-table-division-category', ['record' => $record]))->hidden(function (Model $record) {
                     if ($record->project_division_categories->count() > 0) {
                         return false;
                     } else {

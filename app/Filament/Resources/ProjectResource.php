@@ -39,6 +39,7 @@ use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\Actions;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
@@ -51,11 +52,11 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Tables\Actions\HeaderActionsPosition;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Infolists\Components\Section as InSection;
-use App\Filament\Resources\ProjectResource\RelationManagers;
-use Filament\Infolists\Components\Actions\Action as IFAction;
-
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 
+use App\Filament\Resources\ProjectResource\RelationManagers;
+
+use Filament\Infolists\Components\Actions\Action as IFAction;
 use Thiktak\FilamentSimpleListEntry\Infolists\Components\SimpleListEntry;
 
 class ProjectResource extends Resource
@@ -837,7 +838,9 @@ class ProjectResource extends Resource
 
 
                 ]),
-            ])
+            ],
+            // position: ActionsPosition::BeforeColumns
+            )
             ->recordUrl(null)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
