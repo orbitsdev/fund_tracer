@@ -54,6 +54,8 @@ class QuarterDivisionExpenses extends Page implements HasForms, HasTable
     {
         static::authorizeResourceAccess();
         $this->record = ProjectQuarter::find($record);
+
+        // dd();
         // dd(ProjectResource::geturl('quarter-list',['record'=> $this->record->project_year->project_id]));
     //    dd($this->record->project_year->project_id);
     }
@@ -157,7 +159,7 @@ class QuarterDivisionExpenses extends Page implements HasForms, HasTable
                     DeleteBulkAction::make()
                 ]),
             ])
-            // ->modifyQueryUsing(fn (Builder $query) => $query->where('project_quarter_id', $this->record->id))
+             ->modifyQueryUsing(fn (Builder $query) => $query->where('project_quarter_id', $this->record->id))
 
             ;
     }
