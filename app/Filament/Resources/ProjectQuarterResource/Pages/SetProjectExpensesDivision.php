@@ -24,9 +24,9 @@ class SetProjectExpensesDivision extends EditRecord
 
     protected function getRedirectUrl(): string
     {
-        // dd($this->getRecord());
+        //  dd($this->getRecord()->project_year->project_id);
         // return ProjectResource::getUrl('quarter-list', ['record' => $this->getRecord()]);
-        return ProjectResource::getUrl('view', ['record' => $this->getRecord()->project_year->project_id]);
+     return ProjectResource::getUrl('quarter-list', ['record' => $this->getRecord()->project_year->project_id]);
     }
 
     protected function mutateFormDataBeforeFill(array $data): array

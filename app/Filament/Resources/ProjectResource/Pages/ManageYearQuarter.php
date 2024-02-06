@@ -62,6 +62,7 @@ class ManageYearQuarter extends Page implements HasForms, HasTable
                 // ...
             ])->headerActions([
                 Action::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')->url(fn (): string => ProjectResource::getUrl('index')),
+                Action::make('View')->label('View Project Details')->icon('heroicon-m-eye')->url(fn (): string => ProjectResource::getUrl('view', ['record' => $this->record->id])),
 
                 CreateAction::make()->label('Create Year')->form([
                     Select::make('year_id')

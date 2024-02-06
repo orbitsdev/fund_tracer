@@ -74,6 +74,7 @@ class ProjectYearQuarterList extends Page implements HasForms, HasTable
             ])->headerActions([
 
                 Action::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')->url(fn (): string => ProjectResource::getUrl('manage-quarter-year', ['record' => $this->record->project_id])),
+                Action::make('View')->label('View Project Details')->icon('heroicon-m-eye')->url(fn (): string => ProjectResource::getUrl('view', ['record' => $this->record->project_id])),
 
             ], position: HeaderActionsPosition::Bottom)
 

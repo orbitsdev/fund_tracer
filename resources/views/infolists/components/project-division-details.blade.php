@@ -26,9 +26,9 @@
                         <td class="border border-black p-2">{{ $project_year->year->title }}</td>
                     </tr>
                     @foreach ($project_year->project_quarters as $project_quarter)
-                        <tr style="background: #F2F2F2 !important; color:#2f2f31;">
-                            <td class="border border-black p-2 text-xs">{{ $project_quarter->quarter->title }}</td>
-                        </tr>
+                    <tr style="background: #F2F2F2 !important; color:#2f2f31;">
+                        <td class="border border-black p-2 text-xs">{{ $project_quarter->quarter->title }}</td>
+                    </tr>
                         @foreach ($project_quarter->quarter_expense_budget_divisions as $project_budget_division)
                             <tr>
                                 <td class="border border-black p-2 text-xs">{{ $project_budget_division->project_division->division->title }}</td>
@@ -82,10 +82,11 @@
                                                 </td>
                                             </tr>
                                         @endforeach
-                                        <tr style="background: #352180 !important; color:white;">
-                                            <td class="border border-black p-2   " style="padding-left:10px">Total For {{ $project_budget_division->project_division->division->abbreviation }} </td>
-                                            <td class="border border-black text-right  p-2  text-xs ">{{ number_format($divisionTotal, 2) }}</td>
+                                        <tr style="background: #5a489e  !important; color: white;">
+                                            <td class=" " style="padding-left: 10px;">Total For {{ $project_budget_division->project_division->division->abbreviation }}</td>
+                                            <td class="border border-black text-right p-1 text-xs">{{ number_format($divisionTotal, 2) }}</td>
                                         </tr>
+                                        
                                         @php
                                             $yearGrandTotal += $divisionTotal;
 
@@ -106,7 +107,7 @@
                         @endforeach
                     @endforeach
                 </table>
-                <div class="flex flex-col mt-4 border-t border-gray-300 p-4">
+               <div class="flex flex-col mt-4 border-t border-gray-300 p-4">
                     <div class="flex justify-between items-center">
                         <span class="text-xs text-gray-600">Year Grand Total:</span>
                         <span class="text-xs text-gray-600">{{ number_format($yearGrandTotal, 2) }}</span>
@@ -130,10 +131,19 @@
             @endphp
         @endforeach
         <!-- Display the overall grand total for the entire table -->
-        <div class="mt-4 border-t border-gray-300 p-4">
+        <div class="mt-4 border-t border-gray-300 p-4" style="background: #e2e0ff;">
             <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-600">Overall Grand Total:</span>
-                <span class="text-xs text-gray-600">{{ number_format($overallGrandTotal, 2) }}</span>
+                <span class="text-xs text-gray-600 font-bold">Overall Grand Total:</span>
+                <span class="text-xs text-gray-600 font-bold">{{ number_format($overallGrandTotal, 2) }}</span>
+            </div>
+        </div>
+        <div class="mt-4 border-t border-gray-300 p-4" style="background: #F8F9FA;">
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-600 font-bold">Remaining Amount:</span>
+                @php
+                    $remainingAmount =  ($getRecord()->allocated_fund - $overallGrandTotal);
+                @endphp
+                <span class="text-xs text-gray-600 font-bold">{{ number_format($remainingAmount, 2) }}</span>
             </div>
         </div>
     </div>

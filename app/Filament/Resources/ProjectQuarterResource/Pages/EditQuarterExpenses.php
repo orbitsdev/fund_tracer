@@ -37,18 +37,7 @@ class EditQuarterExpenses extends EditRecord
 
 
         $project = $this->getRecord()->project_year->project;
-        // $sum = $project->project_years()->with('project_quarters.quarter_expense_budget_divisions.quarter_expenses')->get()
-        // ->sum(function ($project_year) {
-        //     return $project_year->project_quarters->sum(function ($project_quarter) {
-        //         return $project_quarter->quarter_expense_budget_divisions->sum(function ($quarter_expense_budget_division) {
-        //             return $quarter_expense_budget_division->quarter_expenses->sum('amount');
-        //         });
-        //     });
-        // });
-
-        // $old_expenses = $project->quarter_expense_budget_divisions
-        // ->flatMap->quarter_expenses->sum('amount');
-
+       
         $project_fund =floatval(str_replace(',', '', $project->allocated_fund));
         $over_all_expenses = $project->project_years()->with('project_quarters.quarter_expense_budget_divisions.quarter_expenses')->get()
             ->sum(function ($project_year) {
@@ -864,6 +853,8 @@ class EditQuarterExpenses extends EditRecord
     {
         self::updateTotal($get, $set, $record);
     }
+
+
     public static function updateTotal(Get $get, Set $set, Model $record)
     {
 

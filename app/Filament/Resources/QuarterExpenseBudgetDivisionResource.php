@@ -20,6 +20,17 @@ class QuarterExpenseBudgetDivisionResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static bool $shouldRegisterNavigation = false;
 
+    
+    
+    // protected function getRedirectUrl(): string
+    // {
+    //     dd('test');
+
+    //     // dd($this->getOwnerRecord());
+    //     // return redirect()->route('filament.admin.resources.projects.index');
+    //   return ProjectResource::getUrl('index');
+    // }
+
     public static function form(Form $form): Form
     {
         return $form

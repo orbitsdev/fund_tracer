@@ -35,7 +35,15 @@ class QuarterDivisionExpenses extends Page implements HasForms, HasTable
 
     protected static string $view = 'filament.resources.project-quarter-resource.pages.quarter-division-expenses';
 
+    
+    // protected function getRedirectUrl(): string
+    // {
+    //     dd('test');
 
+    //     // dd($this->getOwnerRecord());
+    //     // return redirect()->route('filament.admin.resources.projects.index');
+    //   return ProjectResource::getUrl('index');
+    // }
     public function getHeader(): ?View
     {
         return view('filament.settings.custom-header',['title'=> 'Quarter Expenses Division', 'first'=> 'Quarter Divsaion' ,'second'=> 'Quarter Expenses Division List']);
@@ -72,6 +80,8 @@ class QuarterDivisionExpenses extends Page implements HasForms, HasTable
             ])->headerActions([
 
                 Action::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')->url(fn (): string => ProjectResource::geturl('quarter-list',['record'=> $this->record->project_year->project_id])),
+
+                Action::make('View')->label('View Project Details')->icon('heroicon-m-eye')->url(fn (): string => ProjectResource::getUrl('view', ['record' => $this->record->project_year->project_id])),
 
                 // CreateAction::make()->label('Create Budget Division')
 
