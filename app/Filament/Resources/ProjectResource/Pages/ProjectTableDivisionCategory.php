@@ -21,6 +21,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Actions\HeaderActionsPosition;
 use App\Filament\Resources\ProjectDivisionCategoryResource;
+use Filament\Tables\Columns\ViewColumn;
 
 class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
 {
@@ -30,7 +31,7 @@ class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
 
     public function getHeader(): ?View
     {
-        return view('filament.settings.custom-header',['title'=> 'Division Category List', 'first'=> 'Projects' ,'second'=> 'Division Category List']);
+        return view('filament.settings.custom-header', ['title' => 'Division Category List', 'first' => 'Projects', 'second' => 'Division Category List']);
     }
 
     use InteractsWithTable;
@@ -49,10 +50,18 @@ class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
             ->query(ProjectDivisionCategory::query())
             ->columns([
 
-                   TextColumn::make('from')->sortable()->searchable()->color('info'),
-                // TextColumn::make('project_quarters_count')->counts('project_quarters')->label('Quarters Count'),
+                TextColumn::make('from')->searchable()->color('info'),
 
 
+
+                ViewColumn::make('project_division_sub_category_expenses')->view('tables.columns.declared-expenses')
+                 ->label('Declared Expenses')
+                // TextColumn::make('project_division_sub_category_expenses')
+                // ->label('Declared Expenses')
+                //     ->listWithLineBreaks()
+                //     ->bulleted()
+                //     ->formatStateUsing(fn ($state) => $state->title)
+                //     ,
 
             ])
             ->filters([
@@ -60,7 +69,7 @@ class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
             ])->headerActions([
 
                 Action::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')
-                ->url(fn (): string => ProjectResource::getUrl('project-table-division', ['record' => $this->record->project_id]))
+                    ->url(fn (): string => ProjectResource::getUrl('project-table-division', ['record' => $this->record->project_id]))
 
             ], position: HeaderActionsPosition::Bottom)
 
@@ -68,7 +77,7 @@ class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
 
 
                 Action::make('Manage Expenses')->button()->label('Declare Expenses')->icon('heroicon-m-pencil-square')
-                ->url(fn (Model $record): string => ProjectDivisionCategoryResource::getUrl('edit-category-expenses', ['record' => $record])),
+                    ->url(fn (Model $record): string => ProjectDivisionCategoryResource::getUrl('edit-category-expenses', ['record' => $record])),
 
                 DeleteAction::make()->button(),
 
@@ -79,10 +88,11 @@ class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
                     DeleteBulkAction::make()
                 ]),
             ])
-           ->modifyQueryUsing(fn (Builder $query) => $query->where('project_devision_id', $this->record->id
-            )
-        )
-        ;
+            ->modifyQueryUsing(
+                fn (Builder $query) => $query->where(
+                    'project_devision_id',
+                    $this->record->id
+                )
+            );
     }
-
 }

@@ -12,8 +12,10 @@ use App\Models\DivisionCategory;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Contracts\HasForms;
 use App\Models\ProjectDivisionCategory;
+use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
@@ -60,8 +62,9 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
                 TextColumn::make('division.title')->sortable()->color('Division'),
 
                 TextColumn::make('project_division_categories.from')
-    ->listWithLineBreaks()
-    ->bulleted()
+                ->label('Has')
+                    ->listWithLineBreaks()
+                    ->bulleted()
 
                 // TextColumn::make('project_division_categories_count')->counts('project_division_categories')->label('Current'),
 
@@ -106,20 +109,72 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
                             ])
                             ->hint('Click plus icon to add more options'),
 
+                        Checkbox::make('is_included')->label('Include DC and IC on division creation?')->default(true)
+
+
 
                     ],)
 
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['project_id'] = $this->record->id;
-                        // dd($data);
+
+
+                        //  dd($data);
 
                         return $data;
                     })
+
                     ->modalHeading('Create Year For Quarter')
                     ->using(function (array $data, string $model): Model {
+
+
+
+                        // $data['project_id'] = $this->record->id;
+
+
+                        // $original_data  = $data;
+
+                        // unset($data['is_included']);
+                        // $new_record = $model::create($data);
+
+                        // // Assuming $division_category_id is the ID of the existing division category you want to associate
+
+                        // if($original_data['is_included']){
+                        //     $pivot_data = [
+                        //         [
+                        //             'division_category_id' => $new_record->id,
+                        //             'from' => 'Direct Cost',
+                        //         ],
+                        //         [
+                        //             'division_category_id' => $new_record->id,
+                        //             'from' => 'Indirect Cost',
+                        //         ],
+                        //     ];
+
+                        //     $new_record->project_division_categories()->createMany($pivot_data);
+                        // }
+
+
+
+                        // return $new_record;
+
                         $data['project_id'] = $this->record->id;
 
-                        return $model::create($data);
+                        $original_data = $data;
+
+                        unset($data['is_included']);
+                        $new_record = $model::create($data);
+
+                        if ($original_data['is_included']) {
+                            $pivot_data = [
+                                ['from' => 'Indirect Cost'],
+                                ['from' => 'Direct Cost'],
+                            ];
+
+                            $new_record->project_division_categories()->createMany($pivot_data);
+                        }
+
+                        return $new_record;
                     })
                     ->disableCreateAnother(),
 
@@ -127,22 +182,26 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
 
             ->actions([
 
-                Action::make('Manage Category')->button()->label('Manage Category')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('project-table-division-category', ['record' => $record]))->hidden(function(Model $record){
-                    if($record->project_division_categories->count()>0){
+                Action::make('Manage Category')->button()->label('Manage ')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('project-table-division-category', ['record' => $record]))->hidden(function (Model $record) {
+                    if ($record->project_division_categories->count() > 0) {
                         return false;
-                    }else{
+                    } else {
                         return true;
                     }
                 }),
 
                 Action::make('Create Category')->button()->outlined()->label('Create Category')->icon('heroicon-m-sparkles')
-                ->url(fn (Model $record): string => ProjectResource::getUrl('create-project-table-division-category', ['record' => $record]))
-                // ->hidden(function(Model $record){
-
-                //     $direct_cost_exist = $record->project_division_categories->first()->from === 'Direct Cost';
-                //     $indirec_cost_exist = $record->project_division_categories->first()->from === 'Direct Cost';
-                //     // if($record){}
-                // })
+                ->url(function (Model $record): string {
+                    return ProjectResource::getUrl('create-project-table-division-category', ['record' => $record]);
+                })
+                ->hidden(function (Model $record) {
+                    return $record->project_division_categories()
+                    ->where('from', 'Direct Cost')
+                    ->exists() && $record->project_division_categories()
+                    ->where('from', 'Indirect Cost')
+                    ->exists();
+                })
+            
                 ,
 
                 ActionGroup::make([

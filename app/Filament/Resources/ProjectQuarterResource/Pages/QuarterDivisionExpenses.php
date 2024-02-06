@@ -58,6 +58,10 @@ class QuarterDivisionExpenses extends Page implements HasForms, HasTable
             ->columns([
 
                   TextColumn::make('project_division.division.title')->sortable()->searchable()->color('info')->searchable(),
+                  TextColumn::make('quarter_expenses')
+                  ->listWithLineBreaks()
+                //   ->bulleted()
+                  ->formatStateUsing(fn ($state) => $state->fourth_layer->title .__(" - {$state->amount}"))
                 // TextColumn::make('project_quarters_count')->counts('project_quarters')->label('Quarters Count'),
 
 
@@ -68,6 +72,7 @@ class QuarterDivisionExpenses extends Page implements HasForms, HasTable
             ])->headerActions([
 
                 Action::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')->url(fn (): string => ProjectResource::geturl('quarter-list',['record'=> $this->record->project_year->project_id])),
+
                 // CreateAction::make()->label('Create Budget Division')
 
                 //     ->form([
@@ -123,7 +128,15 @@ class QuarterDivisionExpenses extends Page implements HasForms, HasTable
             ->actions([
 
 
-              Action::make('Manage Quarters')->button()->label('Manage Expenses')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => QuarterExpenseBudgetDivisionResource::getUrl('edit-division-expenses', ['record' => $record])),
+              Action::make('Manage Quarters')->button()->label('Manage Expenses')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => QuarterExpenseBudgetDivisionResource::getUrl('edit-division-expenses', ['record' => $record]))
+            //   ->hidden(function(Model $record){
+            //     if($record->quarter_expenses->count()>0){
+            //         return false;
+            //     }else{
+            //         return true;
+            //     }
+            // }) 
+              ,
 
                 DeleteAction::make()->button(),
 
