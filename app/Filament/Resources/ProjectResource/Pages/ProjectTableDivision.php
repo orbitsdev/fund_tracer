@@ -41,7 +41,7 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
     protected static string $resource = ProjectResource::class;
     protected static string $view = 'filament.resources.project-resource.pages.project-table-division';
 
-    protected static ?string $title = 'Budget Division';
+    protected static ?string $title = 'Particulars';
 
     public $record = null;
 
@@ -75,8 +75,9 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
                 // ...
             ])->headerActions([
                 Action::make('Back')->label('Back')->icon('heroicon-m-arrow-uturn-left')->outlined()->color('gray')->url(fn (): string => ProjectResource::getUrl('index')),
+                Action::make('view project')->label('View Project Details')->icon('heroicon-m-eye')->url(fn (): string => ProjectResource::getUrl('view', ['record'=> $this->record])),
 
-                CreateAction::make()->label('Create Budget Division')
+                CreateAction::make()->label('Create Particular')
 
                     ->form([
 
@@ -109,7 +110,7 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
                             ])
                             ->hint('Click plus icon to add more options'),
 
-                        Checkbox::make('is_included')->label('Include DC and IC on division creation?')->default(true)
+                        Checkbox::make('is_included')->label('Include DC and IC on particular creation?')->default(true)
 
 
 
@@ -182,7 +183,7 @@ class ProjectTableDivision extends Page implements HasForms, HasTable
 
             ->actions([
 
-                Action::make('Manage Category')->button()->label('Manage Category')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('project-table-division-category', ['record' => $record]))->hidden(function (Model $record) {
+                Action::make('Manage Category')->button()->label('Manage')->icon('heroicon-m-pencil-square')->url(fn (Model $record): string => ProjectResource::getUrl('project-table-division-category', ['record' => $record]))->hidden(function (Model $record) {
                     if ($record->project_division_categories->count() > 0) {
                         return false;
                     } else {

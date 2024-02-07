@@ -31,7 +31,7 @@ class ProjectTableDivisionCategory extends Page implements HasForms, HasTable
 
     public function getHeader(): ?View
     {
-        return view('filament.settings.custom-header', ['title' => 'Division Category List', 'first' => 'Projects', 'second' => 'Division Category List']);
+        return view('filament.settings.custom-header', ['title' => 'Particular Category List', 'first' => 'Projects', 'second' => 'Particlular Category List']);
     }
 
     use InteractsWithTable;
